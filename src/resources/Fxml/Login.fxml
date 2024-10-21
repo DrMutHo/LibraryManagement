@@ -1,18 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.HBox?>
 
-<AnchorPane maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" styleClass="AnchorPane_out" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
    <children>
-      <Button layoutX="276.0" layoutY="258.0" mnemonicParsing="false" onAction="#handleLogin" text="Login" />
-      <TextField fx:id="usernameField" layoutX="226.0" layoutY="104.0" />
-      <Text layoutX="291.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login" />
-      <Label fx:id="loginMessage" layoutX="233.0" layoutY="223.0" maxWidth="-Infinity" prefHeight="18.0" prefWidth="149.0" />
-      <PasswordField fx:id="passwordField" layoutX="226.0" layoutY="174.0" />
+      <AnchorPane layoutX="400.0" layoutY="100.0" maxHeight="703.0" maxWidth="921.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="800.0" styleClass="AnchorPane_login" stylesheets="@../Styles/Login.css" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="387.0">
+         <children>
+            <ImageView fitHeight="365.0" fitWidth="350.0" layoutX="228.0" layoutY="14.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/online-library-isometric-design_98292-34.jpg" />
+               </image>
+            </ImageView>
+            <Button fx:id="loginButton" layoutX="234.0" layoutY="561.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="337.0" styleClass="button_login" text="Login" />
+            <Button fx:id="forgotaccountButton" alignment="CENTER" layoutX="277.0" layoutY="604.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="251.0" styleClass="button_forgotPassword" text="Forgotten your account?" textAlignment="CENTER" />
+            <Button fx:id="createnewaccountbutton" layoutX="277.0" layoutY="646.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="251.0" styleClass="button_createnewaccount" text="Create new account" />
+            <PasswordField fx:id="passwordField" layoutX="361.0" layoutY="481.0" prefHeight="40.0" prefWidth="206.0" />
+            <ChoiceBox fx:id="acc_selector" layoutX="379.0" layoutY="351.0" prefHeight="26.0" prefWidth="185.0" />
+            <Label fx:id="usernameLabel" alignment="CENTER" blendMode="SRC_ATOP" layoutX="223.0" layoutY="409.0" prefHeight="74.0" prefWidth="117.0" styleClass="username_password_label" text="User name" />
+            <Label fx:id="passwordLabel" alignment="CENTER" layoutX="234.0" layoutY="464.0" prefHeight="74.0" prefWidth="94.0" styleClass="username_password_label" text="Password" />
+            <Label fx:id="chooseaccountLable" alignment="CENTER" layoutX="122.0" layoutY="327.0" prefHeight="74.0" prefWidth="251.0" styleClass="username_password_label" text="Choose your account type:" />
+            <HBox layoutX="361.0" layoutY="425.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="42.0" prefWidth="241.0">
+               <children>
+                  <TextField fx:id="usernameField" prefHeight="40.0" prefWidth="204.0" styleClass="text-field" />
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
