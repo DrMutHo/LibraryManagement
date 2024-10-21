@@ -18,7 +18,7 @@
 /** 1 số thứ về textfield*/
 .text-field, .password-field {
     -fx-background-color: white;
-    -fx-border-color: lightgray;
+    -fx-border-color: white;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
     -fx-padding: 5px;
@@ -101,3 +101,13 @@
 .text_field_pretext {
     -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
 }
+
+/** Hbox8 */
+.hbox_set {
+    -fx-alignment: center;
+    -fx-background-color: white;
+    -fx-background-radius: 5px; 
+}
+
+/** image  */
+

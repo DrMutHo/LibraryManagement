@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
@@ -19,17 +20,38 @@
                   <Image url="@../Images/online-library-isometric-design_98292-34.jpg" />
                </image>
             </ImageView>
-            <Button fx:id="loginButton" layoutX="234.0" layoutY="561.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="337.0" styleClass="button_login" text="Login" />
-            <Button fx:id="forgotaccountButton" alignment="CENTER" layoutX="277.0" layoutY="604.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="251.0" styleClass="button_forgotPassword" text="Forgotten your account?" textAlignment="CENTER" />
-            <Button fx:id="createnewaccountbutton" layoutX="277.0" layoutY="646.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="251.0" styleClass="button_createnewaccount" text="Create new account" />
-            <PasswordField fx:id="passwordField" layoutX="361.0" layoutY="481.0" prefHeight="40.0" prefWidth="206.0" />
-            <ChoiceBox fx:id="acc_selector" layoutX="379.0" layoutY="351.0" prefHeight="26.0" prefWidth="185.0" />
-            <Label fx:id="usernameLabel" alignment="CENTER" blendMode="SRC_ATOP" layoutX="223.0" layoutY="409.0" prefHeight="74.0" prefWidth="117.0" styleClass="username_password_label" text="User name" />
+            <Button fx:id="loginButton" layoutX="234.0" layoutY="561.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="359.0" styleClass="button_login" text="Login" />
+            <Button fx:id="forgotaccountButton" alignment="CENTER" layoutX="288.0" layoutY="607.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="251.0" styleClass="button_forgotPassword" text="Forgotten your account?" textAlignment="CENTER" />
+            <Button fx:id="createnewaccountbutton" layoutX="288.0" layoutY="646.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="251.0" styleClass="button_createnewaccount" text="Create new account" />
+            <ChoiceBox fx:id="acc_selector" layoutX="406.0" layoutY="351.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="26.0" prefWidth="185.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></ChoiceBox>
+            <Label fx:id="usernameLabel" alignment="CENTER" blendMode="SRC_ATOP" layoutX="222.0" layoutY="401.0" prefHeight="74.0" prefWidth="117.0" styleClass="username_password_label" text="User name" />
             <Label fx:id="passwordLabel" alignment="CENTER" layoutX="234.0" layoutY="464.0" prefHeight="74.0" prefWidth="94.0" styleClass="username_password_label" text="Password" />
-            <Label fx:id="chooseaccountLable" alignment="CENTER" layoutX="122.0" layoutY="327.0" prefHeight="74.0" prefWidth="251.0" styleClass="username_password_label" text="Choose your account type:" />
-            <HBox layoutX="361.0" layoutY="425.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="42.0" prefWidth="241.0">
+            <Label fx:id="chooseaccountLable" alignment="CENTER" layoutX="155.0" layoutY="327.0" prefHeight="74.0" prefWidth="251.0" styleClass="username_password_label" text="Choose your account type:" />
+            <HBox alignment="CENTER_LEFT" layoutX="341.0" layoutY="423.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="28.0" prefWidth="251.0" styleClass="hbox_set">
                <children>
-                  <TextField fx:id="usernameField" prefHeight="40.0" prefWidth="204.0" styleClass="text-field" />
+                  <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="225.0" styleClass="text-field" />
+                  <ImageView fitHeight="28.0" fitWidth="31.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
+                     <image>
+                        <Image url="@../Images/search.png" />
+                     </image></ImageView>
+               </children>
+            </HBox>
+            <HBox layoutX="349.0" layoutY="463.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="236.0">
+               <children>
+                  <ImageView fitHeight="26.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="341.0" layoutY="487.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="28.0" prefWidth="251.0" styleClass="hbox_set">
+               <children>
+                  <PasswordField fx:id="passwordField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="225.0" styleClass="text-field" />
+                  <ImageView fitHeight="28.0" fitWidth="44.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
+                     <image>
+                        <Image url="@../Images/search.png" />
+                     </image>
+                  </ImageView>
                </children>
             </HBox>
          </children>
