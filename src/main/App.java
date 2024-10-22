@@ -13,12 +13,12 @@ public class App extends Application {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/resources/Fxml/Login.fxml"));
 
-            Scene scene = new Scene(root, 600, 400);
+            Scene scene = new Scene(root, 850, 750);
 
             primaryStage.setTitle("Library Management System");
 
             primaryStage.setScene(scene);
-
+            
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
