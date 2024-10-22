@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.DashboardController">
+<BorderPane prefHeight="750.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.DashboardController">
 
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="900.0" spacing="10.0">
@@ -37,10 +37,6 @@
             </HBox>
         </HBox>
     </top>
-
-    <left>
-        <VBox prefHeight="442.0" prefWidth="141.0" BorderPane.alignment="CENTER" />
-    </left>
 
     <center>
         <PieChart fx:id="pieChart" legendSide="BOTTOM" title="Library Book Statistics" />

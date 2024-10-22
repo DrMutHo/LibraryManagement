@@ -28,14 +28,14 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-    // Khởi tạo dữ liệu cho combobox acc_selector
-    acc_selector.setItems(FXCollections.observableArrayList(AccountType.CLIENT, AccountType.ADMIN));
+        // Khởi tạo dữ liệu cho combobox acc_selector
+        acc_selector.setItems(FXCollections.observableArrayList(AccountType.CLIENT, AccountType.ADMIN));
 
-    // Đặt giá trị mặc định cho acc_selector từ viewFactory
-    acc_selector.setValue(Model.getInstance().getViewFactory().getLoginAccountType());
+        // Đặt giá trị mặc định cho acc_selector từ viewFactory
+        acc_selector.setValue(Model.getInstance().getViewFactory().getLoginAccountType());
 
-    // Chữ mờ mờ ở username khi chưa nhập gì.
-    usernameField.setPromptText("Enter your username");
-    passwordField.setPromptText("Enter your password");
+        // Chữ mờ mờ ở username khi chưa nhập gì.
+        usernameField.setPromptText("Enter your username");
+        passwordField.setPromptText("Enter your password");
     }
 }
