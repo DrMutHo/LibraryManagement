@@ -90,7 +90,6 @@
     -fx-border-radius: 5px;
 }
 .hbox_set-focused {
-    -fx-border-color: white;
     -fx-border-color: blue;
 }
 
