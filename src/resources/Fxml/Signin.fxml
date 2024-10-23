@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Rectangle2D?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -22,17 +20,9 @@
                   <Image url="@../Images/online-library-isometric-design_98292-34.jpg" />
                </image>
             </ImageView>
-            <Button fx:id="loginButton" layoutX="125.0" layoutY="452.0" mnemonicParsing="false" prefHeight="38.49" prefWidth="190.31" styleClass="button_login" text="Login" />
-            <Button fx:id="forgotaccountButton" alignment="CENTER" layoutX="138.0" layoutY="495.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="163.0" styleClass="button_forgotPassword" text="Forgotten your account?" textAlignment="CENTER" />
-            <Button fx:id="createnewaccountbutton" layoutX="141.0" layoutY="530.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="Sign Up" />
-            <ChoiceBox fx:id="acc_selector" layoutX="286.0" layoutY="290.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="26.0" prefWidth="94.0">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ChoiceBox>
+            <Button fx:id="createnewaccountbutton" layoutX="125.0" layoutY="530.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="191.0" styleClass="button_createnewaccount" text="Create new account" />
             <Label fx:id="usernameLabel" alignment="CENTER" blendMode="SRC_ATOP" layoutX="59.0" layoutY="346.0" prefHeight="39.0" prefWidth="93.0" styleClass="username_password_label" text="User name" />
             <Label fx:id="passwordLabel" alignment="CENTER" layoutX="62.0" layoutY="401.0" prefHeight="39.0" prefWidth="86.0" styleClass="username_password_label" text="Password" />
-            <Label fx:id="chooseaccountLable" alignment="CENTER" layoutX="37.0" layoutY="283.0" prefHeight="39.0" prefWidth="230.0" styleClass="username_password_label" text="Choose your account type:" />
             <HBox fx:id="hbox_0" alignment="CENTER" layoutX="168.0" layoutY="346.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="190.0" styleClass="hbox_set">
                <children>
                   <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="158.0" styleClass="text-field" />
@@ -62,6 +52,7 @@
                   </ImageView>
                </children>
             </HBox>
+            <Button fx:id="SignUp_backButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="&lt;--" />
          </children>
       </AnchorPane>
    </children>
