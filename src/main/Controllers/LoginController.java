@@ -30,6 +30,8 @@ public class LoginController implements Initializable {
     public HBox hbox_1;
     public HBox hbox_0;
     public TextField textField;
+    @FXML
+    private Button togglePasswordButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -70,13 +72,11 @@ public class LoginController implements Initializable {
             textField.setText(passwordField.getText()); // Lấy nội dung từ PasswordField
             passwordField.setVisible(false); // Ẩn PasswordField
             textField.setVisible(true); // Hiển thị TextField
-           
         } else {
             // Nếu TextField đang hiển thị
             passwordField.setText(textField.getText()); // Lấy nội dung từ TextField
             textField.setVisible(false); // Ẩn TextField
             passwordField.setVisible(true); // Hiển thị PasswordField
-            
         }
     }
 }

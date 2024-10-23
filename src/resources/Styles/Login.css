@@ -86,11 +86,10 @@
 .hbox_set {
     -fx-background-color: white;
     -fx-background-radius: 5px; 
-    -fx-border-color: white;
+    -fx-border-color: black;
     -fx-border-radius: 5px;
 }
 .hbox_set-focused {
-    -fx-border-color: white;
     -fx-border-color: blue;
 }
 
