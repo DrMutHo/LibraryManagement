@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="AnchorPane_out" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="AnchorPane_out" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
    <children>
       <AnchorPane layoutX="213.0" layoutY="83.0" maxHeight="586.31" maxWidth="489.25" minHeight="-Infinity" minWidth="-Infinity" prefHeight="583.31" prefWidth="425.0" styleClass="AnchorPane_login" stylesheets="@../Styles/Login.css" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="213.0">
          <children>
@@ -36,7 +36,7 @@
             <HBox fx:id="hbox_0" alignment="CENTER" layoutX="168.0" layoutY="346.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="190.0" styleClass="hbox_set">
                <children>
                   <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="35.0" prefWidth="158.0" styleClass="text-field" />
-                  <ImageView fitHeight="28.0" fitWidth="28.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="26.0" fitWidth="26.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Images/527489.png" />
                      </image>
@@ -52,7 +52,7 @@
                         <TextField fx:id="textField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="35.0" prefWidth="133.0" />
                      </children>
                   </StackPane>
-                  <ImageView fitHeight="28.0" fitWidth="28.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="26.0" fitWidth="26.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Images/download.png" />
                      </image>
