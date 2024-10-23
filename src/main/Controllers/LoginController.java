@@ -62,6 +62,15 @@ public class LoginController implements Initializable {
                 hbox_0.getStyleClass().remove("hbox_set-focused");
             }
         });
+        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                // Khi PasswordField được focus, đổi màu HBox
+                hbox_1.getStyleClass().add("hbox_set-focused");
+            } else {
+                // Khi PasswordField không còn focus, trở lại trạng thái ban đầu
+                hbox_1.getStyleClass().remove("hbox_set-focused");
+            }
+        });
         togglePasswordVisibility();
     }
     
