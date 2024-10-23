@@ -35,11 +35,7 @@
             <Label fx:id="chooseaccountLable" alignment="CENTER" layoutX="37.0" layoutY="283.0" prefHeight="39.0" prefWidth="230.0" styleClass="username_password_label" text="Choose your account type:" />
             <HBox fx:id="hbox_0" alignment="CENTER" layoutX="168.0" layoutY="346.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="190.0" styleClass="hbox_set">
                <children>
-<<<<<<< Updated upstream
-                  <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="35.0" prefWidth="158.0" styleClass="text-field" />
-=======
                   <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="158.0" styleClass="text-field" />
->>>>>>> Stashed changes
                   <ImageView fitHeight="26.0" fitWidth="26.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Images/527489.png" />
