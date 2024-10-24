@@ -73,7 +73,7 @@ public class LoginController implements Initializable {
         });
         togglePasswordVisibility();
     }
-    
+
     @FXML
     private void togglePasswordVisibility() {
         if (passwordField.isVisible()) {
