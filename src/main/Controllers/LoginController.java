@@ -30,6 +30,7 @@ public class LoginController implements Initializable {
     public HBox hbox_1;
     public HBox hbox_0;
     public TextField textField;
+    public Label errorLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -38,6 +39,8 @@ public class LoginController implements Initializable {
 
         // Đặt giá trị mặc định cho acc_selector từ viewFactory
         acc_selector.setValue(Model.getInstance().getViewFactory().getLoginAccountType());
+
+        acc_selector.valueProperty().addListener(observable -> setAcc_selector());
 
         // Chữ mờ mờ ở username khi chưa nhập gì.
         usernameField.setPromptText("Enter your username");
@@ -61,8 +64,27 @@ public class LoginController implements Initializable {
             }
         });
         togglePasswordVisibility();
+        loginButton.setOnAction(event -> onLogin());
     }
-    
+
+    private void onLogin() {
+
+        Stage stage = (Stage) errorLabel.getScene().getWindow();
+        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
+            if (usernameField.getText().equals("test") && passwordField.getText().equals("1")) {
+                System.out.println("get");
+                Model.getInstance().getViewFactory().showClientWindow();
+                // Close the login stage
+                Model.getInstance().getViewFactory().closeStage(stage);
+            }
+        } else {
+            usernameField.setText("");
+            passnameLabel.setText("");
+            errorLabel.setText("No Such Login Credentials.");
+            System.out.println(errorLabel.getText());
+        }
+    }
+
     @FXML
     private void togglePasswordVisibility() {
         if (passwordField.isVisible()) {
@@ -70,13 +92,17 @@ public class LoginController implements Initializable {
             textField.setText(passwordField.getText()); // Lấy nội dung từ PasswordField
             passwordField.setVisible(false); // Ẩn PasswordField
             textField.setVisible(true); // Hiển thị TextField
-           
+
         } else {
             // Nếu TextField đang hiển thị
             passwordField.setText(textField.getText()); // Lấy nội dung từ TextField
             textField.setVisible(false); // Ẩn TextField
             passwordField.setVisible(true); // Hiển thị PasswordField
-            
+
         }
+    }
+
+    private void setAcc_selector() {
+        Model.getInstance().getViewFactory().setLoginAccountType(acc_selector.getValue());
     }
 }
