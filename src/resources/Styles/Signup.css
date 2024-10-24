@@ -1,10 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fleur+De+Leah&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Modak&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Modak&family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&display=swap');
 
 
+.signup_anchorpane {
+    -fx-background-color: white;    
+}
 .signup_label {
-    -fx-font-family: "Modak", system-ui;
+    -fx-font-family: "Playwrite GB S", cursive;
     -fx-font-size: 50px;
     -fx-text-fill: black;
+}
+.exit_button {
+    -fx-font-family: "Playwrite GB S", cursive;
+    -fx-background-color: white;
+    -fx-border-radius: 15;
+    -fx-border-color: gray; 
+}
+.exit_button:hover {
+    -fx-border-color: blue;
+    -fx-cursor: hand;
+}
+.exit_button:pressed {
+    
 }

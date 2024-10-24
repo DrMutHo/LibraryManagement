@@ -44,6 +44,7 @@ public class LoginController implements Initializable {
         // Chữ mờ mờ ở username khi chưa nhập gì.
         usernameField.setPromptText("Enter your username");
         passwordField.setPromptText("Enter your password");
+        textField.setPromptText("Enter your password");
         passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
                 // Khi PasswordField được focus, đổi màu HBox
