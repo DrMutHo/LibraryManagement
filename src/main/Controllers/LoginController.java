@@ -30,7 +30,8 @@ public class LoginController implements Initializable {
     public HBox hbox_1;
     public HBox hbox_0;
     public TextField textField;
-    public Label errorLabel;
+    @FXML
+    private Button togglePasswordButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -39,8 +40,6 @@ public class LoginController implements Initializable {
 
         // Đặt giá trị mặc định cho acc_selector từ viewFactory
         acc_selector.setValue(Model.getInstance().getViewFactory().getLoginAccountType());
-
-        acc_selector.valueProperty().addListener(observable -> setAcc_selector());
 
         // Chữ mờ mờ ở username khi chưa nhập gì.
         usernameField.setPromptText("Enter your username");
@@ -63,26 +62,16 @@ public class LoginController implements Initializable {
                 hbox_0.getStyleClass().remove("hbox_set-focused");
             }
         });
-        togglePasswordVisibility();
-        loginButton.setOnAction(event -> onLogin());
-    }
-
-    private void onLogin() {
-
-        Stage stage = (Stage) errorLabel.getScene().getWindow();
-        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
-            if (usernameField.getText().equals("test") && passwordField.getText().equals("1")) {
-                System.out.println("get");
-                Model.getInstance().getViewFactory().showClientWindow();
-                // Close the login stage
-                Model.getInstance().getViewFactory().closeStage(stage);
+        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                // Khi PasswordField được focus, đổi màu HBox
+                hbox_1.getStyleClass().add("hbox_set-focused");
+            } else {
+                // Khi PasswordField không còn focus, trở lại trạng thái ban đầu
+                hbox_1.getStyleClass().remove("hbox_set-focused");
             }
-        } else {
-            usernameField.setText("");
-            passnameLabel.setText("");
-            errorLabel.setText("No Such Login Credentials.");
-            System.out.println(errorLabel.getText());
-        }
+        });
+        togglePasswordVisibility();
     }
 
     @FXML
@@ -92,17 +81,11 @@ public class LoginController implements Initializable {
             textField.setText(passwordField.getText()); // Lấy nội dung từ PasswordField
             passwordField.setVisible(false); // Ẩn PasswordField
             textField.setVisible(true); // Hiển thị TextField
-
         } else {
             // Nếu TextField đang hiển thị
             passwordField.setText(textField.getText()); // Lấy nội dung từ TextField
             textField.setVisible(false); // Ẩn TextField
             passwordField.setVisible(true); // Hiển thị PasswordField
-
         }
-    }
-
-    private void setAcc_selector() {
-        Model.getInstance().getViewFactory().setLoginAccountType(acc_selector.getValue());
     }
 }
