@@ -12,6 +12,7 @@ import main.Controllers.Client.ClientController;
 
 public class ViewFactory {
     private AccountType loginAccountType;
+    // Client Views
     private final ObjectProperty<ClientMenuOptions> clientSelectedMenuItem;
     private BorderPane dashboardView;
     private BorderPane homeView;
