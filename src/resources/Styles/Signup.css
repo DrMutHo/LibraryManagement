@@ -47,3 +47,7 @@
 .signup_hbox_set-focused {
     -fx-border-color: blue;
 }
+.toggle_button {
+    -fx-cursor: hand;
+    -fx-background-color: white;
+}
