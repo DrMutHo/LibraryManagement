@@ -29,13 +29,6 @@
     -fx-border-color: red; /* Khi có lỗi */
 }
 
-.username_password_label {
-    -fx-font-size: 18px;
-    -fx-font-family: "Modak", system-ui;
-    -fx-font-weight: 400;
-    -fx-text-fill: white;
-}
-
 /** nút quên tài khoản. */
 .button_forgotPassword {
     -fx-font-size: 13px;
@@ -97,5 +90,11 @@
 /** image  */
 .image_view {
     -fx-border-radius: 10px;
+}
+
+/** button có ảnh */
+.button_set {
+    -fx-cursor: hand;
+    -fx-background-color: white;
 }
 

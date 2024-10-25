@@ -33,8 +33,8 @@
             <Label fx:id="chooseaccountLable" alignment="CENTER" layoutX="43.0" layoutY="283.0" prefHeight="39.0" prefWidth="230.0" styleClass="username_password_label" text="Choose your account type:" />
             <HBox fx:id="hbox_0" alignment="CENTER" layoutX="95.0" layoutY="330.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="hbox_set">
                <children>
-                  <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="220.0" styleClass="text-field" HBox.hgrow="NEVER" />
-                  <ImageView fitHeight="26.0" fitWidth="26.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                  <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="text-field" HBox.hgrow="NEVER" />
+                  <ImageView fitHeight="36.0" fitWidth="31.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Images/527489.png" />
                      </image>
@@ -43,17 +43,17 @@
             </HBox>
             <HBox fx:id="hbox_1" alignment="CENTER" blendMode="SRC_ATOP" layoutX="95.0" layoutY="386.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="hbox_set">
                <children>
-                  <Button fx:id="togglePasswordButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#togglePasswordVisibility" prefHeight="26.0" prefWidth="21.0" HBox.hgrow="NEVER">
+                  <Button fx:id="toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#togglePasswordVisibility" prefHeight="26.0" prefWidth="22.0" styleClass="button_set" HBox.hgrow="NEVER">
                      <graphic>
-                        <ImageView fitHeight="23.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="imageIcon" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic></Button>
-                  <StackPane prefHeight="38.0" prefWidth="198.0" HBox.hgrow="NEVER">
+                  <StackPane prefHeight="38.0" prefWidth="190.0" HBox.hgrow="NEVER">
                      <children>
                         <PasswordField fx:id="passwordField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="126.0" styleClass="password-field" />
-                        <TextField fx:id="textField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="197.0" />
+                        <TextField fx:id="textField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="194.0" />
                      </children>
                   </StackPane>
-                  <ImageView fitHeight="26.0" fitWidth="26.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
+                  <ImageView fitHeight="36.0" fitWidth="31.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
                      <image>
                         <Image url="@../Images/download.png" />
                      </image>

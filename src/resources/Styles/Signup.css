@@ -3,12 +3,15 @@
 
 .signup_anchorpane {
     -fx-background-color: white;    
+
 }
 .signup_label {
     -fx-font-family: "Playwrite GB S", cursive;
     -fx-font-size: 50px;
     -fx-text-fill: black;
 }
+
+/** nút exit */
 .exit_button {
     -fx-font-family: "Playwrite GB S", cursive;
     -fx-background-color: white;
@@ -21,4 +24,26 @@
 }
 .exit_button:pressed {
     
+}
+
+/** username và pass */
+.signup_passwordField {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+    -fx-font-size: 13px;
+}
+
+/** Hbox8 */
+.signup_hbox_set {
+    -fx-background-color: white;
+    -fx-background-radius: 5px; 
+    -fx-border-color: black;
+    -fx-border-radius: 5px;
+}
+.signup_hbox_set-focused {
+    -fx-border-color: blue;
 }
