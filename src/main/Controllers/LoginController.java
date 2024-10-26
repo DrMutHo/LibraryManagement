@@ -72,8 +72,9 @@ public class LoginController implements Initializable {
             }
         });
         togglePasswordVisibility();
+        loginButton.setOnAction(event -> onLogin());
     }
-    
+
     @FXML
     private void togglePasswordVisibility() {
         if (passwordField.isVisible()) {
@@ -88,4 +89,15 @@ public class LoginController implements Initializable {
             passwordField.setVisible(true); // Hiển thị PasswordField
         }
     }
+
+    private void onLogin() {
+        Stage stage = (Stage) loginButton.getScene().getWindow();
+        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
+            Model.getInstance().getViewFactory().showClientWindow();
+            // Close the login stage
+            Model.getInstance().getViewFactory().closeStage(stage);
+
+        }
+    }
+
 }
