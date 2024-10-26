@@ -2,6 +2,7 @@ package main;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import main.Models.GoogleBooksAPI;
 import main.Models.Model;
 
 public class App extends Application {
@@ -13,6 +14,9 @@ public class App extends Application {
 
     public static void main(String[] args) {
         // Chạy ứng dụng JavaFX
+        // String isbn = "9780140449136";
+        // GoogleBooksAPI.searchBookByISBN(isbn);
         launch(args);
+
     }
 }
