@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="AnchorPane_out" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
+<AnchorPane fx:id="outer_pane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="AnchorPane_out" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
    <children>
       <ImageView fitHeight="750.0" fitWidth="850.0" opacity="0.56" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="33.0" AnchorPane.topAnchor="0.0">
          <image>
@@ -23,17 +23,17 @@
             <Rectangle2D height="750.0" width="850.0" />
          </viewport>
       </ImageView>
-      <AnchorPane layoutX="213.0" layoutY="83.0" maxHeight="586.31" maxWidth="489.25" minHeight="-Infinity" minWidth="-Infinity" prefHeight="583.31" prefWidth="425.0" styleClass="AnchorPane_login" stylesheets="@../Styles/Login.css" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="213.0">
+      <AnchorPane fx:id="inner_pane" layoutX="213.0" layoutY="83.0" maxHeight="586.31" maxWidth="489.25" minHeight="-Infinity" minWidth="-Infinity" prefHeight="583.31" prefWidth="425.0" styleClass="AnchorPane_login" stylesheets="@../Styles/Login.css" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="213.0">
          <children>
-            <ImageView fitHeight="289.0" fitWidth="294.0" layoutX="68.0" layoutY="14.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="333.0" fitWidth="289.0" layoutX="75.0" layoutY="14.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
                <image>
                   <Image url="@../Images/online-library-isometric-design_98292-34.jpg" />
                </image>
             </ImageView>
             <Button fx:id="loginButton" layoutX="125.0" layoutY="452.0" mnemonicParsing="false" prefHeight="38.49" prefWidth="190.31" styleClass="button_login" text="Login" />
             <Button fx:id="forgotaccountButton" alignment="CENTER" layoutX="138.0" layoutY="495.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="163.0" styleClass="button_forgotPassword" text="Forgotten your account?" textAlignment="CENTER" />
-            <Button fx:id="createnewaccountbutton" layoutX="141.0" layoutY="530.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="Sign Up" />
-            <ChoiceBox fx:id="acc_selector" layoutX="286.0" layoutY="290.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="26.0" prefWidth="94.0" styleClass="choose_account_selector">
+            <Button fx:id="createnewaccountButton" layoutX="141.0" layoutY="530.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="Sign Up" />
+            <ChoiceBox fx:id="acc_selector" layoutX="274.0" layoutY="289.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="26.0" prefWidth="94.0" styleClass="choose_account_selector">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>

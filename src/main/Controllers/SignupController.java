@@ -72,8 +72,7 @@ public class SignupController implements Initializable {
         signup_passwordField.setPromptText("Enter your password");
         signup_textField.setPromptText("Enter your password");
         signup_passwordField1.setPromptText("Confirmed password");
-        signup_textField1.setPromptText("Confirmed
-         password");
+        signup_textField1.setPromptText("Confirmed password");
 
         signup_passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {

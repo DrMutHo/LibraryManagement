@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -13,6 +14,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import main.Models.Model;
@@ -20,15 +22,13 @@ import main.Views.AccountType;
 
 public class LoginController implements Initializable {
     @FXML
+    private AnchorPane inner_pane;
+    @FXML
     private ChoiceBox<AccountType> acc_selector;
     @FXML
     private TextField usernameField;
     @FXML
     private PasswordField passwordField;
-    @FXML
-    private Label usernameLabel;
-    @FXML
-    private Label passnameLabel;
     @FXML
     private Label chooseaccountLabel;
     @FXML
@@ -58,10 +58,48 @@ public class LoginController implements Initializable {
         username_password_promptext_init();
         passwordField_init();
     }
+    
+    
+    @FXML
+    private void togglePasswordVisibility() {
+        if (passwordField.isVisible()) {
+            // Ẩn passwordField và hiển thị textField (mật khẩu dưới dạng văn bản)
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+            textField.setVisible(true);
+            textField.setManaged(true);
+            imageIcon.setImage(eyeOpen);
+        } else {
+            // Hiển thị passwordField (mật khẩu dưới dạng dấu chấm) và ẩn textField
+            textField.setVisible(false);
+            textField.setManaged(false);
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+            imageIcon.setImage(eyeClosed);
+        }
+    }
+
+    
+
+    private void setAcc_selector() {
+        Model.getInstance().getViewFactory().setLoginAccountType(acc_selector.getValue());
+        // Change Payee Address label accordingly
+        if (acc_selector.getValue() == AccountType.ADMIN) {
+            inner_pane.getChildren().remove(forgotaccountButton);
+            inner_pane.getChildren().remove(createnewaccountButton);
+    } else {
+        inner_pane.getChildren().add(forgotaccountButton);
+        inner_pane.getChildren().add(createnewaccountButton);
+    }
+}
+
+    
+    
 
     public void acc_selector_init() {
         acc_selector.setItems(FXCollections.observableArrayList(AccountType.CLIENT, AccountType.ADMIN));
         acc_selector.setValue(Model.getInstance().getViewFactory().getLoginAccountType());
+        acc_selector.valueProperty().addListener(observable -> setAcc_selector());
     }
 
     public void username_password_promptext_init() {
@@ -92,6 +130,7 @@ public class LoginController implements Initializable {
     }
 
     public void passwordField_init() {
+        try {     
         passwordField.setVisible(true);
         passwordField.setManaged(true);
         textField.setVisible(false);
@@ -101,24 +140,11 @@ public class LoginController implements Initializable {
         eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
         imageIcon.setImage(eyeClosed);
         toggleButton.setOnAction(even -> togglePasswordVisibility());
-    }
-    
-    @FXML
-    private void togglePasswordVisibility() {
-        if (passwordField.isVisible()) {
-            // Ẩn passwordField và hiển thị textField (mật khẩu dưới dạng văn bản)
-            passwordField.setVisible(false);
-            passwordField.setManaged(false);
-            textField.setVisible(true);
-            textField.setManaged(true);
-            imageIcon.setImage(eyeOpen);
-        } else {
-            // Hiển thị passwordField (mật khẩu dưới dạng dấu chấm) và ẩn textField
-            textField.setVisible(false);
-            textField.setManaged(false);
-            passwordField.setVisible(true);
-            passwordField.setManaged(true);
-            imageIcon.setImage(eyeClosed);
+        } catch (Exception e) {
+            System.out.println("Lỗi khi tải ảnh hoặc thiết lập sự kiện: " + e.getMessage());
+            e.printStackTrace();
         }
+
     }
+
 }
