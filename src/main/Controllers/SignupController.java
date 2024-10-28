@@ -71,8 +71,9 @@ public class SignupController implements Initializable {
         signup_usernameField.setPromptText("Enter your username");
         signup_passwordField.setPromptText("Enter your password");
         signup_textField.setPromptText("Enter your password");
-        signup_passwordField1.setPromptText("Re-enter your password");
-        signup_textField1.setPromptText("Re-enter your password");
+        signup_passwordField1.setPromptText("Confirmed password");
+        signup_textField1.setPromptText("Confirmed
+         password");
 
         signup_passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -129,7 +130,7 @@ public class SignupController implements Initializable {
 
     @FXML
     private void togglePasswordVisibility1() {
-        if (signup_passwordField.isVisible()) {
+        if (signup_passwordField1.isVisible()) {
             signup_passwordField1.setVisible(false);
             signup_passwordField1.setManaged(false);
             signup_textField1.setVisible(true);

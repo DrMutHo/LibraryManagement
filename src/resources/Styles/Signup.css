@@ -45,7 +45,7 @@
     -fx-border-radius: 5px;
 }
 .signup_hbox_set-focused {
-    -fx-border-color: blue;
+    -fx-border-color: orange;
 }
 .toggle_button {
     -fx-cursor: hand;

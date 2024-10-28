@@ -79,5 +79,10 @@
             </ImageView>
          </children>
       </HBox>
+      <ImageView fitHeight="133.0" fitWidth="240.0" layoutX="532.0" layoutY="122.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/poqqrvev54h81.jpg" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
