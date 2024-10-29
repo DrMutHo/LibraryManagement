@@ -19,24 +19,7 @@ import main.Models.Model;
 import main.Views.AccountType;
 
 public class LoginController implements Initializable {
-<<<<<<<<< Temporary merge branch 1
 
-    public ChoiceBox<AccountType> acc_selector;
-    public TextField usernameField;
-    public PasswordField passwordField;
-    public Label usernameLabel;
-    public Label passnameLabel;
-    public Label chooseaccountLabel;
-    public Button forgotaccountButton;
-    public Button loginButton;
-    public Button createnewaccountButton;
-    public HBox hbox_1;
-    public HBox hbox_0;
-    public TextField textField;
-    @FXML
-    private Button togglePasswordButton;
-
-=========
     @FXML
     private AnchorPane outer_pane;
     @FXML
@@ -69,7 +52,7 @@ public class LoginController implements Initializable {
     private Image eyeClosed;
     @FXML
     ImageView imageIcon;
->>>>>>>>> Temporary merge branch 2
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         acc_selector_init();
