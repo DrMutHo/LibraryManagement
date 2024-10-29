@@ -13,7 +13,6 @@
 
 <AnchorPane fx:id="signup_anchorpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="signup_anchorpane" stylesheets="@../Styles/Signup.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.SignupController">
    <children>
-      <Label layoutX="139.0" layoutY="90.0" styleClass="signup_label" stylesheets="@../Styles/Signup.css" text="Sign Up" />
       <Button fx:id="signup_exitButton" layoutX="24.0" layoutY="14.0" mnemonicParsing="false" styleClass="exit_button" text="exit">
          <graphic>
             <ImageView fitHeight="94.0" fitWidth="61.0" pickOnBounds="true" preserveRatio="true">
@@ -23,66 +22,71 @@
             </ImageView>
          </graphic>
       </Button>
-      <HBox fx:id="signup_hbox0" alignment="CENTER" layoutX="115.0" layoutY="375.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
-         <children>
-            <TextField fx:id="signup_usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="signup_passwordField" HBox.hgrow="NEVER" />
-            <ImageView fitHeight="36.0" fitWidth="31.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../Images/527489.png" />
-               </image>
-            </ImageView>
-         </children>
-      </HBox>
-      <HBox fx:id="signup_hbox1" alignment="CENTER" blendMode="SRC_ATOP" layoutX="115.0" layoutY="429.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
-         <children>
-            <Button fx:id="signup_toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#togglePasswordVisibility" prefHeight="26.0" prefWidth="22.0" styleClass="toggle_button" HBox.hgrow="NEVER">
-               <graphic>
-                  <ImageView fx:id="signup_imageIcon" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
-               </graphic>
-            </Button>
-            <StackPane prefHeight="38.0" prefWidth="190.0" HBox.hgrow="NEVER">
-               <children>
-                  <PasswordField fx:id="signup_passwordField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="126.0" styleClass="signup_passwordField" />
-                  <TextField fx:id="signup_textField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="194.0" styleClass="signup_passwordField" />
-               </children>
-            </StackPane>
-            <ImageView fitHeight="36.0" fitWidth="31.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
-               <image>
-                  <Image url="@../Images/download.png" />
-               </image>
-               <viewport>
-                  <Rectangle2D />
-               </viewport>
-            </ImageView>
-         </children>
-      </HBox>
-      <HBox fx:id="signup_hbox2" alignment="CENTER" blendMode="SRC_ATOP" layoutX="115.0" layoutY="488.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
-         <children>
-            <Button fx:id="signup_toggleButton1" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#togglePasswordVisibility1" prefHeight="26.0" prefWidth="22.0" styleClass="toggle_button" HBox.hgrow="NEVER">
-               <graphic>
-                  <ImageView fx:id="signup_imageIcon1" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
-               </graphic>
-            </Button>
-            <StackPane prefHeight="38.0" prefWidth="190.0" HBox.hgrow="NEVER">
-               <children>
-                  <PasswordField fx:id="signup_passwordField1" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="126.0" styleClass="signup_passwordField" />
-                  <TextField fx:id="signup_textField1" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="194.0" styleClass="signup_passwordField" />
-               </children>
-            </StackPane>
-            <ImageView fitHeight="36.0" fitWidth="31.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
-               <image>
-                  <Image url="@../Images/download.png" />
-               </image>
-               <viewport>
-                  <Rectangle2D />
-               </viewport>
-            </ImageView>
-         </children>
-      </HBox>
       <ImageView fitHeight="133.0" fitWidth="240.0" layoutX="532.0" layoutY="122.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../Images/poqqrvev54h81.jpg" />
          </image>
       </ImageView>
+      <AnchorPane layoutX="14.0" layoutY="181.0" prefHeight="448.0" prefWidth="432.0" styleClass="signup_inner_anchorpane">
+         <children>
+            <Label layoutX="115.0" layoutY="14.0" styleClass="signup_label" stylesheets="@../Styles/Signup.css" text="Sign Up" />
+            <HBox fx:id="signup_hbox0" alignment="CENTER" layoutX="91.0" layoutY="184.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
+               <children>
+                  <TextField fx:id="signup_usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="signup_passwordField" HBox.hgrow="NEVER" />
+                  <ImageView fitHeight="36.0" fitWidth="27.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/527489.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox fx:id="signup_hbox1" alignment="CENTER" blendMode="SRC_ATOP" layoutX="91.0" layoutY="245.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
+               <children>
+                  <Button fx:id="signup_toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#togglePasswordVisibility" prefHeight="26.0" prefWidth="22.0" styleClass="toggle_button" HBox.hgrow="NEVER">
+                     <graphic>
+                        <ImageView fx:id="signup_imageIcon" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
+                     </graphic>
+                  </Button>
+                  <StackPane prefHeight="38.0" prefWidth="190.0" HBox.hgrow="NEVER">
+                     <children>
+                        <PasswordField fx:id="signup_passwordField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="126.0" styleClass="signup_passwordField" />
+                        <TextField fx:id="signup_textField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="194.0" styleClass="signup_passwordField" />
+                     </children>
+                  </StackPane>
+                  <ImageView fitHeight="36.0" fitWidth="27.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
+                     <image>
+                        <Image url="@../Images/download.png" />
+                     </image>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox fx:id="signup_hbox2" alignment="CENTER" blendMode="SRC_ATOP" layoutX="91.0" layoutY="304.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
+               <children>
+                  <Button fx:id="signup_toggleButton1" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#togglePasswordVisibility1" prefHeight="26.0" prefWidth="22.0" styleClass="toggle_button" HBox.hgrow="NEVER">
+                     <graphic>
+                        <ImageView fx:id="signup_imageIcon1" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
+                     </graphic>
+                  </Button>
+                  <StackPane prefHeight="38.0" prefWidth="190.0" HBox.hgrow="NEVER">
+                     <children>
+                        <PasswordField fx:id="signup_passwordField1" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="126.0" styleClass="signup_passwordField" />
+                        <TextField fx:id="signup_textField1" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="194.0" styleClass="signup_passwordField" />
+                     </children>
+                  </StackPane>
+                  <ImageView fitHeight="36.0" fitWidth="27.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
+                     <image>
+                        <Image url="@../Images/download.png" />
+                     </image>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
