@@ -11,7 +11,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Model.getInstance().getViewFactory().showLoginWindow();
+        Model.getInstance().getViewFactory().showSignUpWindow();
     }
 
     public static void main(String[] args) {

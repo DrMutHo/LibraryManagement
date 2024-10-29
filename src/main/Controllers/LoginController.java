@@ -22,6 +22,8 @@ import main.Views.AccountType;
 
 public class LoginController implements Initializable {
     @FXML
+    private AnchorPane outer_pane;
+    @FXML
     private AnchorPane inner_pane;
     @FXML
     private ChoiceBox<AccountType> acc_selector;
@@ -51,7 +53,6 @@ public class LoginController implements Initializable {
     Image eyeClosed;
     @FXML
     ImageView imageIcon;
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         acc_selector_init();
