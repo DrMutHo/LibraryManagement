@@ -3,9 +3,9 @@ package main.Controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -57,6 +57,8 @@ public class LoginController implements Initializable {
         acc_selector_init();
         username_password_promptext_init();
         passwordField_init();
+        //loginButton.setOnAction(event -> onLogin());
+        //createnewaccountButton.setOnAction(event -> onsignUp());
     }
     
     
@@ -130,7 +132,6 @@ public class LoginController implements Initializable {
     }
 
     public void passwordField_init() {
-        try {     
         passwordField.setVisible(true);
         passwordField.setManaged(true);
         textField.setVisible(false);
@@ -139,12 +140,25 @@ public class LoginController implements Initializable {
         eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
         eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
         imageIcon.setImage(eyeClosed);
-        toggleButton.setOnAction(even -> togglePasswordVisibility());
-        } catch (Exception e) {
-            System.out.println("Lỗi khi tải ảnh hoặc thiết lập sự kiện: " + e.getMessage());
-            e.printStackTrace();
-        }
-
+        toggleButton.setOnAction(event -> togglePasswordVisibility());
     }
 
+    @FXML
+    private void onLogin() {
+        Stage stage = (Stage) loginButton.getScene().getWindow();
+        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
+            Model.getInstance().getViewFactory().showClientWindow();
+            // Close the Login stage
+            Model.getInstance().getViewFactory().closeStage(stage);
+        }
+    }
+    @FXML
+    private void onsignUp() {
+        Stage stage = (Stage) loginButton.getScene().getWindow();
+        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
+            Model.getInstance().getViewFactory().showSignUpWindow(stage);;
+            // Close the Login stage
+            Model.getInstance().getViewFactory().closeStage(stage);
+        }
+    }
 }
