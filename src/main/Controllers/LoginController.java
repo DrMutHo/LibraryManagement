@@ -56,9 +56,13 @@ public class LoginController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         acc_selector_init();
         username_password_promptext_init();
-        passwordField_init();
-        //loginButton.setOnAction(event -> onLogin());
-        //createnewaccountButton.setOnAction(event -> onsignUp());
+        try {
+            passwordField_init();
+        } catch (Exception e) {
+            System.err.println("Error initializing password field: " + e.getMessage());
+        }
+        loginButton.setOnAction(event -> onLogin());
+        createnewaccountButton.setOnAction(event -> onsignUp());
     }
     
     
@@ -151,11 +155,12 @@ public class LoginController implements Initializable {
             Model.getInstance().getViewFactory().closeStage(stage);
         }
     }
+
     @FXML
     private void onsignUp() {
         Stage stage = (Stage) loginButton.getScene().getWindow();
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
-            Model.getInstance().getViewFactory().showSignUpWindow(stage);;
+            Model.getInstance().getViewFactory().showSignUpWindow();;
             // Close the Login stage
             Model.getInstance().getViewFactory().closeStage(stage);
         }

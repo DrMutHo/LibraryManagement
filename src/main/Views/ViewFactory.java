@@ -79,7 +79,7 @@ public class ViewFactory {
     }
 
 
-    public void showSignUpWindow(Stage stage) {
+    public void showSignUpWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
         createStage(loader);
     }

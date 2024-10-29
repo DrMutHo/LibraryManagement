@@ -32,7 +32,7 @@
             </ImageView>
             <Button fx:id="loginButton" layoutX="125.0" layoutY="452.0" mnemonicParsing="false" prefHeight="38.49" prefWidth="190.31" styleClass="button_login" text="Login" />
             <Button fx:id="forgotaccountButton" alignment="CENTER" layoutX="138.0" layoutY="495.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="163.0" styleClass="button_forgotPassword" text="Forgotten your account?" textAlignment="CENTER" />
-            <Button fx:id="createnewaccountButton" layoutX="141.0" layoutY="530.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="Sign Up" />
+            <Button fx:id="createnewaccountButton" layoutX="141.0" layoutY="530.0" mnemonicParsing="false" onAction="#onsignUp" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="Sign Up" />
             <ChoiceBox fx:id="acc_selector" layoutX="274.0" layoutY="289.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="26.0" prefWidth="94.0" styleClass="choose_account_selector">
                <cursor>
                   <Cursor fx:constant="HAND" />
