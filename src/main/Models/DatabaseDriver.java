@@ -1,6 +1,7 @@
 package main.Models;
 
 import java.sql.*;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class DatabaseDriver {
     private Connection conn;
@@ -8,9 +9,10 @@ public class DatabaseDriver {
     public DatabaseDriver() {
         try {
             // Chuỗi kết nối MySQL
+            Dotenv dotenv = Dotenv.load();
             String url = "jdbc:mysql://localhost:3306/library_management";
-            String username = "root";
-            String password = "0986633179A";
+            String username = dotenv.get("DB_USER");
+            String password = dotenv.get("DB_PASSWORD");
 
             // Kết nối MySQL
             this.conn = DriverManager.getConnection(url, username, password);
