@@ -4,13 +4,6 @@
     ],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
-        "d:\\btl\\LibraryManagement\\lib\\javafx.base.jar",
-        "d:\\btl\\LibraryManagement\\lib\\javafx.swing.jar",
-        "d:\\btl\\LibraryManagement\\lib\\javafx.media.jar",
-        "d:\\btl\\LibraryManagement\\lib\\javafx.web.jar",
-        "d:\\btl\\LibraryManagement\\lib\\javafx-swt.jar",
-        "d:\\btl\\LibraryManagement\\lib\\javafx.graphics.jar",
-        "d:\\btl\\LibraryManagement\\lib\\javafx.controls.jar",
-        "d:\\btl\\LibraryManagement\\lib\\javafx.fxml.jar"
+        "lib/**/*.jar"
     ]
 }

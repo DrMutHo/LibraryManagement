@@ -51,7 +51,7 @@ public class LoginController implements Initializable {
     @FXML
     private Image eyeClosed;
     @FXML
-    ImageView imageIcon;
+    private ImageView imageIcon;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -65,7 +65,8 @@ public class LoginController implements Initializable {
         loginButton.setOnAction(event -> onLogin());
         createnewaccountButton.setOnAction(event -> onsignUp());
     }
-    
+
+    @FXML
     private void togglePasswordVisibility() {
         if (passwordField.isVisible()) {
             passwordField.setVisible(false);
