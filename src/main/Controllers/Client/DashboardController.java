@@ -1,11 +1,21 @@
 package main.Controllers.Client;
 
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ResourceBundle;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.util.Duration;
 
-public class DashboardController {
+public class DashboardController implements Initializable {
 
     @FXML
     private PieChart pieChart;
@@ -23,12 +33,24 @@ public class DashboardController {
     private Button btnOverdueBooks;
 
     @FXML
-    public void initialize() {
-        PieChart.Data availableBooks = new PieChart.Data("Available Books", 30);
-        PieChart.Data borrowedBooks = new PieChart.Data("Borrowed Books", 5);
+    private Label timeLabel;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
+
+        Timeline clock = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            LocalDateTime now = LocalDateTime.now();
+            timeLabel.setText(now.format(formatter));
+        }));
+
+        clock.setCycleCount(Timeline.INDEFINITE);
+        clock.play();
+        PieChart.Data borrowingBooks = new PieChart.Data("Borrowing Books", 5);
+        PieChart.Data borrowedBooks = new PieChart.Data("Borrowed Books", 30);
         PieChart.Data overdueBooks = new PieChart.Data("Overdue Books", 2);
 
-        pieChart.getData().addAll(availableBooks, borrowedBooks, overdueBooks);
+        pieChart.getData().addAll(borrowingBooks, borrowedBooks, overdueBooks);
 
         for (PieChart.Data data : pieChart.getData()) {
             Tooltip tooltip = new Tooltip();

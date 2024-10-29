@@ -24,7 +24,7 @@
             <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Label alignment="CENTER" prefHeight="36.0" prefWidth="98.0" text="Hello, user">
+                  <Label fx:id="timeLabel" alignment="CENTER" prefHeight="28.0" prefWidth="227.0">
                      <font>
                         <Font name="Book Antiqua" size="18.0" />
                      </font>

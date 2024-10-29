@@ -23,8 +23,8 @@
             </Label>
             <Separator maxHeight="-Infinity" orientation="VERTICAL" prefHeight="21.0" prefWidth="0.0" />
             <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                <Label alignment="CENTER" prefHeight="36.0" prefWidth="98.0" text="Hello, user">
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                <Label fx:id="timeLabel" alignment="CENTER" prefHeight="28.0" prefWidth="167.0">
                     <font>
                         <Font name="Book Antiqua" size="18.0" />
                     </font>
