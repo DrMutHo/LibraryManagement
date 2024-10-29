@@ -142,7 +142,11 @@ public class LoginController implements Initializable {
         textField.setManaged(false);
         textField.textProperty().bindBidirectional(passwordField.textProperty());
         eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
-        eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
+
+
+        eyeOpen = new Image(getClass().getResource("/resources/Images/show-password.png").toExternalForm());
+
+
         imageIcon.setImage(eyeClosed);
         toggleButton.setOnAction(event -> togglePasswordVisibility());
     }

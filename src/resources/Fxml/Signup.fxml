@@ -13,7 +13,7 @@
 
 <AnchorPane fx:id="signup_anchorpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="signup_anchorpane" stylesheets="@../Styles/Signup.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.SignupController">
    <children>
-      <Button fx:id="signup_exitButton" layoutX="24.0" layoutY="14.0" mnemonicParsing="false" styleClass="exit_button" text="exit">
+      <Button fx:id="signup_exitButton" layoutX="24.0" layoutY="14.0" mnemonicParsing="false" onAction="#onExit" styleClass="exit_button" text="exit">
          <graphic>
             <ImageView fitHeight="94.0" fitWidth="61.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -22,14 +22,9 @@
             </ImageView>
          </graphic>
       </Button>
-      <ImageView fitHeight="133.0" fitWidth="240.0" layoutX="532.0" layoutY="122.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../Images/poqqrvev54h81.jpg" />
-         </image>
-      </ImageView>
-      <AnchorPane layoutX="14.0" layoutY="181.0" prefHeight="448.0" prefWidth="432.0" styleClass="signup_inner_anchorpane">
+      <AnchorPane layoutX="209.0" layoutY="151.0" prefHeight="448.0" prefWidth="432.0" styleClass="signup_inner_anchorpane">
          <children>
-            <Label layoutX="115.0" layoutY="14.0" styleClass="signup_label" stylesheets="@../Styles/Signup.css" text="Sign Up" />
+            <Label layoutX="115.0" layoutY="45.0" styleClass="signup_label" stylesheets="@../Styles/Signup.css" text="Sign Up" />
             <HBox fx:id="signup_hbox0" alignment="CENTER" layoutX="91.0" layoutY="184.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
                   <TextField fx:id="signup_usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="signup_passwordField" HBox.hgrow="NEVER" />
@@ -86,6 +81,7 @@
                   </ImageView>
                </children>
             </HBox>
+            <Button layoutX="114.0" layoutY="370.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" styleClass="signup_button" text="Creat new account" />
          </children>
       </AnchorPane>
    </children>

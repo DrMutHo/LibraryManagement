@@ -11,6 +11,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import main.Models.Model;
+import main.Views.AccountType;
 
 public class SignupController implements Initializable {
     @FXML
@@ -41,11 +44,17 @@ public class SignupController implements Initializable {
     private Button signup_toggleButton1;
     @FXML 
     private ImageView signup_imageIcon1;
+    @FXML
+    private Button signup_exitButton;
 
     @Override 
      public void initialize(URL url, ResourceBundle resourceBundle) {
         username_password_promptext_init();
-        passwordField_init();
+        try { 
+            passwordField_init();
+        } catch (Exception e) {
+            e.getStackTrace();
+        }
     }
     public void passwordField_init() {
         signup_passwordField.setVisible(true);
@@ -143,4 +152,13 @@ public class SignupController implements Initializable {
             signup_imageIcon1.setImage(signup_eyeClosed);
         }
     }
+
+    @FXML
+    private void onExit() {
+         Stage stage = (Stage) signup_exitButton.getScene().getWindow();
+            Model.getInstance().getViewFactory().showLoginWindow();;
+            // Close the Login stage
+            Model.getInstance().getViewFactory().closeStage(stage);
+    }
+
 }

@@ -8,7 +8,7 @@
 .signup_label {
     -fx-font-family: "Playwrite GB S", cursive;
     -fx-font-size: 50px;
-    -fx-text-fill: black;
+    -fx-text-fill: white;
 }
 
 /** nút exit */
@@ -52,8 +52,23 @@
     -fx-background-color: white;
 }
 .signup_inner_anchorpane {
-    -fx-border-color: black;
-    -fx-border-radius: 15px;
-    -fx-background-color: 15px;
-    -fx-border-width: 2px;
+    -fx-background-color: #9CD8E2;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-border-width: 2;
+    -fx-padding: 20;
+    -fx-border-color: brown;
+}
+.signup_button {
+    -fx-background-color:#32CD32;
+    -fx-text-fill: white;
+    -fx-font-family: "Playwrite GB S", cursive;
+    -fx-font-size: 18px;    
+}
+.signup_button:hover {
+    -fx-border-color: green;
+    -fx-cursor: hand;
+}
+.exit_button:pressed {
+    
 }
