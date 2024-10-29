@@ -51,7 +51,7 @@ public class LoginController implements Initializable {
     @FXML
     private Image eyeClosed;
     @FXML
-    private ImageView imageIcon;
+    ImageView imageIcon;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
