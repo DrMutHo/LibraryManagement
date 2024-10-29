@@ -24,20 +24,13 @@ public class ViewFactory {
         Scene scene = null;
         try {
             scene = new Scene(loader.load());
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         Stage stage = new Stage();
         stage.setScene(scene);
-        try {
-            stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/resources/Images/icon.png"))));
-        } catch (Exception e) {
-            System.out.print("Không tìm thấy ảnh" + e.getMessage());
-            e.printStackTrace();
-
-        }
         stage.setResizable(false);
-        stage.setTitle("ELib");
+        stage.setTitle("Library Management System");
         stage.show();
     }
 
@@ -50,8 +43,9 @@ public class ViewFactory {
         createStage(loader);
     }
 
-    public void showSignupWindow(Stage stage) {
+    public void getSignupView(Stage stage) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
         createStage(loader);
     }
+
 }
