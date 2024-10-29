@@ -5,10 +5,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class GoogleBooksAPI {
     // Thay YOUR_GOOGLE_API_KEY bằng key API thật của bạn.
-    private static final String API_KEY = "AIzaSyAsosNdLv_cAgIN6EaS27kx8a7SlmetS_I";
+    static Dotenv dotenv = Dotenv.load();
+    private static final String API_KEY = dotenv.get("API_KEY");
 
     public static void searchBookByISBN(String isbn) {
         int retryCount = 0;
