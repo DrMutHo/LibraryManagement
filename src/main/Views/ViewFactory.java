@@ -24,7 +24,7 @@ public class ViewFactory {
     }
 
     public AccountType getLoginAccountType() {
-        return this.loginAccountType;
+        return loginAccountType;
     }
 
     public void setLoginAccountType(AccountType loginAccountType) {

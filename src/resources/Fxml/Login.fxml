@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Rectangle2D?>
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -11,6 +12,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.StackPane?>
 
 <AnchorPane fx:id="outer_pane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="AnchorPane_out" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
@@ -30,6 +32,7 @@
                   <Image url="@../Images/online-library-isometric-design_98292-34.jpg" />
                </image>
             </ImageView>
+            <Label fx:id="errorLabel" text="Error Message" visible="false" />
             <Button fx:id="loginButton" layoutX="125.0" layoutY="452.0" mnemonicParsing="false" prefHeight="38.49" prefWidth="190.31" styleClass="button_login" text="Login" />
             <Button fx:id="forgotaccountButton" alignment="CENTER" layoutX="138.0" layoutY="495.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="163.0" styleClass="button_forgotPassword" text="Forgotten your account?" textAlignment="CENTER" />
             <Button fx:id="createnewaccountButton" layoutX="141.0" layoutY="530.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="Sign Up" />
@@ -65,6 +68,9 @@
                      <image>
                         <Image url="@../Images/download.png" />
                      </image>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
                      <viewport>
                         <Rectangle2D />
                      </viewport>
