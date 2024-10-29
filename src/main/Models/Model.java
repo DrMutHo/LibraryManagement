@@ -5,29 +5,35 @@ import main.Views.ViewFactory;
 public class Model {
     private static Model model;
     private ViewFactory viewFactory;
-    private boolean signup_SucccessFlag;
-    
+    private boolean signupSuccessFlag; 
+    private final DatabaseDriver databaseDriver;
+
     private Model() {
         this.viewFactory = new ViewFactory();
-        this.signup_SucccessFlag = false;
+        this.signupSuccessFlag = false;
+        this.databaseDriver = new DatabaseDriver();
     }
 
     public static synchronized Model getInstance() {
-        if (model == null){
+        if (model == null) {
             model = new Model();
         }
         return model;
     }
+
     public ViewFactory getViewFactory() {
         return viewFactory;
     }
 
-    public boolean getsignup_SuccessFlag() {
-        return this.signup_SucccessFlag;
+    public boolean getSignupSuccessFlag() {
+        return this.signupSuccessFlag;
     }
 
-    public void setsignup_SuccessFlag(boolean flag) {
-        this.signup_SucccessFlag = flag;
+    public void setSignupSuccessFlag(boolean flag) {
+        this.signupSuccessFlag = flag;
     }
 
+    public DatabaseDriver getDatabaseDriver() {
+        return databaseDriver;
+    }
 }
