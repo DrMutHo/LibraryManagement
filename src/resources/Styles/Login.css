@@ -89,6 +89,10 @@
 }
 .hbox_set-focused {
     -fx-border-color: orange;
+
+}
+.hbox_set-focused {
+    -fx-border-color: blue;
 }
 
 

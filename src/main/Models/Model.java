@@ -5,14 +5,13 @@ import main.Views.ViewFactory;
 public class Model {
     private static Model model;
     private ViewFactory viewFactory;
+    private boolean signupSuccessFlag; 
     private final DatabaseDriver databaseDriver;
 
-    private boolean signup_SucccessFlag;
-    
     private Model() {
         this.viewFactory = new ViewFactory();
+        this.signupSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
-        this.signup_SucccessFlag = false;
     }
 
     public static synchronized Model getInstance() {
@@ -26,16 +25,15 @@ public class Model {
         return viewFactory;
     }
 
+    public boolean getSignupSuccessFlag() {
+        return this.signupSuccessFlag;
+    }
+
+    public void setSignupSuccessFlag(boolean flag) {
+        this.signupSuccessFlag = flag;
+    }
+
     public DatabaseDriver getDatabaseDriver() {
         return databaseDriver;
     }
-
-    public boolean getsignup_SuccessFlag() {
-        return this.signup_SucccessFlag;
-    }
-
-    public void setsignup_SuccessFlag(boolean flag) {
-        this.signup_SucccessFlag = flag;
-    }
-
 }

@@ -41,7 +41,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ChoiceBox>
-            <Label fx:id="chooseaccountLable" alignment="CENTER" layoutX="43.0" layoutY="283.0" prefHeight="39.0" prefWidth="230.0" styleClass="choose_account" text="Choose your account type:" />
+            <Label fx:id="chooseaccountLabel" alignment="CENTER" layoutX="43.0" layoutY="283.0" prefHeight="39.0" prefWidth="230.0" styleClass="choose_account" text="Choose your account type:" />
             <HBox fx:id="hbox_0" alignment="CENTER" layoutX="95.0" layoutY="330.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="hbox_set">
                <children>
                   <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="text" HBox.hgrow="NEVER" />
@@ -57,7 +57,8 @@
                   <Button fx:id="toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#togglePasswordVisibility" prefHeight="26.0" prefWidth="22.0" styleClass="button_set" HBox.hgrow="NEVER">
                      <graphic>
                         <ImageView fx:id="imageIcon" fitHeight="26.0" fitWidth="22.0" onDragDetected="#togglePasswordVisibility" pickOnBounds="true" preserveRatio="true" />
-                     </graphic></Button>
+                     </graphic>
+                  </Button>
                   <StackPane prefHeight="38.0" prefWidth="190.0" HBox.hgrow="NEVER">
                      <children>
                         <PasswordField fx:id="passwordField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="126.0" styleClass="text" />

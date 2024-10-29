@@ -24,7 +24,7 @@ public class ViewFactory {
     }
 
     public AccountType getLoginAccountType() {
-        return loginAccountType;
+        return this.loginAccountType;
     }
 
     public void setLoginAccountType(AccountType loginAccountType) {
@@ -78,14 +78,13 @@ public class ViewFactory {
         createStage(loader);
     }
 
-
-    public void showSignUpWindow() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
-        createStage(loader);
-    }
-
     public void showLoginWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Login.fxml"));
+        createStage(loader);
+    }
+  
+      public void showSignUpWindow() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
         createStage(loader);
     }
 
