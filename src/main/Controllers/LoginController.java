@@ -57,8 +57,12 @@ public class LoginController implements Initializable {
         acc_selector_init();
         username_password_promptext_init();
         passwordField_init();
+<<<<<<< Updated upstream
         //loginButton.setOnAction(event -> onLogin());
         //createnewaccountButton.setOnAction(event -> onsignUp());
+=======
+        loginButton.setOnAction(event -> onsignUp());
+>>>>>>> Stashed changes
     }
     
     
@@ -140,6 +144,7 @@ public class LoginController implements Initializable {
         eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
         eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
         imageIcon.setImage(eyeClosed);
+<<<<<<< Updated upstream
         toggleButton.setOnAction(event -> togglePasswordVisibility());
     }
 
@@ -162,3 +167,27 @@ public class LoginController implements Initializable {
         }
     }
 }
+=======
+        toggleButton.setOnAction(even -> togglePasswordVisibility());
+        } catch (Exception e) {
+            System.out.println("Lỗi khi tải ảnh hoặc thiết lập sự kiện: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    private void onLogin() {
+        Stage stage = (Stage) loginButton.getScene().getWindow();
+        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
+            Model.getInstance().getViewFactory().showClientWindow();
+            // Close the Login Stage
+            Model.getInstance().getViewFactory().closeStage(stage);
+        }
+    }
+
+    private void onsignUp() {
+        Stage stage = (Stage) loginButton.getScene().getWindow();
+        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
+            Model.getInstance().getViewFactory().showSignUpWindow(stage);
+        }
+    }
+}
+>>>>>>> Stashed changes
