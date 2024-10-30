@@ -4,6 +4,21 @@
     ],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar"
+        "d:\\btl\\LibraryManagement\\lib\\javafx.base.jar",
+        "d:\\btl\\LibraryManagement\\lib\\google-api-client-2.0.0.jar",
+        "d:\\btl\\LibraryManagement\\lib\\gson-2.11.0.jar",
+        "d:\\btl\\LibraryManagement\\lib\\google-oauth-client-1.34.1.jar",
+        "d:\\btl\\LibraryManagement\\lib\\javafx.media.jar",
+        "d:\\btl\\LibraryManagement\\lib\\javafx.web.jar",
+        "d:\\btl\\LibraryManagement\\lib\\dotenv-java-3.0.2.jar",
+        "d:\\btl\\LibraryManagement\\lib\\fontawesomefx-8.9.jar",
+        "d:\\btl\\LibraryManagement\\lib\\google-http-client-1.42.1.jar",
+        "d:\\btl\\LibraryManagement\\lib\\javafx.graphics.jar",
+        "d:\\btl\\LibraryManagement\\lib\\javafx.fxml.jar",
+        "d:\\btl\\LibraryManagement\\lib\\javafx.swing.jar",
+        "d:\\btl\\LibraryManagement\\lib\\guava-33.3.1-jre.jar",
+        "d:\\btl\\LibraryManagement\\lib\\javafx-swt.jar",
+        "d:\\btl\\LibraryManagement\\lib\\mysql-connector-j-9.0.0.jar",
+        "d:\\btl\\LibraryManagement\\lib\\javafx.controls.jar"
     ]
 }
