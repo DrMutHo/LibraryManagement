@@ -1,10 +1,14 @@
 package main.Controllers;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -52,6 +56,7 @@ public class LoginController implements Initializable {
     private Image eyeClosed;
     @FXML
     private ImageView imageIcon;
+    private Stage stage;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -145,17 +150,18 @@ public class LoginController implements Initializable {
     }
 
     private void onLogin() {
-        Stage stage = (Stage) loginButton.getScene().getWindow();
+        stage = (Stage) loginButton.getScene().getWindow();
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
             Model.getInstance().getViewFactory().showClientWindow();
             Model.getInstance().getViewFactory().closeStage(stage);
         }
     }
 
-    private void onsignUp() {
-        Stage stage = (Stage) loginButton.getScene().getWindow();
+    private void onsignUp() throws IOException {
+        stage = (Stage) loginButton.getScene().getWindow();
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
-            Model.getInstance().getViewFactory().showSignUpWindow();
+            FXMLLoader load = Model.getInstance().getViewFactory().getSignUpView();
+            Scene scene= new Scene(load.load());
             Model.getInstance().getViewFactory().closeStage(stage);
         }
     }

@@ -17,6 +17,7 @@ public class ViewFactory {
     private BorderPane dashboardView;
     private BorderPane homeView;
     private BorderPane profileView;
+    private FXMLLoader loader; 
 
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
@@ -83,9 +84,13 @@ public class ViewFactory {
         createStage(loader);
     }
   
-      public void showSignUpWindow() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
-        createStage(loader);
+    public FXMLLoader getSignUpView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
+        } catch (Exception e) {
+            e.printStackTrace(); 
+        }
+        return loader;
     }
 
     private void createStage(FXMLLoader loader) {
