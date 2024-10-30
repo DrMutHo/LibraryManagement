@@ -157,12 +157,10 @@ public class LoginController implements Initializable {
         }
     }
 
-    private void onsignUp() throws IOException {
+    private void onsignUp() {
         stage = (Stage) loginButton.getScene().getWindow();
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
-            FXMLLoader load = Model.getInstance().getViewFactory().getSignUpView();
-            Scene scene= new Scene(load.load());
-            Model.getInstance().getViewFactory().closeStage(stage);
+            Model.getInstance().getViewFactory().showSignUpWindow();
         }
     }
 }

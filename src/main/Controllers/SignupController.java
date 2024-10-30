@@ -158,7 +158,7 @@ public class SignupController implements Initializable {
          Stage stage = (Stage) signup_exitButton.getScene().getWindow();
             Model.getInstance().getViewFactory().showLoginWindow();;
             // Close the Login stage
-            Model.getInstance().getViewFactory().closeStage(stage);
+            //Model.getInstance().getViewFactory().closeStage(stage);
     }
 
 }
