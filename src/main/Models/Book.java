@@ -9,58 +9,34 @@ public class Book {
     private String language;
     private int publication_year;
     private String description;
-    private String image_url;
+    private String image_path;
+    private double average_rating;
+    private int review_count;
 
+    // Constructor không tham số
     public Book() {
     }
 
+    // Constructor đầy đủ với tất cả các thuộc tính
     public Book(int book_id, String title, String author, String isbn, String genre, String language,
-            int publication_date, String description, String image_url) {
+            String description, int publication_year, String image_path, double average_rating, int review_count) {
         this.book_id = book_id;
         this.title = title;
         this.author = author;
+        this.isbn = isbn;
+        this.genre = genre;
+        this.language = language;
+        this.publication_year = publication_year;
         this.description = description;
-        this.image_url = image_url;
-        this.isbn = isbn;
-        this.genre = genre;
-        this.language = language;
-        this.publication_year = publication_date;
+        this.image_path = image_path;
+        this.average_rating = average_rating;
+        this.review_count = review_count;
     }
 
-    public String getGenre() {
-        return this.genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public String getLanguage() {
-        return this.language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public int getPublication_year() {
-        return this.publication_year;
-    }
-
-    public void setPublication_year(int publication_date) {
-        this.publication_year = publication_date;
-    }
-
-    public String getIsbn() {
-        return this.isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
+    // Getters và Setters cho tất cả các thuộc tính
 
     public int getBook_id() {
-        return this.book_id;
+        return book_id;
     }
 
     public void setBook_id(int book_id) {
@@ -68,7 +44,7 @@ public class Book {
     }
 
     public String getTitle() {
-        return this.title;
+        return title;
     }
 
     public void setTitle(String title) {
@@ -76,26 +52,74 @@ public class Book {
     }
 
     public String getAuthor() {
-        return this.author;
+        return author;
     }
 
     public void setAuthor(String author) {
         this.author = author;
     }
 
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public int getPublication_year() {
+        return publication_year;
+    }
+
+    public void setPublication_year(int publication_year) {
+        this.publication_year = publication_year;
+    }
+
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public String getImage_url() {
-        return this.image_url;
+    public String getImage_path() {
+        return image_path;
     }
 
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
+    public void setImage_path(String image_path) {
+        this.image_path = image_path;
+    }
+
+    public double getAverage_rating() {
+        return average_rating;
+    }
+
+    public void setAverage_rating(double average_rating) {
+        this.average_rating = average_rating;
+    }
+
+    public int getReview_count() {
+        return review_count;
+    }
+
+    public void setReview_count(int review_count) {
+        this.review_count = review_count;
     }
 }
