@@ -7,20 +7,24 @@ public class Book {
     private String isbn;
     private String genre;
     private String language;
-    private int publication_date;
+    private int publication_year;
     private String description;
     private String image_url;
 
     public Book() {
     }
 
-    public Book(Integer book_id, String title, String author, String description, String image_url, String isbn) {
+    public Book(int book_id, String title, String author, String isbn, String genre, String language,
+            int publication_date, String description, String image_url) {
         this.book_id = book_id;
         this.title = title;
         this.author = author;
         this.description = description;
         this.image_url = image_url;
         this.isbn = isbn;
+        this.genre = genre;
+        this.language = language;
+        this.publication_year = publication_date;
     }
 
     public String getGenre() {
@@ -39,12 +43,12 @@ public class Book {
         this.language = language;
     }
 
-    public int getPublication_date() {
-        return this.publication_date;
+    public int getPublication_year() {
+        return this.publication_year;
     }
 
-    public void setPublication_date(int publication_date) {
-        this.publication_date = publication_date;
+    public void setPublication_year(int publication_date) {
+        this.publication_year = publication_date;
     }
 
     public String getIsbn() {
