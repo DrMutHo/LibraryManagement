@@ -7,11 +7,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import main.Models.Book;
 
-public class BookController implements Initializable {
+public class CardController implements Initializable {
     @FXML
-    private Image image;
+    private ImageView imageView;
 
     @FXML
     private Label title;
@@ -26,7 +27,7 @@ public class BookController implements Initializable {
 
     public void setData(Book book) {
         Image bookCoverImage = new Image(book.getImage_url(), true);
-        image = bookCoverImage;
+        imageView.setImage(bookCoverImage);
         title.setText("Title: " + book.getTitle());
         author.setText("Author " + book.getAuthor());
     }

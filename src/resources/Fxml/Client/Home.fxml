@@ -62,7 +62,7 @@
             </Label>
             <ScrollPane prefHeight="155.0" prefWidth="800.0">
                <content>
-                  <HBox prefHeight="154.0" prefWidth="995.0" />
+                  <HBox fx:id="recentlyAddBook" prefHeight="154.0" prefWidth="995.0" />
                </content></ScrollPane>
             <Label text="Recommend for you">
                <font>

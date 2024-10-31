@@ -61,4 +61,12 @@ public class Model {
     public ObservableList<Book> getAllBook() {
         return allBook;
     }
+
+    public Book findBookByISBN(String ISBN) {
+        for (Book book : allBook) {
+            if (book.getIsbn().equals(ISBN))
+                return book;
+        }
+        return null;
+    }
 }
