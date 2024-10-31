@@ -5,3 +5,4 @@ public enum ClientMenuOptions {
     HOME,
     PROFILE
 }
+

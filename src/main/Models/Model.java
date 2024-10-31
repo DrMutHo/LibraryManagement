@@ -9,11 +9,13 @@ import main.Views.ViewFactory;
 public class Model {
     private static Model model;
     private ViewFactory viewFactory;
+    private boolean signupSuccessFlag; 
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
 
     private Model() {
         this.viewFactory = new ViewFactory();
+        this.signupSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
     }
@@ -29,10 +31,18 @@ public class Model {
         return viewFactory;
     }
 
+    public boolean getSignupSuccessFlag() {
+        return this.signupSuccessFlag;
+    }
+
+    public void setSignupSuccessFlag(boolean flag) {
+        this.signupSuccessFlag = flag;
+    }
+
     public DatabaseDriver getDatabaseDriver() {
         return databaseDriver;
     }
-
+  
     public void setAllBook() {
         ResultSet resultSet = databaseDriver.getAllBookData();
         try {

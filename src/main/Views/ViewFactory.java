@@ -82,6 +82,11 @@ public class ViewFactory {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Login.fxml"));
         createStage(loader);
     }
+  
+      public void showSignUpWindow() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
+        createStage(loader);
+    }
 
     private void createStage(FXMLLoader loader) {
         Scene scene = null;
@@ -100,4 +105,5 @@ public class ViewFactory {
     public void closeStage(Stage stage) {
         stage.close();
     }
+
 }
