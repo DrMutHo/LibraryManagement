@@ -22,7 +22,18 @@
             </Label>
             <Separator maxHeight="-Infinity" orientation="VERTICAL" prefHeight="21.0" prefWidth="0.0" />
             <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" />
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                <Label fx:id="timeLabel" alignment="CENTER" prefHeight="28.0" prefWidth="167.0">
+                    <font>
+                        <Font name="Book Antiqua" size="18.0" />
+                    </font>
+                </Label>
+            <ImageView fitHeight="44.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../Images/profile-user.png" />
+               </image>
+            </ImageView>
+            </HBox>
         </HBox>
     </top>
     
