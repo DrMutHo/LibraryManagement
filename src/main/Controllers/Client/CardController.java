@@ -26,7 +26,8 @@ public class CardController implements Initializable {
     }
 
     public void setData(Book book) {
-        Image bookCoverImage = new Image(book.getImage_url(), true);
+        String image_path = getClass().getResource(book.getImage_path()).toExternalForm();
+        Image bookCoverImage = new Image(image_path, true);
         imageView.setImage(bookCoverImage);
         title.setText("Title: " + book.getTitle());
         author.setText("Author " + book.getAuthor());
