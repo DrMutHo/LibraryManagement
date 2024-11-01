@@ -156,9 +156,7 @@ public class SignupController implements Initializable {
     @FXML
     private void onExit() {
          Stage stage = (Stage) signup_exitButton.getScene().getWindow();
-            Model.getInstance().getViewFactory().showLoginWindow();;
-            // Close the Login stage
-            //Model.getInstance().getViewFactory().closeStage(stage);
+            Model.getInstance().getViewFactory().showLoginWindow();
     }
 
 }
