@@ -163,12 +163,14 @@ public class LoginController implements Initializable {
         stage = (Stage) loginButton.getScene().getWindow();
         String username = usernameField.getText();
         String password = passwordField.getText();
+        DatabaseDriver databaseDriver = new DatabaseDriver();
         
         // Kiểm tra loại tài khoản
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
             // Kiểm tra thông tin đăng nhập
             if (isValidCredentials(username, password)) {
                 // Đăng nhập thành công
+                databaseDriver.getClientnData(username, password);
                 Model.getInstance().getViewFactory().showClientWindow();
                 Model.getInstance().getViewFactory().closeStage(stage);
             } else {

@@ -4,9 +4,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.cdimascio.dotenv.Dotenv;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 public class DatabaseDriver {
     private HikariDataSource dataSource;
 
@@ -45,5 +42,40 @@ public class DatabaseDriver {
         if (dataSource != null) {
             dataSource.close();
         }
+    }
+
+    public ResultSet getBookData(String ISBN) {
+        Statement statement;
+        ResultSet resultSet = null;
+        try {
+            statement = this.dataSource.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM Book WHERE ISBN='" + ISBN + "';");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultSet;
+    }
+
+    public ResultSet getAllBookData() {
+        Statement statement;
+        ResultSet resultSet = null;
+        try {
+            statement = this.conn.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM Book;");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultSet;
+    }
+    public ResultSet getClientnData(String username, String password) {
+        Statement statement;
+        ResultSet resultSet = null;
+        try {
+            statement = this.dataSource.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM Client WHERE Username='"+username+"' AND Password='"+password+"';");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return resultSet;
     }
 }
