@@ -60,7 +60,7 @@ public class DatabaseDriver {
         Statement statement;
         ResultSet resultSet = null;
         try {
-            statement = this.conn.createStatement();
+            statement = this.dataSource.getConnection().createStatement();
             resultSet = statement.executeQuery("SELECT * FROM Book;");
         } catch (SQLException e) {
             e.printStackTrace();
