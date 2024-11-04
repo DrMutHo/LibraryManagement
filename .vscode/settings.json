@@ -19,6 +19,10 @@
         "d:\\btl\\LibraryManagement\\lib\\guava-33.3.1-jre.jar",
         "d:\\btl\\LibraryManagement\\lib\\javafx-swt.jar",
         "d:\\btl\\LibraryManagement\\lib\\mysql-connector-j-9.0.0.jar",
-        "d:\\btl\\LibraryManagement\\lib\\javafx.controls.jar"
+        "d:\\btl\\LibraryManagement\\lib\\javafx.controls.jar",
+        "d:\\btl\\LibraryManagement\\lib\\jbcrypt-0.4.jar",
+        "d:\\btl\\LibraryManagement\\lib\\HikariCP-5.0.1.jar",
+        "d:\\btl\\LibraryManagement\\lib\\slf4j-simple-2.0.16.jar",
+        "d:\\btl\\LibraryManagement\\lib\\slf4j-api-2.0.16.jar"
     ]
 }

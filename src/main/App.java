@@ -1,4 +1,6 @@
 package main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
