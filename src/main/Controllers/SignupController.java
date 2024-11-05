@@ -1,6 +1,10 @@
 package main.Controllers;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -58,14 +62,18 @@ public class SignupController implements Initializable {
     private HBox signup_hbox4;
     @FXML
     private HBox signup_hbox5;
+    @FXML 
+    private Button signup_creatNewAccountButton;
+
     @Override 
-     public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         username_password_promptext_init();
         try { 
             passwordField_init();
         } catch (Exception e) {
             e.getStackTrace();
         }
+        signup_creatNewAccountButton.setOnAction(event -> onCreatNewAccount());
     }
     public void passwordField_init() {
         signup_passwordField.setVisible(true);
@@ -173,6 +181,32 @@ public class SignupController implements Initializable {
             Model.getInstance().getViewFactory().showLoginWindow();
     }
 
-    
+    @FXML
+    private void onCreatNewAccount() {
+        
+    }
 
+    private boolean isValidSignUp(String username, String password) {
+        String query = "SELECT * FROM Client WHERE username = ?";
+        try (Connection connection = databaseDriver.getConnection(); 
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            
+            // Kiểm tra kết nối
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return false;
+            }
+    
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+    
+            if (resultSet.next()) {
+                String storedPasswordHash = resultSet.getString("password_hash");
+                return verifyPassword(password, storedPasswordHash);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

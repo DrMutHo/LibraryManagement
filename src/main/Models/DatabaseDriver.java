@@ -108,7 +108,7 @@ public class DatabaseDriver {
                     "VALUES ('"+Client_id+"', '"+library_card_number+"', '"+email+"', '"+
                     phone_number+"', '"+address+"', '" +registration_date+"', '"+
                     outstandingfees+"', '"+username+"', '"+password_hash+"';");
-        }catch (SQLException e){
+        } catch (SQLException e){
             e.printStackTrace();
         }
     }

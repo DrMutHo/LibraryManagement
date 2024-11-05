@@ -66,7 +66,6 @@ public class LoginController implements Initializable {
     @FXML
     private ImageView imageIcon;
     private Stage stage;
-    private DatabaseDriver databaseDriver;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -77,7 +76,6 @@ public class LoginController implements Initializable {
         } catch (Exception e) {
             System.err.println("Error initializing password field: " + e.getMessage());
         }
-        this.databaseDriver = new DatabaseDriver();
         loginButton.setOnAction(event -> onLogin());
         createnewaccountButton.setOnAction(event -> onsignUp());
     }
@@ -109,6 +107,7 @@ public class LoginController implements Initializable {
             inner_pane.getChildren().add(createnewaccountButton);
         }
     }
+
 
     public void acc_selector_init() {
         acc_selector.setItems(FXCollections.observableArrayList(AccountType.CLIENT, AccountType.ADMIN));
@@ -146,6 +145,8 @@ public class LoginController implements Initializable {
         });
     }
 
+    
+
     public void passwordField_init() {
         passwordField.setVisible(true);
         passwordField.setManaged(true);
@@ -163,14 +164,13 @@ public class LoginController implements Initializable {
         stage = (Stage) loginButton.getScene().getWindow();
         String username = usernameField.getText();
         String password = passwordField.getText();
-        DatabaseDriver databaseDriver = new DatabaseDriver();
         
         // Kiểm tra loại tài khoản
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
             // Kiểm tra thông tin đăng nhập
             if (isValidCredentials(username, password)) {
                 // Đăng nhập thành công
-                databaseDriver.getClientnData(username);
+                Model.getInstance().getDatabaseDriver().getClientnData(username);
                 Model.getInstance().getViewFactory().showClientWindow();
                 Model.getInstance().getViewFactory().closeStage(stage);
             } else {
