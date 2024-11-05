@@ -46,7 +46,18 @@ public class SignupController implements Initializable {
     private ImageView signup_imageIcon1;
     @FXML
     private Button signup_exitButton;
-
+    @FXML
+    private HBox signup_hbox3;
+    @FXML
+    private TextField signup_emailField;
+    @FXML
+    private TextField signup_phoneNumField;
+    @FXML
+    private TextField signup_addressField;
+    @FXML
+    private HBox signup_hbox4;
+    @FXML
+    private HBox signup_hbox5;
     @Override 
      public void initialize(URL url, ResourceBundle resourceBundle) {
         username_password_promptext_init();
@@ -82,6 +93,9 @@ public class SignupController implements Initializable {
         signup_textField.setPromptText("Enter your password");
         signup_passwordField1.setPromptText("Confirmed password");
         signup_textField1.setPromptText("Confirmed password");
+        signup_emailField.setPromptText("Enter your email"); 
+        signup_addressField.setPromptText("Enter your home address");
+        signup_phoneNumField.setPromptText("Enter your phone number");   
 
         signup_passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -158,5 +172,7 @@ public class SignupController implements Initializable {
          Stage stage = (Stage) signup_exitButton.getScene().getWindow();
             Model.getInstance().getViewFactory().showLoginWindow();
     }
+
+    
 
 }
