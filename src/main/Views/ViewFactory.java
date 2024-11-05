@@ -17,6 +17,7 @@ public class ViewFactory {
     private BorderPane dashboardView;
     private BorderPane homeView;
     private BorderPane profileView;
+    private BorderPane browsingView;
 
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
@@ -71,6 +72,17 @@ public class ViewFactory {
         return profileView;
     }
 
+    public BorderPane getBrowsingView() {
+        if (browsingView == null) {
+            try {
+                browsingView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Browsing.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return browsingView;
+    }
+
     public void showClientWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Client.fxml"));
         ClientController clientController = new ClientController();
@@ -82,8 +94,8 @@ public class ViewFactory {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Login.fxml"));
         createStage(loader);
     }
-  
-      public void showSignUpWindow() {
+
+    public void showSignUpWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
         createStage(loader);
     }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/20" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.BrowsingController">
+
+    <top>
+        <VBox>
+            <HBox>
+                <Label text="Search:"/>
+                <TextField fx:id="searchField" promptText="Enter book title or author" />
+                <Button text="Search" onAction="#onSearch"/>
+            </HBox>
+
+            <TableView fx:id="bookTable" prefHeight="300" onMouseClicked="#onBookSelect">
+                <columns>
+                    <TableColumn fx:id="colTitle" text="Title" prefWidth="150" />
+                    <TableColumn fx:id="colAuthor" text="Author" prefWidth="100" />
+                    <TableColumn fx:id="colGenre" text="Genre" prefWidth="100" />
+                    <TableColumn fx:id="colYear" text="Year" prefWidth="80" />
+                    <TableColumn fx:id="colRating" text="Rating" prefWidth="80" />
+                </columns>
+            </TableView>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox>
+            <HBox>
+                <ImageView fx:id="bookImageView" fitWidth="150" fitHeight="200" preserveRatio="true" />
+                <VBox>
+                    <Label text="Title:" />
+                    <Label fx:id="labelTitle" />
+                    <Label text="Author:" />
+                    <Label fx:id="labelAuthor" />
+                    <Label text="ISBN:" />
+                    <Label fx:id="labelISBN" />
+                    <Label text="Genre:" />
+                    <Label fx:id="labelGenre" />
+                    <Label text="Language:" />
+                    <Label fx:id="labelLanguage" />
+                    <Label text="Publication Year:" />
+                    <Label fx:id="labelPublicationYear" />
+                    <Label text="Average Rating:" />
+                    <Label fx:id="labelAverageRating" />
+                    <Label text="Review Count:" />
+                    <Label fx:id="labelReviewCount" />
+                </VBox>
+            </HBox>
+            <Label text="Description:" />
+            <TextArea fx:id="textDescription" editable="false" wrapText="true" prefHeight="100" />
+        </VBox>
+    </center>
+</BorderPane>
