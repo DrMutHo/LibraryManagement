@@ -67,12 +67,12 @@ public class DatabaseDriver {
         }
         return resultSet;
     }
-    public ResultSet getClientnData(String username, String password) {
+    public ResultSet getClientnData(String username) {
         Statement statement;
         ResultSet resultSet = null;
         try {
             statement = this.dataSource.getConnection().createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM Client WHERE Username='"+username+"' AND Password='"+password+"';");
+            resultSet = statement.executeQuery("SELECT * FROM Client WHERE username='" + username + "';");
         }catch (Exception e){
             e.printStackTrace();
         }
