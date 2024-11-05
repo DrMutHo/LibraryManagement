@@ -67,14 +67,13 @@ public class BrowsingController {
         labelISBN.setText(book.getIsbn());
         labelGenre.setText(book.getGenre());
         labelLanguage.setText(book.getLanguage());
-        labelPublicationYear.setText(String.valueOf(book.getPublication_year()));
-        labelAverageRating.setText(String.format("%.2f", book.getAverage_rating()));
-        labelReviewCount.setText(String.valueOf(book.getReview_count()));
+        labelPublicationYear.setText(String.valueOf(book.getPublicationYear()));
+        labelAverageRating.setText(String.format("%.2f", book.getAverageRating()));
+        labelReviewCount.setText(String.valueOf(book.getReviewCount()));
         textDescription.setText(book.getDescription());
 
-        if (book.getImage_path() != null) {
-            Image image = new Image(getClass().getResourceAsStream(book.getImage_path()));
-            ;
+        if (book.getImagePath() != null) {
+            Image image = new Image(getClass().getResourceAsStream(book.getImagePath()));
             bookImageView.setImage(image);
         } else {
             bookImageView.setImage(null);
