@@ -56,3 +56,54 @@
     -fx-effect: dropshadow(two-pass-box, #AAAAAA, 5, 0, 0, 4);
     /* Shadow effect */
 }
+
+.chart-container {
+    -fx-padding: 20;
+    /* Padding inside the container */
+    -fx-spacing: 20;
+    /* Space between the charts */
+    -fx-background-color: #f0f0f0;
+    /* Light background color for the container */
+    -fx-border-color: #cccccc;
+    /* Border color around the container */
+    -fx-border-width: 1;
+    /* Border width */
+    -fx-border-radius: 5;
+    /* Rounded corners */
+    -fx-background-radius: 5;
+    /* Rounded corners for the background */
+}
+
+/* Chart Container */
+.chart-container {
+    -fx-padding: 20;
+    -fx-spacing: 20;
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+/* Individual Charts */
+.chart {
+    -fx-padding: 10;
+}
+
+/* Plot Background in Charts */
+.chart .chart-plot-background {
+    -fx-background-color: #ffffff;
+}
+
+/* Axis Labels Styling */
+.axis-label {
+    -fx-text-fill: #333333;
+    -fx-font-weight: bold;
+}
+
+/* Chart Title Styling */
+.chart .chart-title {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4a34f7;
+    -fx-font-weight: bold;
+}

@@ -17,6 +17,8 @@ public class ViewFactory {
     private BorderPane dashboardView;
     private BorderPane homeView;
     private BorderPane profileView;
+    private BorderPane browsingView;
+    private BorderPane notiView;
     private FXMLLoader loader; 
     private Stage loginAndSignUpStage;
 
@@ -74,6 +76,28 @@ public class ViewFactory {
         return profileView;
     }
 
+    public BorderPane getBrowsingView() {
+        if (browsingView == null) {
+            try {
+                browsingView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Browsing.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return browsingView;
+    }
+
+    public BorderPane getNotiView() {
+        if (notiView == null) {
+            try {
+                notiView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Notification.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return notiView;
+    }
+
     public void showClientWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Client.fxml"));
         ClientController clientController = new ClientController();
@@ -94,7 +118,7 @@ public class ViewFactory {
         loginAndSignUpStage.setTitle("Library Management System");
         loginAndSignUpStage.show();
     }
-  
+
     public void showSignUpWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
         Scene scene = null;

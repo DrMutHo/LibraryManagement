@@ -83,11 +83,11 @@ public class Book {
         this.language = language;
     }
 
-    public int getPublication_year() {
+    public int getPublicationYear() {
         return publication_year;
     }
 
-    public void setPublication_year(int publication_year) {
+    public void setPublicationYear(int publication_year) {
         this.publication_year = publication_year;
     }
 
@@ -99,27 +99,27 @@ public class Book {
         this.description = description;
     }
 
-    public String getImage_path() {
+    public String getImagePath() {
         return image_path;
     }
 
-    public void setImage_path(String image_path) {
+    public void setImagePath(String image_path) {
         this.image_path = image_path;
     }
 
-    public double getAverage_rating() {
+    public double getAverageRating() {
         return average_rating;
     }
 
-    public void setAverage_rating(double average_rating) {
+    public void setAverageRating(double average_rating) {
         this.average_rating = average_rating;
     }
 
-    public int getReview_count() {
+    public int getReviewCount() {
         return review_count;
     }
 
-    public void setReview_count(int review_count) {
+    public void setReviewCount(int review_count) {
         this.review_count = review_count;
     }
 }

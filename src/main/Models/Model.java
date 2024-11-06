@@ -62,7 +62,6 @@ public class Model {
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count);
 
-                // Thêm Book vào ObservableList
                 allBook.add(book);
             }
         } catch (Exception e) {
