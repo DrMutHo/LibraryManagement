@@ -1,46 +1,43 @@
 package main.Controllers.Client;
 
 import javafx.fxml.FXML;
-import javafx.scene.chart.PieChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 
 public class DashboardController {
+    @FXML
+    private LineChart<String, Number> borrowingTrendsLineChart;
 
     @FXML
-    private PieChart pieChart;
+    private BarChart<String, Number> borrowingTrendsBarChart;
 
-    @FXML
-    private Button btnBorrowReturn;
-
-    @FXML
-    private Button btnBorrowingBooks;
-
-    @FXML
-    private Button btnBorrowedBooks;
-
-    @FXML
-    private Button btnOverdueBooks;
-
-    @FXML
     public void initialize() {
-        PieChart.Data availableBooks = new PieChart.Data("Available Books", 30);
-        PieChart.Data borrowedBooks = new PieChart.Data("Borrowed Books", 5);
-        PieChart.Data overdueBooks = new PieChart.Data("Overdue Books", 2);
+        populateCharts();
+    }
 
-        pieChart.getData().addAll(availableBooks, borrowedBooks, overdueBooks);
+    private void populateCharts() {
+        // Sample data
+        XYChart.Series<String, Number> lineSeries = new XYChart.Series<>();
+        lineSeries.setName("Borrowing Trends");
 
-        for (PieChart.Data data : pieChart.getData()) {
-            Tooltip tooltip = new Tooltip();
-            tooltip.setText(data.getName() + ": " + (int) data.getPieValue());
-            Tooltip.install(data.getNode(), tooltip);
+        lineSeries.getData().add(new XYChart.Data<>("Jan", 20));
+        lineSeries.getData().add(new XYChart.Data<>("Feb", 35));
+        lineSeries.getData().add(new XYChart.Data<>("Mar", 50));
+        lineSeries.getData().add(new XYChart.Data<>("Apr", 40));
+        lineSeries.getData().add(new XYChart.Data<>("May", 45));
 
-            data.getNode().setOnMouseEntered(e -> {
-                data.getNode().setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
-            });
-        }
+        borrowingTrendsLineChart.getData().add(lineSeries);
 
-        btnBorrowReturn.setOnAction(e -> System.out.println("Manage Borrow/Return clicked"));
+        XYChart.Series<String, Number> barSeries = new XYChart.Series<>();
+        barSeries.setName("Borrowing Trends");
 
+        barSeries.getData().add(new XYChart.Data<>("Jan", 20));
+        barSeries.getData().add(new XYChart.Data<>("Feb", 35));
+        barSeries.getData().add(new XYChart.Data<>("Mar", 50));
+        barSeries.getData().add(new XYChart.Data<>("Apr", 40));
+        barSeries.getData().add(new XYChart.Data<>("May", 45));
+
+        borrowingTrendsBarChart.getData().add(barSeries);
     }
 }

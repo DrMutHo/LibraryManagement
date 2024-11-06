@@ -3,5 +3,7 @@ package main.Views;
 public enum ClientMenuOptions {
     DASHBOARD,
     HOME,
-    PROFILE
+    PROFILE,
+    BROWSING,
+    NOTIFICATION
 }

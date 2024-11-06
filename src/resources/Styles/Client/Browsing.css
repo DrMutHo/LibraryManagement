@@ -1,0 +1,89 @@
+/* Top Container */
+.top-container {
+    -fx-padding: 10px;
+}
+
+/* Search Container */
+.search-container {
+    -fx-spacing: 5px;
+    -fx-alignment: center;
+}
+
+.search-label {
+    -fx-font-weight: bold;
+}
+
+.search-field {
+    -fx-pref-width: 200px;
+}
+
+.search-button {
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+}
+
+/* Table Styling */
+.book-table {
+    -fx-pref-height: 300px;
+}
+
+.table-column {
+    -fx-font-weight: bold;
+}
+
+/* Center Container */
+.center-container {
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+}
+
+/* Details Container */
+.details-container {
+    -fx-spacing: 20px;
+}
+
+/* Book Details Container */
+.book-details-container {
+    -fx-spacing: 10px;
+}
+
+/* ImageView Styling */
+.book-image {
+    /* Optional additional styling */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0, 5);
+}
+
+.image-container {
+    -fx-alignment: center;
+}
+
+/* Rating Container Styling */
+.rating-container {
+    -fx-spacing: 5px;
+}
+
+/* Information Container Styling */
+.info-container {
+    -fx-spacing: 5px;
+}
+
+.label {
+    -fx-font-weight: bold;
+}
+
+.detail-label {
+    -fx-padding: 2px 0 2px 10px;
+    -fx-font-size: 14px;
+}
+
+/* Description Section Styling */
+.description-label {
+    -fx-font-weight: bold;
+    -fx-padding: 5px 0 0 0;
+}
+
+.description-area {
+    -fx-pref-height: 100px;
+    -fx-background-color: #f0f0f0;
+    -fx-padding: 5px;
+}

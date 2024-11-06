@@ -1,0 +1,109 @@
+/* Center Section Style */
+.center-container {
+    -fx-background-color: #F9F9F9;
+}
+
+/* Statistic Container */
+.statistic-container {
+    -fx-spacing: 25;
+    -fx-padding: 20;
+}
+
+/* Statistic Box Style */
+.statistic-box {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-padding: 15;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(two-pass-box, #AAAAAA, 5, 0, 0, 4);
+    -fx-min-width: 180;
+    -fx-pref-width: 180;
+    -fx-hgrow: ALWAYS;
+}
+
+/* Statistic Label Style */
+.statistic-label {
+    -fx-font-size: 13;
+    -fx-text-fill: #000000;
+    -fx-font-family: "Arial";
+}
+
+/* Statistic Value Style */
+.statistic-value {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-font-family: "Arial";
+}
+
+.top-books-label {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4a34f7;
+    /* Color matching your main title */
+    -fx-padding: 10 0 10 0;
+    /* Padding for spacing */
+}
+
+/* Top Books Container */
+.top-books-container {
+    -fx-background-color: #FFFFFF;
+    /* Background color for the container */
+    -fx-background-radius: 10;
+    /* Rounded corners */
+    -fx-padding: 10;
+    /* Padding inside the container */
+    -fx-effect: dropshadow(two-pass-box, #AAAAAA, 5, 0, 0, 4);
+    /* Shadow effect */
+}
+
+.chart-container {
+    -fx-padding: 20;
+    /* Padding inside the container */
+    -fx-spacing: 20;
+    /* Space between the charts */
+    -fx-background-color: #f0f0f0;
+    /* Light background color for the container */
+    -fx-border-color: #cccccc;
+    /* Border color around the container */
+    -fx-border-width: 1;
+    /* Border width */
+    -fx-border-radius: 5;
+    /* Rounded corners */
+    -fx-background-radius: 5;
+    /* Rounded corners for the background */
+}
+
+/* Chart Container */
+.chart-container {
+    -fx-padding: 20;
+    -fx-spacing: 20;
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+/* Individual Charts */
+.chart {
+    -fx-padding: 10;
+}
+
+/* Plot Background in Charts */
+.chart .chart-plot-background {
+    -fx-background-color: #ffffff;
+}
+
+/* Axis Labels Styling */
+.axis-label {
+    -fx-text-fill: #333333;
+    -fx-font-weight: bold;
+}
+
+/* Chart Title Styling */
+.chart .chart-title {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4a34f7;
+    -fx-font-weight: bold;
+}
