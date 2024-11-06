@@ -21,7 +21,7 @@
     -fx-background-radius: 5px;
     -fx-padding: 5px;
     -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
-    -fx-font-size: 13px;
+    -fx-font-size: 11px;
 }
 
 .text-field.error {
