@@ -19,10 +19,13 @@ public class ViewFactory {
     private BorderPane profileView;
     private BorderPane browsingView;
     private BorderPane notiView;
+    private FXMLLoader loader; 
+    private Stage loginAndSignUpStage;
 
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
         this.clientSelectedMenuItem = new SimpleObjectProperty<>();
+        this.loginAndSignUpStage = new Stage();
     }
 
     public AccountType getLoginAccountType() {
@@ -104,12 +107,30 @@ public class ViewFactory {
 
     public void showLoginWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Login.fxml"));
-        createStage(loader);
+        Scene scene = null;
+        try {
+            scene = new Scene(loader.load());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        loginAndSignUpStage.setScene(scene);
+        loginAndSignUpStage.setResizable(false);
+        loginAndSignUpStage.setTitle("Library Management System");
+        loginAndSignUpStage.show();
     }
 
     public void showSignUpWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
-        createStage(loader);
+        Scene scene = null;
+        try {
+            scene = new Scene(loader.load());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        loginAndSignUpStage.setScene(scene);
+        loginAndSignUpStage.setResizable(false);
+        loginAndSignUpStage.setTitle("Library Management System");
+        loginAndSignUpStage.show();
     }
 
     private void createStage(FXMLLoader loader) {

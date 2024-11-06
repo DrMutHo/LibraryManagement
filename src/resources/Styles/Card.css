@@ -7,22 +7,13 @@
     -fx-pref-width: 160px;
     -fx-background-color: #f0f0f0;
     /* Màu nền cho VBox */
-    -fx-margin: 10px;
+    -fx-margin: 5px;
     /* Khoảng cách trong cho VBox */
     -fx-background-radius: 10;
     /* Bo góc cho VBox */
     -fx-border-color: #cccccc;
     -fx-border-width: 1px;
     -fx-border-radius: 10;
-}
-
-/* Định kiểu cho ImageView */
-.vbox-card .image-view {
-    -fx-fit-height: 156px;
-    -fx-fit-width: 160px;
-    -fx-margin-bottom: 2px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0.5, 0, 0);
-    /* Tạo bóng cho hình ảnh */
 }
 
 /* Định kiểu cho Label title */
@@ -38,4 +29,15 @@
     -fx-font-size: 14px;
     -fx-text-fill: #666666;
     /* Màu chữ nhạt hơn */
+}
+
+/* Hiệu ứng động cho phần card với shadow và xoay */
+.card-cover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.5, 5, 5);
+    -fx-rotate: 0deg;
+    -fx-transition: -fx-rotate 0.6s ease, -fx-translate-x 0.6s ease;
+}
+
+.vbox-card:hover {
+    -fx-cursor: hand;
 }

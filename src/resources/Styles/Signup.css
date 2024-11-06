@@ -23,7 +23,8 @@
     -fx-cursor: hand;
 }
 .exit_button:pressed {
-    
+    -fx-scale-x: 0.95; 
+    -fx-scale-y: 0.95; 
 }
 
 /** username và pass */
@@ -45,7 +46,10 @@
     -fx-border-radius: 15px;
 }
 .signup_hbox_set-focused {
-    -fx-border-color: orange;
+    -fx-border-color: blue;
+}
+.signup_hbox_set-error {
+    -fx-border-color: red; /* Màu viền khi có lỗi */
 }
 .toggle_button {
     -fx-cursor: hand;
