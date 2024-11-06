@@ -125,13 +125,14 @@ public class SignupController implements Initializable {
 
     public void username_password_promptext_init() {
         signup_usernameField.setPromptText("Enter your username");
-        signup_passwordField.setPromptText("Enter your password");
-        signup_textField.setPromptText("Enter your password");
+        signup_passwordField.setPromptText("Password must be 6+ characters");
+        signup_textField.setPromptText("Password must be 6+ characters");
         signup_passwordField1.setPromptText("Confirmed password");
         signup_textField1.setPromptText("Confirmed password");
         signup_emailField.setPromptText("Enter your email"); 
         signup_addressField.setPromptText("Enter your home address");
         signup_phoneNumField.setPromptText("Enter your phone number");   
+        signup_name.setPromptText("Enter your fullname");
 
         signup_passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
