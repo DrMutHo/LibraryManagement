@@ -198,7 +198,7 @@ public class LoginController implements Initializable {
 
     private boolean isValidCredentials(String username, String password) {
         String query = "SELECT * FROM Client WHERE username = ?";
-        try (Connection connection = databaseDriver.getConnection(); 
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             
             // Kiểm tra kết nối

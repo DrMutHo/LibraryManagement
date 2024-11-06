@@ -46,7 +46,10 @@
     -fx-border-radius: 15px;
 }
 .signup_hbox_set-focused {
-    -fx-border-color: orange;
+    -fx-border-color: blue;
+}
+.signup_hbox_set-error {
+    -fx-border-color: red; /* Màu viền khi có lỗi */
 }
 .toggle_button {
     -fx-cursor: hand;

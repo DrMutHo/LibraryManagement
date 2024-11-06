@@ -1,7 +1,8 @@
 package main.Controllers;
-
+import org.mindrot.jbcrypt.BCrypt;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,7 +64,25 @@ public class SignupController implements Initializable {
     @FXML
     private HBox signup_hbox5;
     @FXML 
-    private Button signup_creatNewAccountButton;
+    private Button signup_createNewAccountButton;
+    @FXML 
+    private ImageView signup_imageErrorIcon;
+    @FXML 
+    private ImageView signup_imageErrorIcon1;
+    @FXML 
+    private ImageView signup_imageErrorIcon2;
+    @FXML 
+    private ImageView signup_imageErrorIcon3;
+    @FXML 
+    private ImageView signup_imageErrorIcon4;
+    @FXML 
+    private ImageView signup_imageErrorIcon5;
+    @FXML
+    private TextField signup_name;
+    @FXML
+    private HBox signup_hbox6;
+    @FXML
+    private ImageView signup_imageErrorIcon6;
 
     @Override 
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -73,7 +92,7 @@ public class SignupController implements Initializable {
         } catch (Exception e) {
             e.getStackTrace();
         }
-        signup_creatNewAccountButton.setOnAction(event -> onCreatNewAccount());
+        signup_createNewAccountButton.setOnAction(event -> onCreateNewAccount());
     }
     public void passwordField_init() {
         signup_passwordField.setVisible(true);
@@ -177,36 +196,141 @@ public class SignupController implements Initializable {
 
     @FXML
     private void onExit() {
-         Stage stage = (Stage) signup_exitButton.getScene().getWindow();
-            Model.getInstance().getViewFactory().showLoginWindow();
+        Stage stage = (Stage) signup_exitButton.getScene().getWindow();
+        Model.getInstance().getViewFactory().showLoginWindow();
     }
 
     @FXML
-    private void onCreatNewAccount() {
-        
+    private void onCreateNewAccount() {
+        String email = signup_emailField.getText();
+        String phoneNum = signup_phoneNumField.getText();
+        String username = signup_usernameField.getText();
+        String password = signup_passwordField.getText();
+        String password1 = signup_passwordField1.getText();
+        String address = signup_addressField.getText();
+        String name = signup_name.getText();
+        String hashedPassword = BCrypt.hashpw(password1, BCrypt.gensalt());
+        if (isValidSignUp(email, phoneNum, username, password, password1, address, name)) {
+            Model.getInstance().getDatabaseDriver().createClient(email, phoneNum, address, username, hashedPassword, name);
+        }
     }
 
-    private boolean isValidSignUp(String username, String password) {
-        String query = "SELECT * FROM Client WHERE username = ?";
-        try (Connection connection = databaseDriver.getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            
-            // Kiểm tra kết nối
-            if (connection == null || connection.isClosed()) {
-                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
-                return false;
-            }
+    private boolean isValidSignUp(String email, String phoneNum,
+    String username, String password, String password1, String address, String name) {
+        boolean isValid = true;
+
+        if (!isValidName(name)) {
+            highlightField(signup_hbox6, signup_imageErrorIcon6);
+        } else {
+            resetField(signup_hbox6, signup_imageErrorIcon6);
+        }
+        if (!isValidUserName(username)) {
+            highlightField(signup_hbox0, signup_imageErrorIcon);
+            isValid = false;
+        } else {
+            resetField(signup_hbox0, signup_imageErrorIcon);
+        }
+
+        if(!isValidAddress(address)) {
+            highlightField(signup_hbox5, signup_imageErrorIcon1);
+            isValid = false;
+        } else {
+            resetField(signup_hbox5, signup_imageErrorIcon1);
+        }
+        
+        if (!isValidEmail(email)) {
+            highlightField(signup_hbox3, signup_imageErrorIcon3);
+            isValid = false;
+        } else {
+            resetField(signup_hbox3, signup_imageErrorIcon3);
+        }
+        
+        if (!isValidPassword(password, password1)) {
+            highlightField(signup_hbox1, signup_imageErrorIcon4);
+            highlightField(signup_hbox2, signup_imageErrorIcon5);
+            isValid = false;
+        } else {
+            resetField(signup_hbox1, signup_imageErrorIcon4);
+            resetField(signup_hbox2, signup_imageErrorIcon5);
+        }
+        
+        if (!isValidPhoneNum(phoneNum)) {
+            highlightField(signup_hbox4, signup_imageErrorIcon2);
+            isValid = false;
+        } else {
+            resetField(signup_hbox4, signup_imageErrorIcon2);
+        }
+        return isValid;
+    }
     
+    private void highlightField(HBox hbox, ImageView icon) {
+        hbox.getStyleClass().add("signup_hbox_set-error"); 
+        icon.setImage(new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
+    }
+        
+    private void resetField(HBox hbox, ImageView icon) {
+        hbox.getStyleClass().remove("signup_hbox_set-error"); 
+        icon.setImage(null); 
+    }
+
+    private boolean isValidName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+    private boolean isValidEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false; // Kiểm tra null và chuỗi rỗng
+        }
+        return true;
+    }
+
+    private boolean isValidAddress(String address) {
+        return address != null && !address.trim().isEmpty();
+    }
+
+    private boolean isValidUserName(String username) {
+    if (username == null || username.trim().isEmpty()) {
+        return false; // Username không được để trống
+    }
+
+    // Kết nối đến cơ sở dữ liệu
+    try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection()) {
+        String query = "SELECT COUNT(*) FROM Client WHERE username = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
-    
             if (resultSet.next()) {
-                String storedPasswordHash = resultSet.getString("password_hash");
-                return verifyPassword(password, storedPasswordHash);
+                int count = resultSet.getInt(1);
+                return count == 0; // Trả về true nếu username không tồn tại
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return false;
+    } catch (SQLException e) {
+        e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi xảy ra
+    }
+
+    return false; // Mặc định trả về false nếu có lỗi xảy ra
+}
+
+    private boolean isValidPhoneNum(String phoneNum) {
+        if (phoneNum == null) {
+            return false;
+        }
+        return phoneNum.length() == 10; 
+    }
+
+    private boolean isValidPassword(String password, String password1) {
+        if (password == null || password1 == null) {
+            return false;
+        }
+        if (password.length() < 6) {
+            return false;
+        }
+        
+        if (!password.equals(password1)) {
+            return false;
+        }
+        return true;
     }
 }
