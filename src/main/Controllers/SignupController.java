@@ -1,11 +1,20 @@
 package main.Controllers;
 import org.mindrot.jbcrypt.BCrypt;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -212,7 +221,7 @@ public class SignupController implements Initializable {
         String hashedPassword = BCrypt.hashpw(password1, BCrypt.gensalt());
         if (isValidSignUp(email, phoneNum, username, password, password1, address, name)) {
             Model.getInstance().getDatabaseDriver().createClient(email, phoneNum, address, username, hashedPassword, name);
-        }
+        } 
     }
 
     private boolean isValidSignUp(String email, String phoneNum,
@@ -279,11 +288,50 @@ public class SignupController implements Initializable {
         }
         return true;
     }
+
     private boolean isValidEmail(String email) {
+        boolean isValidEmail = false;
         if (email == null || email.trim().isEmpty()) {
-            return false; // Kiểm tra null và chuỗi rỗng
+            return false;
+        } else {
+            try { 
+            @SuppressWarnings("deprecation")
+            URL url = new URL("https://emailvalidation.abstractapi.com/v1/?api_key=fe97d39becd94b14a4a19b97ebcc29a1&email=" + email);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET"); 
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                Gson gson = new Gson();
+                Type type = new TypeToken<Map<String, Object>>(){}.getType();
+                Map<String, Object> map = gson.fromJson(response.toString(), type);
+                
+                System.out.println(map.get("is_free_email"));
+                Map<String, Object> isFreeEmail = (Map<String, Object>) map.get("is_free_email");
+
+
+                boolean value = (boolean) isFreeEmail.get("value");
+                isValidEmail = value;
+    
+                // In ra kết quả
+                System.out.println("Value of is_free_email: " + value);
+            } else {
+                System.out.println("GET request not worked");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return true;
+    }
+        
+        return false;
     }
 
     private boolean isValidAddress(String address) {

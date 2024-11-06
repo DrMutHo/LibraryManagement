@@ -170,7 +170,8 @@ public class LoginController implements Initializable {
             // Kiểm tra thông tin đăng nhập
             if (isValidCredentials(username, password)) {
                 // Đăng nhập thành công
-                Model.getInstance().getDatabaseDriver().getClientnData(username);
+                Model.getInstance().getDatabaseDriver().getClientData(username);
+                Model.getInstance().evaluateClientCred(username);
                 Model.getInstance().getViewFactory().showClientWindow();
                 Model.getInstance().getViewFactory().closeStage(stage);
             } else {
