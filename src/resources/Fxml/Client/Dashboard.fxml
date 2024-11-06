@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -22,7 +21,7 @@
             </Label>
             <Separator maxHeight="-Infinity" orientation="VERTICAL" prefHeight="21.0" prefWidth="0.0" />
             <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" />
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" />
         </HBox>
     </top>
     
@@ -61,9 +60,9 @@
                         </VBox>
                     </children>
                 </HBox>
-                <HBox layoutY="150.0" prefHeight="175.0" prefWidth="850.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" spacing="20">
+                <HBox layoutY="150.0" prefHeight="175.0" prefWidth="850.0" spacing="20" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                     <children>
-                        <Label prefHeight="18.0" prefWidth="200.0" text="Top 5 Favourite Books" styleClass="top-books-label" />
+                        <Label prefHeight="18.0" prefWidth="200.0" styleClass="top-books-label" text="Top 5 Favourite Books" />
                     </children>
                 </HBox>
             </children>
