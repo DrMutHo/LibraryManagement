@@ -10,7 +10,7 @@ public class DatabaseDriver {
             // Chuỗi kết nối MySQL
             String url = "jdbc:mysql://localhost:3306/library_management";
             String username = "root";
-            String password = "0986633179A";
+            String password = "T1enm0t711!@#$%";
 
             // Kết nối MySQL
             this.conn = DriverManager.getConnection(url, username, password);
@@ -19,5 +19,9 @@ public class DatabaseDriver {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    public Connection getConnection() {
+        return conn;
     }
 }
