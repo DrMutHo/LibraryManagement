@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="750.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.DashboardController">
@@ -35,37 +43,45 @@
     <center>
         <GridPane fx:id="registrationForm" alignment="CENTER" hgap="10" vgap="10">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20" />
+                <Insets bottom="20" left="20" right="20" top="20" />
             </padding>
 
-            <Label text="First Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
             <TextField fx:id="firstNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-            <Label text="Last Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <Label text="Author:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             <TextField fx:id="lastNameField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-            <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <Label text="ISBN:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
             <TextField fx:id="emailField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-            <Label text="Phone Number:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <Label text="Genre:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
             <TextField fx:id="phoneNumberField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-            <Label text="Address:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <Label text="Language::" GridPane.columnIndex="0" GridPane.rowIndex="4" />
             <TextField fx:id="addressField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-            <Label text="Registration Date:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+            <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
             <TextField fx:id="registrationDateField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
-            <Label text="Outstanding Fees:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+            <Label text="Publication year:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
             <TextField fx:id="outstandingFeesField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
-            <Label text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-            <TextField fx:id="usernameField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-
-            <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-            <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-
-            <Button text="Register" fx:id="registerButton" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Button fx:id="registerButton" text="Create" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
         </GridPane>
     </center>
 </BorderPane>
