@@ -15,6 +15,7 @@ public class ClientMenuController implements Initializable {
     public Button home_btn;
     public Button profile_btn;
     public Button browsing_btn;
+    public Button noti_btn;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -26,6 +27,7 @@ public class ClientMenuController implements Initializable {
         home_btn.setOnAction(event -> onHome());
         profile_btn.setOnAction(event -> onProfile());
         browsing_btn.setOnAction(event -> onBrowsing());
+        noti_btn.setOnAction(event -> onNotification());
     }
 
     private void onDashboard() {
@@ -42,5 +44,9 @@ public class ClientMenuController implements Initializable {
 
     private void onBrowsing() {
         Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.BROWSING);
+    }
+
+    private void onNotification() {
+        Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.NOTIFICATION);
     }
 }

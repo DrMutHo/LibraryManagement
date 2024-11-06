@@ -4,5 +4,6 @@ public enum ClientMenuOptions {
     DASHBOARD,
     HOME,
     PROFILE,
-    BROWSING
+    BROWSING,
+    NOTIFICATION
 }

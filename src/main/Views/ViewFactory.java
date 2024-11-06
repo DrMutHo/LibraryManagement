@@ -18,6 +18,7 @@ public class ViewFactory {
     private BorderPane homeView;
     private BorderPane profileView;
     private BorderPane browsingView;
+    private BorderPane notiView;
 
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
@@ -81,6 +82,17 @@ public class ViewFactory {
             }
         }
         return browsingView;
+    }
+
+    public BorderPane getNotiView() {
+        if (notiView == null) {
+            try {
+                notiView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Notification.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return notiView;
     }
 
     public void showClientWindow() {

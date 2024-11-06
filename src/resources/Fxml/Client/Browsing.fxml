@@ -16,11 +16,11 @@
 
     <center>
         <VBox fx:id="centerContainer" styleClass="center-container">
-            <HBox fx:id="detailsContainer" styleClass="details-container">
-                <VBox prefHeight="307.0" prefWidth="158.0" styleClass="book-details-container">
-               <VBox prefHeight="198.0" prefWidth="132.0">
+            <HBox fx:id="detailsContainer" prefHeight="361.0" prefWidth="336.0" styleClass="details-container">
+                <VBox prefHeight="379.0" prefWidth="158.0" styleClass="book-details-container">
+               <VBox alignment="CENTER" prefHeight="250.0" prefWidth="158.0">
                   <children>
-                          <ImageView fx:id="bookImageView" fitHeight="146.0" fitWidth="157.0" preserveRatio="true" styleClass="book-image" />
+                          <ImageView fx:id="bookImageView" fitHeight="221.0" fitWidth="157.0" preserveRatio="true" styleClass="book-image" />
                   </children>
                </VBox>
                     <VBox fx:id="ratingContainer" prefHeight="100.0" prefWidth="113.0" styleClass="rating-container">
@@ -52,7 +52,7 @@
         </VBox>
     </center>
    <left>
-        <VBox fx:id="topContainer" prefHeight="730.0" prefWidth="473.0" styleClass="top-container" BorderPane.alignment="CENTER">
+        <VBox fx:id="topContainer" prefHeight="730.0" prefWidth="433.0" styleClass="top-container" BorderPane.alignment="CENTER">
             <HBox fx:id="searchContainer" prefHeight="36.0" prefWidth="512.0" styleClass="search-container">
                 <Label styleClass="search-label" text="Search:" />
                 <TextField fx:id="searchField" promptText="Enter book title or author" styleClass="search-field" />
