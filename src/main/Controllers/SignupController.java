@@ -95,7 +95,7 @@ public class SignupController implements Initializable {
 
     @Override 
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        username_password_promptext_init();
+        signup_prompt_init();
         try { 
             passwordField_init();
         } catch (Exception e) {
@@ -123,7 +123,7 @@ public class SignupController implements Initializable {
         
     }
 
-    public void username_password_promptext_init() {
+    public void signup_prompt_init() {
         signup_usernameField.setPromptText("Enter your username");
         signup_passwordField.setPromptText("Password must be 6+ characters");
         signup_textField.setPromptText("Password must be 6+ characters");

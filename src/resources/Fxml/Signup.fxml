@@ -22,7 +22,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <AnchorPane layoutX="209.0" layoutY="132.0" prefHeight="531.0" prefWidth="432.0" styleClass="signup_inner_anchorpane">
+      <AnchorPane layoutX="209.0" layoutY="92.0" prefHeight="531.0" prefWidth="432.0" styleClass="signup_inner_anchorpane">
          <children>
             <HBox fx:id="signup_hbox4" alignment="CENTER" layoutX="90.0" layoutY="148.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
