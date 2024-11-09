@@ -177,7 +177,7 @@ public class LoginController implements Initializable {
             } else {
                 // Đăng nhập thất bại
                 showAlert("Đăng nhập thất bại", "Tài khoản hoặc mật khẩu của bạn bị lỗi");
-                passwordField.clear(); // Xóa mật khẩu
+                passwordField.clear(); 
             }
         }
     }
@@ -201,16 +201,12 @@ public class LoginController implements Initializable {
         String query = "SELECT * FROM Client WHERE username = ?";
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            
-            // Kiểm tra kết nối
             if (connection == null || connection.isClosed()) {
                 System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
                 return false;
             }
-    
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
-    
             if (resultSet.next()) {
                 String storedPasswordHash = resultSet.getString("password_hash");
                 return verifyPassword(password, storedPasswordHash);

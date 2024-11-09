@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -222,7 +223,16 @@ public class SignupController implements Initializable {
         String hashedPassword = BCrypt.hashpw(password1, BCrypt.gensalt());
         if (isValidSignUp(email, phoneNum, username, password, password1, address, name)) {
             Model.getInstance().getDatabaseDriver().createClient(email, phoneNum, address, username, hashedPassword, name);
+            signup_showAlert("Thông báo!", "Đăng ký thành công");
         } 
+    }
+
+    private void signup_showAlert(String title, String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
     }
 
     private boolean isValidSignUp(String email, String phoneNum,
@@ -290,10 +300,10 @@ public class SignupController implements Initializable {
         return true;
     }
 
-    private boolean isValidEmail(String email) {
-        boolean isValidEmail = false;
+    private boolean isValidEmailApi(String email) {
+        boolean isValidEmailApi = false;
         if (email == null || email.trim().isEmpty()) {
-            return false;
+            return isValidEmailApi;
         } else {
             try { 
             @SuppressWarnings("deprecation")
@@ -320,9 +330,7 @@ public class SignupController implements Initializable {
 
 
                 boolean value = (boolean) isFreeEmail.get("value");
-                isValidEmail = value;
-    
-                // In ra kết quả
+                isValidEmailApi = value;
                 System.out.println("Value of is_free_email: " + value);
             } else {
                 System.out.println("GET request not worked");
@@ -331,8 +339,32 @@ public class SignupController implements Initializable {
             e.printStackTrace();
         }
     }
-        
-        return false;
+    return isValidEmailApi;
+}   
+
+    private boolean isValidEmailDatabase(String email) {
+        boolean isValidEmailDatabase = false;
+        if (email.trim().isEmpty() || email == null) {
+            return isValidEmailDatabase;
+        } else {
+            try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection()) {
+                String query = "SELECT COUNT(*) FROM Client WHERE email = ?";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                    preparedStatement.setString(1, email);
+                    ResultSet resultSet = preparedStatement.executeQuery();
+                    if (resultSet.next()) {
+                        int count = resultSet.getInt(1);
+                        return count == 0;
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return isValidEmailDatabase;
+    }
+    private boolean isValidEmail(String email) {
+        return isValidEmailApi(email) && isValidEmailDatabase(email);
     }
 
     private boolean isValidAddress(String address) {
@@ -341,10 +373,8 @@ public class SignupController implements Initializable {
 
     private boolean isValidUserName(String username) {
     if (username == null || username.trim().isEmpty()) {
-        return false; // Username không được để trống
+        return false; 
     }
-
-    // Kết nối đến cơ sở dữ liệu
     try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection()) {
         String query = "SELECT COUNT(*) FROM Client WHERE username = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -352,14 +382,14 @@ public class SignupController implements Initializable {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 int count = resultSet.getInt(1);
-                return count == 0; // Trả về true nếu username không tồn tại
+                return count == 0;
             }
         }
     } catch (SQLException e) {
-        e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi xảy ra
+        e.printStackTrace(); 
     }
 
-    return false; // Mặc định trả về false nếu có lỗi xảy ra
+    return false;
 }
 
     private boolean isValidPhoneNum(String phoneNum) {
