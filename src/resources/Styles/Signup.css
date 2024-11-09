@@ -14,9 +14,13 @@
 /** nút exit */
 .exit_button {
     -fx-font-family: "Playwrite GB S", cursive;
+    -fx-font-size: 18px;
     -fx-background-color: white;
     -fx-border-radius: 15;
-    -fx-border-color: gray; 
+    -fx-border-color: brown;
+    -fx-border-width: 2;
+    -fx-background-radius: 15;
+    -fx-background-color: #9CD8E2;
 }
 .exit_button:hover {
     -fx-border-color: blue;
