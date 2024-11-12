@@ -30,7 +30,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <AnchorPane layoutX="209.0" layoutY="92.0" prefHeight="531.0" prefWidth="432.0" styleClass="signup_inner_anchorpane">
+      <AnchorPane layoutX="209.0" layoutY="92.0" prefHeight="594.0" prefWidth="421.0" styleClass="signup_inner_anchorpane">
          <children>
             <HBox fx:id="signup_hbox4" alignment="CENTER" layoutX="89.0" layoutY="246.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
@@ -120,12 +120,12 @@
                </children>
             </HBox>
             <Label layoutX="113.0" layoutY="33.0" styleClass="signup_label" stylesheets="@../Styles/Signup.css" text="Sign Up" />
-            <ImageView fx:id="signup_imageErrorIcon" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon1" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="104.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon2" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="157.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon3" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="211.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon4" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="266.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon5" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="318.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="146.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon1" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon2" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="255.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon3" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="307.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon4" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="359.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon5" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="409.0" pickOnBounds="true" preserveRatio="true" />
             <HBox fx:id="signup_hbox6" alignment="CENTER" layoutX="89.0" layoutY="456.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
                   <TextField fx:id="signup_name" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="signup_passwordField" HBox.hgrow="NEVER" />
@@ -136,7 +136,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <ImageView fx:id="signup_imageErrorIcon6" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="370.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon6" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="465.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </AnchorPane>
    </children>

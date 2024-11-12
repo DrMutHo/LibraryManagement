@@ -10,10 +10,13 @@ import java.util.ResourceBundle;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -21,11 +24,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import main.Models.DatabaseDriver;
 import main.Models.Model;
@@ -35,8 +40,6 @@ public class LoginController implements Initializable {
 
     @FXML
     private AnchorPane outer_pane;
-    @FXML
-    private AnchorPane inner_pane;
     @FXML
     private ChoiceBox<AccountType> acc_selector;
     @FXML
@@ -65,8 +68,19 @@ public class LoginController implements Initializable {
     private Image eyeClosed;
     @FXML
     private ImageView imageIcon;
+    @FXML 
+    private Button alert_button;
+    @FXML
+    private AnchorPane notificationPane;
+    @FXML ImageView lib_image;
     private Stage stage;
 
+    @FXML
+    public void handleOkButtonAction() {
+        notificationPane.setVisible(false);
+        lib_image.setVisible(true);
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         acc_selector_init();
@@ -100,11 +114,11 @@ public class LoginController implements Initializable {
     private void setAcc_selector() {
         Model.getInstance().getViewFactory().setLoginAccountType(acc_selector.getValue());
         if (acc_selector.getValue() == AccountType.ADMIN) {
-            inner_pane.getChildren().remove(forgotaccountButton);
-            inner_pane.getChildren().remove(createnewaccountButton);
+            outer_pane.getChildren().remove(forgotaccountButton);
+            outer_pane.getChildren().remove(createnewaccountButton);
         } else {
-            inner_pane.getChildren().add(forgotaccountButton);
-            inner_pane.getChildren().add(createnewaccountButton);
+            outer_pane.getChildren().add(forgotaccountButton);
+            outer_pane.getChildren().add(createnewaccountButton);
         }
     }
 
@@ -145,8 +159,6 @@ public class LoginController implements Initializable {
         });
     }
 
-    
-
     public void passwordField_init() {
         passwordField.setVisible(true);
         passwordField.setManaged(true);
@@ -165,36 +177,52 @@ public class LoginController implements Initializable {
         String username = usernameField.getText();
         String password = passwordField.getText();
         
-        // Kiểm tra loại tài khoản
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
-            // Kiểm tra thông tin đăng nhập
             if (isValidCredentials(username, password)) {
-                // Đăng nhập thành công
                 Model.getInstance().getDatabaseDriver().getClientData(username);
                 Model.getInstance().evaluateClientCred(username);
                 Model.getInstance().getViewFactory().showClientWindow();
                 Model.getInstance().getViewFactory().closeStage(stage);
             } else {
-                // Đăng nhập thất bại
-                showAlert("Đăng nhập thất bại", "Tài khoản hoặc mật khẩu của bạn bị lỗi");
+                lib_image.setVisible(false);
+                notificationPane.setVisible(true);
                 passwordField.clear(); 
             }
         }
     }
 
-    private void onsignUp() {
-        stage = (Stage) loginButton.getScene().getWindow();
-        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
-            Model.getInstance().getViewFactory().showSignUpWindow();
-        }
+    public void showLoadingAndOpenSignUpWindow() {
+        StackPane loadingOverlay = new StackPane();
+        loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        loadingOverlay.setPrefSize(outer_pane.getWidth(), outer_pane.getHeight()); 
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        loadingOverlay.getChildren().add(progressIndicator);
+        StackPane.setAlignment(progressIndicator, Pos.CENTER);
+        outer_pane.getChildren().add(loadingOverlay);
+        Task<Void> loadingTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                for (int i = 0; i <=1 ; i++) {
+                    Thread.sleep(500);
+                }
+                return null;
+            }
+        };
+        loadingTask.setOnSucceeded(event -> {
+            outer_pane.getChildren().remove(loadingOverlay);
+            Platform.runLater(() -> {
+                Model.getInstance().getViewFactory().showSignUpWindow();
+                Model.getInstance().getViewFactory().closeStage(stage);
+            });
+        });
+        new Thread(loadingTask).start();
     }
 
-    private void showAlert(String title, String message) {
-    Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.setTitle(title);
-    alert.setHeaderText(null);
-    alert.setContentText(message);
-    alert.showAndWait();
+    private void onsignUp() {
+        stage = (Stage) createnewaccountButton.getScene().getWindow();
+        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
+            showLoadingAndOpenSignUpWindow();
+        }
     }
 
     private boolean isValidCredentials(String username, String password) {

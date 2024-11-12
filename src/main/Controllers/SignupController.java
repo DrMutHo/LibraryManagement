@@ -17,15 +17,21 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import main.Models.Model;
 import main.Views.AccountType;
@@ -93,6 +99,10 @@ public class SignupController implements Initializable {
     private HBox signup_hbox6;
     @FXML
     private ImageView signup_imageErrorIcon6;
+    @FXML
+    private AnchorPane signup_anchorpane;
+    @FXML
+    private Stage stage;
 
     @Override 
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -170,6 +180,34 @@ public class SignupController implements Initializable {
                 signup_hbox2.getStyleClass().remove("signup_hbox_set-focused");
             }
         });
+        signup_emailField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                signup_hbox3.getStyleClass().add("signup_hbox_set-focused");
+            } else {
+                signup_hbox3.getStyleClass().remove("signup_hbox_set-focused");
+            }
+        });
+        signup_phoneNumField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                signup_hbox4.getStyleClass().add("signup_hbox_set-focused");
+            } else {
+                signup_hbox4.getStyleClass().remove("signup_hbox_set-focused");
+            }
+        });
+        signup_name.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                signup_hbox6.getStyleClass().add("signup_hbox_set-focused");
+            } else {
+                signup_hbox6.getStyleClass().remove("signup_hbox_set-focused");
+            }
+        });
+        signup_addressField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                signup_hbox5.getStyleClass().add("signup_hbox_set-focused");
+            } else {
+                signup_hbox5.getStyleClass().remove("signup_hbox_set-focused");
+            }
+        });
     }
     @FXML
     private void togglePasswordVisibility() {
@@ -204,11 +242,41 @@ public class SignupController implements Initializable {
             signup_imageIcon1.setImage(signup_eyeClosed);
         }
     }
-
+    public void showLoadingAndCloseSignUpWindow() {
+        StackPane loadingOverlay = new StackPane();
+        loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);"); 
+        loadingOverlay.setPrefSize(signup_anchorpane.getWidth(), signup_anchorpane.getHeight()); 
+    
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        loadingOverlay.getChildren().add(progressIndicator);
+    
+        StackPane.setAlignment(progressIndicator, Pos.CENTER);
+    
+        signup_anchorpane.getChildren().add(loadingOverlay);
+    
+        Task<Void> loadingTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                // Giả lập một tác vụ dài
+                for (int i = 0; i <= 1; i++) {
+                    Thread.sleep(500); 
+                }
+                return null;
+            }
+        };
+        loadingTask.setOnSucceeded(event -> {
+            signup_anchorpane.getChildren().remove(loadingOverlay);
+            Platform.runLater(() -> {
+                Model.getInstance().getViewFactory().showLoginWindow();
+                Model.getInstance().getViewFactory().closeStage(stage);
+            });
+        });
+        new Thread(loadingTask).start();
+    }
     @FXML
     private void onExit() {
-        Stage stage = (Stage) signup_exitButton.getScene().getWindow();
-        Model.getInstance().getViewFactory().showLoginWindow();
+        stage = (Stage) signup_exitButton.getScene().getWindow();
+        showLoadingAndCloseSignUpWindow();
     }
 
     @FXML
