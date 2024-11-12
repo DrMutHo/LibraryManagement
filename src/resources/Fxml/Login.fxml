@@ -16,7 +16,7 @@
 
 <AnchorPane fx:id="outer_pane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="AnchorPane_out" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
    <children>
-      <ImageView fitHeight="750.0" fitWidth="850.0" opacity="0.56" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="33.0" AnchorPane.topAnchor="0.0">
+      <ImageView fitHeight="750.0" fitWidth="850.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="33.0" AnchorPane.topAnchor="0.0">
          <image>
             <Image url="@../Images/112-library-wallpaper-kids-room-mural-modern-design.png" />
          </image>
