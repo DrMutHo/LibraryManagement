@@ -21,7 +21,7 @@
     -fx-background-radius: 5px;
     -fx-padding: 5px;
     -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
-    -fx-font-size: 13px;
+    -fx-font-size: 11px;
 }
 
 .text-field.error {
@@ -71,11 +71,11 @@
     -fx-font-family: "Ubuntu", sans-serif;
 }
 .button_createnewaccount:hover {
-    -fx-background-color: #005A26;
+    -fx-background-color: green;
     -fx-cursor: hand;
 }
 .button_createnewaccount:pressed {
-    -fx-border-color: #005A26;
+    -fx-border-color: green;
     -fx-scale-x: 0.95; 
     -fx-scale-y: 0.95; 
 }
@@ -88,11 +88,8 @@
     -fx-border-radius: 15px;
 }
 .hbox_set-focused {
-    -fx-border-color: orange;
-
-}
-.hbox_set-focused {
     -fx-border-color: blue;
+
 }
 
 

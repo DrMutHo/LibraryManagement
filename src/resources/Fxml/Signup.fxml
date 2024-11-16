@@ -13,6 +13,14 @@
 
 <AnchorPane fx:id="signup_anchorpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="signup_anchorpane" stylesheets="@../Styles/Signup.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.SignupController">
    <children>
+      <ImageView fitHeight="750.0" fitWidth="850.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/112-library-wallpaper-kids-room-mural-modern-design.png" />
+         </image>
+         <viewport>
+            <Rectangle2D height="750.0" width="850.0" />
+         </viewport>
+      </ImageView>
       <Button fx:id="signup_exitButton" layoutX="24.0" layoutY="14.0" mnemonicParsing="false" onAction="#onExit" styleClass="exit_button" text="exit">
          <graphic>
             <ImageView fitHeight="94.0" fitWidth="61.0" pickOnBounds="true" preserveRatio="true">
@@ -22,9 +30,9 @@
             </ImageView>
          </graphic>
       </Button>
-      <AnchorPane layoutX="209.0" layoutY="132.0" prefHeight="531.0" prefWidth="432.0" styleClass="signup_inner_anchorpane">
+      <AnchorPane layoutX="209.0" layoutY="92.0" prefHeight="594.0" prefWidth="421.0" styleClass="signup_inner_anchorpane">
          <children>
-            <HBox fx:id="signup_hbox4" alignment="CENTER" layoutX="90.0" layoutY="148.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
+            <HBox fx:id="signup_hbox4" alignment="CENTER" layoutX="89.0" layoutY="246.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
                   <TextField fx:id="signup_phoneNumField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="signup_passwordField" HBox.hgrow="NEVER" />
                   <ImageView fitHeight="36.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
@@ -34,7 +42,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="signup_hbox1" alignment="CENTER" blendMode="SRC_ATOP" layoutX="90.0" layoutY="257.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
+            <HBox fx:id="signup_hbox1" alignment="CENTER" blendMode="SRC_ATOP" layoutX="89.0" layoutY="350.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
                   <Button fx:id="signup_toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="26.0" minWidth="22.0" mnemonicParsing="false" onAction="#togglePasswordVisibility" prefHeight="26.0" prefWidth="22.0" styleClass="toggle_button" HBox.hgrow="NEVER">
                      <graphic>
@@ -57,7 +65,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="signup_hbox2" alignment="CENTER" blendMode="SRC_ATOP" layoutX="91.0" layoutY="309.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
+            <HBox fx:id="signup_hbox2" alignment="CENTER" blendMode="SRC_ATOP" layoutX="89.0" layoutY="400.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
                   <Button fx:id="signup_toggleButton1" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="22.0" mnemonicParsing="false" onAction="#togglePasswordVisibility1" prefHeight="26.0" prefWidth="22.0" styleClass="toggle_button" HBox.hgrow="NEVER">
                      <graphic>
@@ -80,8 +88,8 @@
                   </ImageView>
                </children>
             </HBox>
-            <Button fx:id="signup_createNewAccountButton" layoutX="114.0" layoutY="434.0" mnemonicParsing="false" onAction="#onCreateNewAccount" prefHeight="44.0" prefWidth="202.0" styleClass="signup_button" text="Create new account" />
-            <HBox fx:id="signup_hbox3" alignment="CENTER" layoutX="90.0" layoutY="202.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
+            <Button fx:id="signup_createNewAccountButton" layoutX="113.0" layoutY="512.0" mnemonicParsing="false" onAction="#onCreateNewAccount" prefHeight="44.0" prefWidth="202.0" styleClass="signup_button" text="Create new account" />
+            <HBox fx:id="signup_hbox3" alignment="CENTER" layoutX="89.0" layoutY="298.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
                   <TextField fx:id="signup_emailField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="211.0" styleClass="signup_passwordField" HBox.hgrow="NEVER" />
                   <ImageView fitHeight="36.0" fitWidth="28.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
@@ -91,7 +99,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="signup_hbox5" alignment="CENTER" layoutX="90.0" layoutY="95.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
+            <HBox fx:id="signup_hbox5" alignment="CENTER" layoutX="89.0" layoutY="191.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
                   <TextField fx:id="signup_addressField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="signup_passwordField" HBox.hgrow="NEVER" />
                   <ImageView fitHeight="36.0" fitWidth="27.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
@@ -101,7 +109,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="signup_hbox0" alignment="CENTER" layoutX="90.0" layoutY="44.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
+            <HBox fx:id="signup_hbox0" alignment="CENTER" layoutX="89.0" layoutY="137.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
                   <TextField fx:id="signup_usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="signup_passwordField" HBox.hgrow="NEVER" />
                   <ImageView fitHeight="36.0" fitWidth="27.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
@@ -111,14 +119,14 @@
                   </ImageView>
                </children>
             </HBox>
-            <Label layoutX="115.0" layoutY="478.0" styleClass="signup_label" stylesheets="@../Styles/Signup.css" text="Sign Up" />
-            <ImageView fx:id="signup_imageErrorIcon" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon1" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="104.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon2" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="157.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon3" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="211.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon4" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="266.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon5" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="318.0" pickOnBounds="true" preserveRatio="true" />
-            <HBox fx:id="signup_hbox6" alignment="CENTER" layoutX="91.0" layoutY="361.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
+            <Label layoutX="113.0" layoutY="33.0" styleClass="signup_label" stylesheets="@../Styles/Signup.css" text="Sign Up" />
+            <ImageView fx:id="signup_imageErrorIcon" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="146.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon1" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon2" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="255.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon3" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="307.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon4" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="359.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon5" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="409.0" pickOnBounds="true" preserveRatio="true" />
+            <HBox fx:id="signup_hbox6" alignment="CENTER" layoutX="89.0" layoutY="456.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
                   <TextField fx:id="signup_name" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="signup_passwordField" HBox.hgrow="NEVER" />
                   <ImageView fitHeight="36.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
@@ -128,7 +136,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <ImageView fx:id="signup_imageErrorIcon6" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="370.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="signup_imageErrorIcon6" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="465.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </AnchorPane>
    </children>

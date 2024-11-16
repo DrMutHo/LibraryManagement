@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Modak&family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&display=swap');
+
+
+.alert_anchorpane {
+    -fx-background-color: white;    
+    -fx-border-color: RED;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+
+}
+.alert_notice {
+    -fx-font-size: 12;
+    -fx-font-family: "Ubuntu", sans-serif;
+}
+.alert_okButton {
+    -fx-font-size: 13;
+    -fx-font-family: "Ubuntu", sans-serif;
+    -fx-background-color: #32CD32;
+    -fx-text-fill: white;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+}
+.alert_okButton:hover {
+    -fx-background-color: green;
+    -fx-cursor: hand;
+}
+.alert_okButton:pressed {
+    -fx-border-color: green;
+    -fx-scale-x: 0.95; 
+    -fx-scale-y: 0.95; 
+}

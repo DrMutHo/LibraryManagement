@@ -14,9 +14,13 @@
 /** nút exit */
 .exit_button {
     -fx-font-family: "Playwrite GB S", cursive;
-    -fx-background-color: white;
+    -fx-font-size: 18px;
+    -fx-background-color: #FFFFFF;
     -fx-border-radius: 15;
-    -fx-border-color: gray; 
+    -fx-border-color: brown;
+    -fx-border-width: 2;
+    -fx-background-radius: 15;
+    -fx-background-color: #9CD8E2;
 }
 .exit_button:hover {
     -fx-border-color: blue;
@@ -35,7 +39,7 @@
     -fx-background-radius: 15px;
     -fx-padding: 5px;
     -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
-    -fx-font-size: 13px;
+    -fx-font-size: 11px;
 }
 
 /** Hbox8 */
@@ -64,15 +68,16 @@
     -fx-border-color: brown;
 }
 .signup_button {
-    -fx-background-color:#32CD32;
+    -fx-background-color: #4CAF50;
     -fx-text-fill: white;
-    -fx-font-family: "Playwrite GB S", cursive;
-    -fx-font-size: 18px;    
+    -fx-font-size: 18px;
+    -fx-font-family: "Ubuntu", sans-serif;
 }
 .signup_button:hover {
-    -fx-border-color: green;
     -fx-cursor: hand;
 }
-.exit_button:pressed {
-    
+.signup_button:pressed {
+    -fx-border-color: green;
+    -fx-scale-x: 0.95; 
+    -fx-scale-y: 0.95; 
 }
