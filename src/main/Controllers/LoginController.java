@@ -114,11 +114,11 @@ public class LoginController implements Initializable {
     private void setAcc_selector() {
         Model.getInstance().getViewFactory().setLoginAccountType(acc_selector.getValue());
         if (acc_selector.getValue() == AccountType.ADMIN) {
-            outer_pane.getChildren().remove(forgotaccountButton);
-            outer_pane.getChildren().remove(createnewaccountButton);
+            forgotaccountButton.setVisible(false);
+            createnewaccountButton.setVisible(false);
         } else {
-            outer_pane.getChildren().add(forgotaccountButton);
-            outer_pane.getChildren().add(createnewaccountButton);
+            forgotaccountButton.setVisible(true);
+            createnewaccountButton.setVisible(true);
         }
     }
 
@@ -187,6 +187,10 @@ public class LoginController implements Initializable {
                 lib_image.setVisible(false);
                 notificationPane.setVisible(true);
                 passwordField.clear(); 
+            }
+        } else {
+            if (isValidCredentials(username, password)) {
+                Model.getInstance()
             }
         }
     }
