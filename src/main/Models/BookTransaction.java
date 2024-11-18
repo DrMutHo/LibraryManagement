@@ -3,101 +3,68 @@ package main.Models;
 import java.time.LocalDate;
 
 public class BookTransaction {
-    private int transaction_id;
-    private int book_id;
-    private int user_id;
-    private LocalDate transaction_date;
-    private LocalDate due_date; // Ngày dự kiến trả
-    private String transaction_type; // borrow, return, purchase, reservation
-    private int quantity;
-    private double total_price;
-    private String status; // pending, completed, overdue, canceled
-    private String notes;
+    private int transactionId; // Unique ID cho mỗi giao dịch
+    private String title; // ID của khách hàng mượn sách (tham chiếu đến Client)
+    private int copyId; // ID của bản sao sách (tham chiếu đến BookCopy)
+    private LocalDate borrowDate; // Ngày mượn sách
+    private LocalDate returnDate; // Ngày trả sách
+    private String status; // Trạng thái của giao dịch ("Processing" hoặc "Done")
 
     // Constructor không tham số
     public BookTransaction() {
     }
 
-    // Constructor đầy đủ với tất cả các thuộc tính
-    public BookTransaction(int transaction_id, int book_id, int user_id, LocalDate transaction_date,
-            LocalDate due_date, String transaction_type, int quantity, double total_price,
-            String status, String notes) {
-        this.transaction_id = transaction_id;
-        this.book_id = book_id;
-        this.user_id = user_id;
-        this.transaction_date = transaction_date;
-        this.due_date = due_date;
-        this.transaction_type = transaction_type;
-        this.quantity = quantity;
-        this.total_price = total_price;
+    // Constructor đầy đủ
+    public BookTransaction(int transactionId, String title, int copyId, LocalDate borrowDate,
+            LocalDate returnDate, String status) {
+        this.transactionId = transactionId;
+        this.title = title;
+        this.copyId = copyId;
+        this.borrowDate = borrowDate;
+        this.returnDate = returnDate;
         this.status = status;
-        this.notes = notes;
     }
 
     // Getters và Setters cho tất cả các thuộc tính
 
-    public int getTransaction_id() {
-        return transaction_id;
+    public int getTransactionId() {
+        return transactionId;
     }
 
-    public void setTransaction_id(int transaction_id) {
-        this.transaction_id = transaction_id;
+    public void setTransactionId(int transactionId) {
+        this.transactionId = transactionId;
     }
 
-    public int getBook_id() {
-        return book_id;
+    public String getTitle() {
+        return title;
     }
 
-    public void setBook_id(int book_id) {
-        this.book_id = book_id;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getCopyId() {
+        return copyId;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setCopyId(int copyId) {
+        this.copyId = copyId;
     }
 
-    public LocalDate getTransaction_date() {
-        return transaction_date;
+    public LocalDate getBorrowDate() {
+        return borrowDate;
     }
 
-    public void setTransaction_date(LocalDate transaction_date) {
-        this.transaction_date = transaction_date;
+    public void setBorrowDate(LocalDate borrowDate) {
+        this.borrowDate = borrowDate;
     }
 
-    public LocalDate getDue_date() {
-        return due_date;
+    public LocalDate getReturnDate() {
+        return returnDate;
     }
 
-    public void setDue_date(LocalDate due_date) {
-        this.due_date = due_date;
-    }
-
-    public String getTransaction_type() {
-        return transaction_type;
-    }
-
-    public void setTransaction_type(String transaction_type) {
-        this.transaction_type = transaction_type;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getTotal_price() {
-        return total_price;
-    }
-
-    public void setTotal_price(double total_price) {
-        this.total_price = total_price;
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
 
     public String getStatus() {
@@ -106,13 +73,5 @@ public class BookTransaction {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
 }

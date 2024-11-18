@@ -72,6 +72,22 @@
                </ImageView>
             </graphic>
          </Button>
+         <Button fx:id="transaction_btn" mnemonicParsing="false" text="Transaction">
+            <effect>
+               <DropShadow blurType="TWO_PASS_BOX">
+                  <color>
+                     <Color red="0.6666666865348816" green="0.6666666865348816" blue="0.6666666865348816" />
+                  </color>
+               </DropShadow>
+            </effect>
+            <graphic>
+               <ImageView fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../../Images/profile-user.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+         </Button>
          <Line endX="120.0" />
          <Button fx:id="profile_btn" mnemonicParsing="false" styleClass="alt_menu_btn" text="Profile">
             <graphic>
