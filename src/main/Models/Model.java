@@ -1,11 +1,9 @@
 package main.Models;
 
+import main.Models.Client;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.Views.ViewFactory;
@@ -13,17 +11,19 @@ import main.Views.ViewFactory;
 public class Model {
     private static Model model;
     private ViewFactory viewFactory;
-    private boolean signupSuccessFlag;
+    private boolean clientLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
     private final ObservableList<BookTransaction> bookTransactions;
+    private final Client client;
 
     private Model() {
         this.viewFactory = new ViewFactory();
-        this.signupSuccessFlag = false;
+        this.clientLoginSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
         this.bookTransactions = FXCollections.observableArrayList();
+        this.client = new Client(0, "", "", "", "", "", null, 0, "", "");
     }
 
     public static synchronized Model getInstance() {
@@ -37,16 +37,20 @@ public class Model {
         return viewFactory;
     }
 
-    public boolean getSignupSuccessFlag() {
-        return this.signupSuccessFlag;
+    public boolean getClientLoginSuccessFlag() {
+        return this.clientLoginSuccessFlag;
     }
 
-    public void setSignupSuccessFlag(boolean flag) {
-        this.signupSuccessFlag = flag;
+    public void setclientLoginSuccessFlag(boolean flag) {
+        this.clientLoginSuccessFlag = flag;
     }
 
     public DatabaseDriver getDatabaseDriver() {
         return databaseDriver;
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     public void setAllBook() {
@@ -68,7 +72,6 @@ public class Model {
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count);
 
-                // Thêm Book vào ObservableList
                 allBook.add(book);
             }
         } catch (Exception e) {
@@ -105,6 +108,43 @@ public class Model {
 
     public ObservableList<Book> getAllBook() {
         return allBook;
+    }
+
+    public Book findBookByISBN(String ISBN) {
+        for (Book book : allBook) {
+            if (book.getIsbn().equals(ISBN))
+                return book;
+        }
+        return null;
+    }
+
+    public void evaluateClientCred(String username) {
+        ResultSet resultSet = databaseDriver.getClientData(username);
+        try {
+            if (resultSet != null && resultSet.next()) {
+                this.client.setClientId(resultSet.getInt("client_id"));
+                this.client.setName(resultSet.getString("name"));
+                this.client.setLibraryCardNumber(resultSet.getString("library_card_number"));
+                this.client.setEmail(resultSet.getString("email"));
+                this.client.setPhoneNumber(resultSet.getString("phone_number"));
+                this.client.setAddress(resultSet.getString("address"));
+                this.client.setRegistrationDate(resultSet.getDate("registration_date"));
+                this.client.setOutstandingFees(resultSet.getDouble("outstanding_fees"));
+                this.client.setUsername(resultSet.getString("username"));
+                this.client.setPasswordHash(resultSet.getString("password_hash"));
+                this.clientLoginSuccessFlag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

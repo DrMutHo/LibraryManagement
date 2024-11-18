@@ -108,7 +108,7 @@ public class DatabaseDriver {
         return resultSet;
     }
 
-    public ResultSet getClientnData(String username) {
+    public ResultSet getClientData(String username) {
         Statement statement;
         ResultSet resultSet = null;
         try {
@@ -171,3 +171,4 @@ public class DatabaseDriver {
         }
     }
 }
+

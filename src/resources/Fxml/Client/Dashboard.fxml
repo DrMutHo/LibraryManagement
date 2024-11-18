@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.ImageView?>
@@ -60,11 +64,36 @@
                         </VBox>
                     </children>
                 </HBox>
-                <HBox layoutY="150.0" prefHeight="175.0" prefWidth="850.0" spacing="20" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                <HBox layoutY="150.0" prefHeight="198.0" prefWidth="850.0" spacing="20" styleClass="top-books-container" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                     <children>
                         <Label prefHeight="18.0" prefWidth="200.0" styleClass="top-books-label" text="Top 5 Favourite Books" />
                     </children>
                 </HBox>
+
+                <HBox layoutY="350.0" prefHeight="342.0" prefWidth="850.0" spacing="20" styleClass="chart-container" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                    <children>
+                        <!-- Line Chart for Borrowing Trends -->
+                        <LineChart fx:id="borrowingTrendsLineChart" prefHeight="300.0" prefWidth="400.0" styleClass="chart">
+                            <xAxis>
+                                <CategoryAxis label="Month" styleClass="axis-label" />
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Books Borrowed" styleClass="axis-label" />
+                            </yAxis>
+                        </LineChart>
+                        
+                        <!-- Bar Chart for Borrowing Trends -->
+                        <BarChart fx:id="borrowingTrendsBarChart" prefHeight="300.0" prefWidth="400.0" styleClass="chart">
+                            <xAxis>
+                                <CategoryAxis label="Month" styleClass="axis-label" />
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Books Borrowed" styleClass="axis-label" />
+                            </yAxis>
+                        </BarChart>
+                    </children>
+                </HBox>
+
             </children>
         </AnchorPane>
     </center>

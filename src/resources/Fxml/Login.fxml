@@ -12,10 +12,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="outer_pane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="AnchorPane_out" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
    <children>
-      <ImageView fitHeight="750.0" fitWidth="850.0" opacity="0.56" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="33.0" AnchorPane.topAnchor="0.0">
+      <ImageView fitHeight="750.0" fitWidth="850.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="33.0" AnchorPane.topAnchor="0.0">
          <image>
             <Image url="@../Images/112-library-wallpaper-kids-room-mural-modern-design.png" />
          </image>
@@ -23,9 +24,9 @@
             <Rectangle2D height="750.0" width="850.0" />
          </viewport>
       </ImageView>
-      <AnchorPane fx:id="inner_pane" layoutX="213.0" layoutY="83.0" maxHeight="586.31" maxWidth="489.25" minHeight="-Infinity" minWidth="-Infinity" prefHeight="583.31" prefWidth="425.0" styleClass="AnchorPane_login" stylesheets="@../Styles/Login.css" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="213.0">
+      <AnchorPane fx:id="inner_pane" layoutX="213.0" layoutY="83.0" maxHeight="586.31" maxWidth="489.25" minHeight="-Infinity" minWidth="-Infinity" prefHeight="584.0" prefWidth="425.0" styleClass="AnchorPane_login" stylesheets="@../Styles/Login.css" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="213.0">
          <children>
-            <ImageView fitHeight="333.0" fitWidth="289.0" layoutX="75.0" layoutY="14.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
+            <ImageView fx:id="lib_image" fitHeight="333.0" fitWidth="289.0" layoutX="75.0" layoutY="14.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
                <image>
                   <Image url="@../Images/online-library-isometric-design_98292-34.jpg" />
                </image>
@@ -76,6 +77,17 @@
                   </ImageView>
                </children>
             </HBox>
+            <AnchorPane fx:id="notificationPane" layoutX="7.0" layoutY="53.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="212.0" prefWidth="411.0" styleClass="alert_anchorpane" stylesheets="@../Styles/Alert.css" visible="false">
+               <children>
+                  <Button fx:id="alert_button" layoutX="255.0" layoutY="154.0" mnemonicParsing="false" onAction="#handleOkButtonAction" prefHeight="30.0" prefWidth="88.0" styleClass="alert_okButton" text="OK!" />
+                  <ImageView fitHeight="240.0" fitWidth="179.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/oops.jpg" />
+                     </image>
+                  </ImageView>
+                  <Text layoutX="194.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="alert_notice" text="Your account or password is incorrect !" />
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
    </children>
