@@ -14,6 +14,7 @@ public class Model {
     private boolean clientLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
+    private ObservableList<Book> recentlyAddBook;
     private final ObservableList<BookTransaction> bookTransactions;
     private final Client client;
 
@@ -22,6 +23,7 @@ public class Model {
         this.clientLoginSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
+        this.recentlyAddBook = FXCollections.observableArrayList();
         this.bookTransactions = FXCollections.observableArrayList();
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "");
     }
@@ -79,8 +81,34 @@ public class Model {
         }
     }
 
+    public void setRecentlyBook() {
+        ResultSet resultSet = databaseDriver.getBookByClientID(Model.getInstance().getClient().getClientId());
+        try {
+            while (resultSet.next()) {
+                int book_id = resultSet.getInt("book_id");
+                String title = resultSet.getString("title");
+                String author = resultSet.getString("author");
+                String isbn = resultSet.getString("isbn");
+                String genre = resultSet.getString("genre");
+                String language = resultSet.getString("language");
+                String description = resultSet.getString("description");
+                int publication_year = resultSet.getInt("publication_year");
+                String image_path = resultSet.getString("image_path");
+                Double average_rating = resultSet.getDouble("average_rating");
+                int review_count = resultSet.getInt("review_count");
+
+                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
+                        image_path, average_rating, review_count);
+
+                recentlyAddBook.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setBookTransaction() {
-        ResultSet resultSet = databaseDriver.getTransactionByClientID(1);
+        ResultSet resultSet = databaseDriver.getTransactionByClientID(Model.getInstance().getClient().getClientId());
         try {
             while (resultSet.next()) {
                 int transactionId = resultSet.getInt("transaction_id");
@@ -92,7 +120,6 @@ public class Model {
                         : null;
                 String status = resultSet.getString("status");
 
-                // Tạo đối tượng BookTransaction và thêm vào danh sách
                 BookTransaction transaction = new BookTransaction(transactionId, title, copyId, borrowDate, returnDate,
                         status);
                 bookTransactions.add(transaction);
@@ -108,6 +135,10 @@ public class Model {
 
     public ObservableList<Book> getAllBook() {
         return allBook;
+    }
+
+    public ObservableList<Book> getRecentlyAddBook() {
+        return recentlyAddBook;
     }
 
     public Book findBookByISBN(String ISBN) {

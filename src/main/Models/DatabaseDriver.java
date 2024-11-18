@@ -76,7 +76,27 @@ public class DatabaseDriver {
                 "bt.copy_id, " +
                 "bt.borrow_date, " +
                 "bt.return_date, " +
-                "bt.status, " +
+                "bt.status " +
+                "FROM BorrowTransaction bt " +
+                "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
+                "JOIN Book b ON bc.book_id = b.book_id " +
+                "WHERE bt.client_id = ?";
+        try {
+            Connection connection = this.dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, client_id);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultSet;
+    }
+
+    public ResultSet getBookByClientID(int client_id) {
+        ResultSet resultSet = null;
+        String query = "SELECT " +
+                "b.* " +
                 "FROM BorrowTransaction bt " +
                 "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
                 "JOIN Book b ON bc.book_id = b.book_id " +
@@ -171,4 +191,3 @@ public class DatabaseDriver {
         }
     }
 }
-

@@ -3,9 +3,12 @@ package main.Controllers.Client;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import main.Models.BookTransaction;
 import main.Models.Model;
 
@@ -31,14 +34,19 @@ public class BookTransactionController {
     private TableColumn<BookTransaction, LocalDate> returnDateColumn;
     @FXML
     private TableColumn<BookTransaction, String> statusColumn;
-
+    @FXML
+    private ImageView bookImageView;
+    @FXML
+    private Label labelTitle, labelAuthor, labelISBN, labelGenre, labelLanguage, labelPublicationYear,
+            labelAverageRating, labelReviewCount;
+    @FXML
+    private TextArea textDescription;
     private ObservableList<BookTransaction> transactionData = FXCollections.observableArrayList();
 
     @FXML
     private void initialize() {
         Model.getInstance().setBookTransaction();
         // Khởi tạo các cột của bảng với thuộc tính của lớp BookTransaction
-        transactionIdColumn.setCellValueFactory(new PropertyValueFactory<>("transactionId"));
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         copyIdColumn.setCellValueFactory(new PropertyValueFactory<>("copyId"));
         borrowDateColumn.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
@@ -46,7 +54,7 @@ public class BookTransactionController {
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         // Nạp dữ liệu mẫu vào bảng
-        loadDataFromDatabase(); // Thay 101 bằng ID của khách hàng bạn muốn hiển thị
+        loadDataFromDatabase();
         transactionTable.setItems(transactionData);
     }
 
@@ -57,4 +65,5 @@ public class BookTransactionController {
             e.printStackTrace();
         }
     }
+
 }
