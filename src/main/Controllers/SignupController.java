@@ -1,21 +1,37 @@
 package main.Controllers;
 import org.mindrot.jbcrypt.BCrypt;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import main.Models.Model;
 import main.Views.AccountType;
@@ -83,10 +99,14 @@ public class SignupController implements Initializable {
     private HBox signup_hbox6;
     @FXML
     private ImageView signup_imageErrorIcon6;
+    @FXML
+    private AnchorPane signup_anchorpane;
+    @FXML
+    private Stage stage;
 
     @Override 
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        username_password_promptext_init();
+        signup_prompt_init();
         try { 
             passwordField_init();
         } catch (Exception e) {
@@ -114,15 +134,16 @@ public class SignupController implements Initializable {
         
     }
 
-    public void username_password_promptext_init() {
+    public void signup_prompt_init() {
         signup_usernameField.setPromptText("Enter your username");
-        signup_passwordField.setPromptText("Enter your password");
-        signup_textField.setPromptText("Enter your password");
+        signup_passwordField.setPromptText("Password must be 6+ characters");
+        signup_textField.setPromptText("Password must be 6+ characters");
         signup_passwordField1.setPromptText("Confirmed password");
         signup_textField1.setPromptText("Confirmed password");
         signup_emailField.setPromptText("Enter your email"); 
         signup_addressField.setPromptText("Enter your home address");
         signup_phoneNumField.setPromptText("Enter your phone number");   
+        signup_name.setPromptText("Enter your fullname");
 
         signup_passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -159,6 +180,34 @@ public class SignupController implements Initializable {
                 signup_hbox2.getStyleClass().remove("signup_hbox_set-focused");
             }
         });
+        signup_emailField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                signup_hbox3.getStyleClass().add("signup_hbox_set-focused");
+            } else {
+                signup_hbox3.getStyleClass().remove("signup_hbox_set-focused");
+            }
+        });
+        signup_phoneNumField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                signup_hbox4.getStyleClass().add("signup_hbox_set-focused");
+            } else {
+                signup_hbox4.getStyleClass().remove("signup_hbox_set-focused");
+            }
+        });
+        signup_name.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                signup_hbox6.getStyleClass().add("signup_hbox_set-focused");
+            } else {
+                signup_hbox6.getStyleClass().remove("signup_hbox_set-focused");
+            }
+        });
+        signup_addressField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                signup_hbox5.getStyleClass().add("signup_hbox_set-focused");
+            } else {
+                signup_hbox5.getStyleClass().remove("signup_hbox_set-focused");
+            }
+        });
     }
     @FXML
     private void togglePasswordVisibility() {
@@ -193,11 +242,41 @@ public class SignupController implements Initializable {
             signup_imageIcon1.setImage(signup_eyeClosed);
         }
     }
-
+    public void showLoadingAndCloseSignUpWindow() {
+        StackPane loadingOverlay = new StackPane();
+        loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);"); 
+        loadingOverlay.setPrefSize(signup_anchorpane.getWidth(), signup_anchorpane.getHeight()); 
+    
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        loadingOverlay.getChildren().add(progressIndicator);
+    
+        StackPane.setAlignment(progressIndicator, Pos.CENTER);
+    
+        signup_anchorpane.getChildren().add(loadingOverlay);
+    
+        Task<Void> loadingTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                // Giả lập một tác vụ dài
+                for (int i = 0; i <= 1; i++) {
+                    Thread.sleep(500); 
+                }
+                return null;
+            }
+        };
+        loadingTask.setOnSucceeded(event -> {
+            signup_anchorpane.getChildren().remove(loadingOverlay);
+            Platform.runLater(() -> {
+                Model.getInstance().getViewFactory().showLoginWindow();
+                Model.getInstance().getViewFactory().closeStage(stage);
+            });
+        });
+        new Thread(loadingTask).start();
+    }
     @FXML
     private void onExit() {
-        Stage stage = (Stage) signup_exitButton.getScene().getWindow();
-        Model.getInstance().getViewFactory().showLoginWindow();
+        stage = (Stage) signup_exitButton.getScene().getWindow();
+        showLoadingAndCloseSignUpWindow();
     }
 
     @FXML
@@ -212,7 +291,16 @@ public class SignupController implements Initializable {
         String hashedPassword = BCrypt.hashpw(password1, BCrypt.gensalt());
         if (isValidSignUp(email, phoneNum, username, password, password1, address, name)) {
             Model.getInstance().getDatabaseDriver().createClient(email, phoneNum, address, username, hashedPassword, name);
-        }
+            signup_showAlert("Thông báo!", "Đăng ký thành công");
+        } 
+    }
+
+    private void signup_showAlert(String title, String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
     }
 
     private boolean isValidSignUp(String email, String phoneNum,
@@ -279,11 +367,72 @@ public class SignupController implements Initializable {
         }
         return true;
     }
-    private boolean isValidEmail(String email) {
+
+    private boolean isValidEmailApi(String email) {
+        boolean isValidEmailApi = false;
         if (email == null || email.trim().isEmpty()) {
-            return false; // Kiểm tra null và chuỗi rỗng
+            return isValidEmailApi;
+        } else {
+            try { 
+            @SuppressWarnings("deprecation")
+            URL url = new URL("https://emailvalidation.abstractapi.com/v1/?api_key=fe97d39becd94b14a4a19b97ebcc29a1&email=" + email);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET"); 
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                Gson gson = new Gson();
+                Type type = new TypeToken<Map<String, Object>>(){}.getType();
+                Map<String, Object> map = gson.fromJson(response.toString(), type);
+                
+                System.out.println(map.get("is_free_email"));
+                Map<String, Object> isFreeEmail = (Map<String, Object>) map.get("is_free_email");
+
+
+                boolean value = (boolean) isFreeEmail.get("value");
+                isValidEmailApi = value;
+                System.out.println("Value of is_free_email: " + value);
+            } else {
+                System.out.println("GET request not worked");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return true;
+    }
+    return isValidEmailApi;
+}   
+
+    private boolean isValidEmailDatabase(String email) {
+        boolean isValidEmailDatabase = false;
+        if (email.trim().isEmpty() || email == null) {
+            return isValidEmailDatabase;
+        } else {
+            try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection()) {
+                String query = "SELECT COUNT(*) FROM Client WHERE email = ?";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                    preparedStatement.setString(1, email);
+                    ResultSet resultSet = preparedStatement.executeQuery();
+                    if (resultSet.next()) {
+                        int count = resultSet.getInt(1);
+                        return count == 0;
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return isValidEmailDatabase;
+    }
+    private boolean isValidEmail(String email) {
+        return isValidEmailApi(email) && isValidEmailDatabase(email);
     }
 
     private boolean isValidAddress(String address) {
@@ -292,10 +441,8 @@ public class SignupController implements Initializable {
 
     private boolean isValidUserName(String username) {
     if (username == null || username.trim().isEmpty()) {
-        return false; // Username không được để trống
+        return false; 
     }
-
-    // Kết nối đến cơ sở dữ liệu
     try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection()) {
         String query = "SELECT COUNT(*) FROM Client WHERE username = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -303,14 +450,14 @@ public class SignupController implements Initializable {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 int count = resultSet.getInt(1);
-                return count == 0; // Trả về true nếu username không tồn tại
+                return count == 0;
             }
         }
     } catch (SQLException e) {
-        e.printStackTrace(); // Xử lý ngoại lệ nếu có lỗi xảy ra
+        e.printStackTrace(); 
     }
 
-    return false; // Mặc định trả về false nếu có lỗi xảy ra
+    return false;
 }
 
     private boolean isValidPhoneNum(String phoneNum) {

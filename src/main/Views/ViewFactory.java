@@ -7,7 +7,11 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.StackPane;
+import javafx.concurrent.Task;
 import main.Controllers.Client.ClientController;
 
 public class ViewFactory {
@@ -17,13 +21,13 @@ public class ViewFactory {
     private BorderPane dashboardView;
     private BorderPane homeView;
     private BorderPane profileView;
-    private FXMLLoader loader; 
-    private Stage loginAndSignUpStage;
+    private BorderPane browsingView;
+    private BorderPane notiView;
+    private BorderPane booktransactionView;
 
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
         this.clientSelectedMenuItem = new SimpleObjectProperty<>();
-        this.loginAndSignUpStage = new Stage();
     }
 
     public AccountType getLoginAccountType() {
@@ -74,6 +78,41 @@ public class ViewFactory {
         return profileView;
     }
 
+    public BorderPane getBrowsingView() {
+        if (browsingView == null) {
+            try {
+                browsingView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Browsing.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return browsingView;
+    }
+
+    public BorderPane getBookTransactionView() {
+        if (booktransactionView == null) {
+            try {
+                booktransactionView = new FXMLLoader(
+                        getClass().getResource("/resources/Fxml/Client/BookTransaction.fxml"))
+                        .load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return booktransactionView;
+    }
+
+    public BorderPane getNotiView() {
+        if (notiView == null) {
+            try {
+                notiView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Notification.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return notiView;
+    }
+
     public void showClientWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Client.fxml"));
         ClientController clientController = new ClientController();
@@ -83,30 +122,12 @@ public class ViewFactory {
 
     public void showLoginWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Login.fxml"));
-        Scene scene = null;
-        try {
-            scene = new Scene(loader.load());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        loginAndSignUpStage.setScene(scene);
-        loginAndSignUpStage.setResizable(false);
-        loginAndSignUpStage.setTitle("Library Management System");
-        loginAndSignUpStage.show();
+        createStage(loader);
     }
-  
+
     public void showSignUpWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
-        Scene scene = null;
-        try {
-            scene = new Scene(loader.load());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        loginAndSignUpStage.setScene(scene);
-        loginAndSignUpStage.setResizable(false);
-        loginAndSignUpStage.setTitle("Library Management System");
-        loginAndSignUpStage.show();
+        createStage(loader);
     }
 
     private void createStage(FXMLLoader loader) {
@@ -126,5 +147,4 @@ public class ViewFactory {
     public void closeStage(Stage stage) {
         stage.close();
     }
-
 }

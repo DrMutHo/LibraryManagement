@@ -14,7 +14,7 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="180.0" styleClass="main_menu_container" stylesheets="@../../Styles/ClientMenu.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.ClientMenuController">
    <AnchorPane prefHeight="730.0" prefWidth="160.0" styleClass="left_container">
       <VBox prefHeight="80.0" prefWidth="160.0" styleClass="title_container" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <ImageView fitHeight="39.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+         <ImageView fitHeight="38.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../../Images/books.png" />
             </image>
@@ -40,7 +40,39 @@
                </ImageView>
             </graphic>
          </Button>
-         <Button fx:id="profile_btn" mnemonicParsing="false" text="Profile">
+         <Button fx:id="browsing_btn" mnemonicParsing="false" text="Browsing">
+            <effect>
+               <DropShadow blurType="TWO_PASS_BOX">
+                  <color>
+                     <Color red="0.6666666865348816" green="0.6666666865348816" blue="0.6666666865348816" />
+                  </color>
+               </DropShadow>
+            </effect>
+            <graphic>
+               <ImageView fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../../Images/profile-user.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+         </Button>
+         <Button fx:id="noti_btn" layoutX="30.0" layoutY="140.0" mnemonicParsing="false" text="Notification">
+            <effect>
+               <DropShadow blurType="TWO_PASS_BOX">
+                  <color>
+                     <Color red="0.6666666865348816" green="0.6666666865348816" blue="0.6666666865348816" />
+                  </color>
+               </DropShadow>
+            </effect>
+            <graphic>
+               <ImageView fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../../Images/profile-user.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+         </Button>
+         <Button fx:id="transaction_btn" mnemonicParsing="false" text="Transaction">
             <effect>
                <DropShadow blurType="TWO_PASS_BOX">
                   <color>
@@ -57,7 +89,7 @@
             </graphic>
          </Button>
          <Line endX="120.0" />
-         <Button fx:id="profile1_btn" mnemonicParsing="false" styleClass="alt_menu_btn" text="Profile">
+         <Button fx:id="profile_btn" mnemonicParsing="false" styleClass="alt_menu_btn" text="Profile">
             <graphic>
                <ImageView fitHeight="27.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                   <image>

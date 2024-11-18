@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -32,7 +33,7 @@ public class CardController implements Initializable {
     }
 
     public void setData(Book book) {
-        String image_path = getClass().getResource(book.getImage_path()).toExternalForm();
+        String image_path = getClass().getResource(book.getImagePath()).toExternalForm();
         Image bookCoverImage = new Image(image_path, true);
         imageView.setImage(bookCoverImage);
         title.setText(book.getTitle());
@@ -44,24 +45,16 @@ public class CardController implements Initializable {
     }
 
     private void addOpenBookEffect() {
-        RotateTransition rotateCover = new RotateTransition(Duration.seconds(0.5), imageView);
-        rotateCover.setFromAngle(0);
-        rotateCover.setToAngle(-30);
+        ScaleTransition scaleUp = new ScaleTransition(Duration.seconds(0.5), imageView);
+        scaleUp.setToX(1.2);
+        scaleUp.setToY(1.2);
 
-        TranslateTransition translateCover = new TranslateTransition(Duration.seconds(0.5), imageView);
-        translateCover.setFromX(0);
-        translateCover.setToX(-10);
+        ScaleTransition scaleDown = new ScaleTransition(Duration.seconds(0.5), imageView);
+        scaleDown.setToX(1.0);
+        scaleDown.setToY(1.0);
 
-        imageView.setOnMouseEntered(event -> {
-            rotateCover.playFromStart();
-            translateCover.playFromStart();
-        });
+        imageView.setOnMouseEntered(event -> scaleUp.playFromStart());
 
-        imageView.setOnMouseExited(event -> {
-            rotateCover.setRate(-1); // Đảo ngược hiệu ứng
-            translateCover.setRate(-1);
-            rotateCover.play();
-            translateCover.play();
-        });
+        imageView.setOnMouseExited(event -> scaleDown.playFromStart());
     }
 }
