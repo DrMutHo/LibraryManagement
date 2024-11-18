@@ -1,6 +1,10 @@
 package main.Models;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,12 +16,14 @@ public class Model {
     private boolean signupSuccessFlag;
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
+    private final ObservableList<BookTransaction> bookTransactions;
 
     private Model() {
         this.viewFactory = new ViewFactory();
         this.signupSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
+        this.bookTransactions = FXCollections.observableArrayList();
     }
 
     public static synchronized Model getInstance() {
@@ -70,15 +76,35 @@ public class Model {
         }
     }
 
+    public void setBookTransaction() {
+        ResultSet resultSet = databaseDriver.getTransactionByClientID(1);
+        try {
+            while (resultSet.next()) {
+                int transactionId = resultSet.getInt("transaction_id");
+                String title = resultSet.getString("title");
+                int copyId = resultSet.getInt("copy_id");
+                LocalDate borrowDate = resultSet.getDate("borrow_date").toLocalDate();
+                LocalDate returnDate = resultSet.getDate("return_date") != null
+                        ? resultSet.getDate("return_date").toLocalDate()
+                        : null;
+                String status = resultSet.getString("status");
+
+                // Tạo đối tượng BookTransaction và thêm vào danh sách
+                BookTransaction transaction = new BookTransaction(transactionId, title, copyId, borrowDate, returnDate,
+                        status);
+                bookTransactions.add(transaction);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ObservableList<BookTransaction> getBookTransaction() {
+        return bookTransactions;
+    }
+
     public ObservableList<Book> getAllBook() {
         return allBook;
     }
 
-    public Book findBookByISBN(String ISBN) {
-        for (Book book : allBook) {
-            if (book.getIsbn().equals(ISBN))
-                return book;
-        }
-        return null;
-    }
 }
