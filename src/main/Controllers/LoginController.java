@@ -1,6 +1,7 @@
 package main.Controllers;
 
 import java.io.IOException;
+import java.lang.classfile.components.ClassPrinter.Node;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,6 +31,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import main.Models.DatabaseDriver;
@@ -74,12 +76,10 @@ public class LoginController implements Initializable {
     private AnchorPane notificationPane;
     @FXML ImageView lib_image;
     private Stage stage;
-
     @FXML
-    public void handleOkButtonAction() {
-        notificationPane.setVisible(false);
-        lib_image.setVisible(true);
-    }
+    private AnchorPane inner_pane;
+
+    
     
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -92,6 +92,7 @@ public class LoginController implements Initializable {
         }
         loginButton.setOnAction(event -> onLogin());
         createnewaccountButton.setOnAction(event -> onsignUp());
+        forgotaccountButton.setOnAction(event -> onResetPassword());
     }
 
     @FXML
@@ -111,6 +112,7 @@ public class LoginController implements Initializable {
         }
     }
 
+    @FXML
     private void setAcc_selector() {
         Model.getInstance().getViewFactory().setLoginAccountType(acc_selector.getValue());
         if (acc_selector.getValue() == AccountType.ADMIN) {
@@ -171,7 +173,17 @@ public class LoginController implements Initializable {
         imageIcon.setImage(eyeClosed);
         toggleButton.setOnAction(event -> togglePasswordVisibility());
     }
-
+    @FXML 
+    private void onResetPassword() {
+        stage = (Stage) forgotaccountButton.getScene().getWindow();
+        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
+            Model.getInstance().getViewFactory().showLoading(() -> {
+                Model.getInstance().getViewFactory().ShowResetPasswordWindow();
+                Model.getInstance().getViewFactory().closeStage(stage);
+            }, outer_pane);
+        }
+    }
+    @FXML
     private void onLogin() {
         stage = (Stage) loginButton.getScene().getWindow();
         String username = usernameField.getText();
@@ -181,51 +193,64 @@ public class LoginController implements Initializable {
             if (isValidCredentials(username, password)) {
                 Model.getInstance().getDatabaseDriver().getClientData(username);
                 Model.getInstance().evaluateClientCred(username);
-                Model.getInstance().getViewFactory().showClientWindow();
-                Model.getInstance().getViewFactory().closeStage(stage);
+                Model.getInstance().getViewFactory().showLoading(() -> {
+                    Model.getInstance().getViewFactory().showClientWindow();;
+                    Model.getInstance().getViewFactory().closeStage(stage);
+                }, outer_pane);
             } else {
                 lib_image.setVisible(false);
                 notificationPane.setVisible(true);
+                disableAllComponents(inner_pane);
                 passwordField.clear(); 
-            }
-        } else {
-            if (isValidCredentials(username, password)) {
-                Model.getInstance()
             }
         }
     }
 
-    public void showLoadingAndOpenSignUpWindow() {
-        StackPane loadingOverlay = new StackPane();
-        loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-        loadingOverlay.setPrefSize(outer_pane.getWidth(), outer_pane.getHeight()); 
-        ProgressIndicator progressIndicator = new ProgressIndicator();
-        loadingOverlay.getChildren().add(progressIndicator);
-        StackPane.setAlignment(progressIndicator, Pos.CENTER);
-        outer_pane.getChildren().add(loadingOverlay);
-        Task<Void> loadingTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                for (int i = 0; i <=1 ; i++) {
-                    Thread.sleep(500);
-                }
-                return null;
-            }
-        };
-        loadingTask.setOnSucceeded(event -> {
-            outer_pane.getChildren().remove(loadingOverlay);
-            Platform.runLater(() -> {
-                Model.getInstance().getViewFactory().showSignUpWindow();
-                Model.getInstance().getViewFactory().closeStage(stage);
-            });
-        });
-        new Thread(loadingTask).start();
+    @FXML
+    public void handleOkButtonAction() {
+        notificationPane.setVisible(false);
+        lib_image.setVisible(true);
+        enableAllComponents(inner_pane);
+
     }
+    private void disableAllComponents(AnchorPane root) {
+        for (javafx.scene.Node node : root.getChildren()) {
+            // Kiểm tra nếu node không phải là notificationPane và không phải con của notificationPane
+            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null && ((AnchorPane) node).getId().equals("notificationPane"))) {
+                node.setDisable(true);
+            } else if (node instanceof AnchorPane && ((AnchorPane) node).getId().equals("notificationPane")) {
+                // Nếu node là notificationPane, duyệt qua các con của notificationPane
+                AnchorPane notificationPane = (AnchorPane) node;
+                for (javafx.scene.Node notificationChild : notificationPane.getChildren()) {
+                    notificationChild.setDisable(false);  // Đảm bảo các thành phần trong notificationPane không bị disable
+                }
+            }
+        }
+    }
+
+    private void enableAllComponents(AnchorPane root) {
+        for (javafx.scene.Node node : root.getChildren()) {
+            // Kiểm tra nếu node không phải là notificationPane và không phải con của notificationPane
+            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null && ((AnchorPane) node).getId().equals("notificationPane"))) {
+                node.setDisable(false);
+            } else if (node instanceof AnchorPane && ((AnchorPane) node).getId().equals("notificationPane")) {
+                // Nếu node là notificationPane, duyệt qua các con của notificationPane
+                AnchorPane notificationPane = (AnchorPane) node;
+                for (javafx.scene.Node notificationChild : notificationPane.getChildren()) {
+                    notificationChild.setDisable(false);  // Đảm bảo các thành phần trong notificationPane không bị disable
+                }
+            }
+        }
+    }
+
 
     private void onsignUp() {
         stage = (Stage) createnewaccountButton.getScene().getWindow();
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
-            showLoadingAndOpenSignUpWindow();
+            Model.getInstance().getViewFactory().showLoading(() -> {
+                Model.getInstance().getViewFactory().showSignUpWindow();
+                Model.getInstance().getViewFactory().closeStage(stage);
+            }, outer_pane);
         }
     }
 

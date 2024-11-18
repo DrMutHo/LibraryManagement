@@ -1,8 +1,10 @@
 package main.Views;
 
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -10,9 +12,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.StackPane;
 import javafx.concurrent.Task;
 import main.Controllers.Client.ClientController;
+import javafx.scene.layout.AnchorPane;
 
 public class ViewFactory {
     private AccountType loginAccountType;
@@ -115,6 +119,42 @@ public class ViewFactory {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Signup.fxml"));
         createStage(loader);
     }
+
+    public void ShowResetPasswordWindow() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Forgotpassword.fxml"));
+        createStage(loader);
+    }
+
+    public void showLoading(Runnable onLoadingComplete, AnchorPane anchorpane) {
+    StackPane loadingOverlay = new StackPane();
+    loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+    loadingOverlay.setPrefSize(anchorpane.getWidth(), anchorpane.getHeight());
+
+    ProgressIndicator progressIndicator = new ProgressIndicator();
+    loadingOverlay.getChildren().add(progressIndicator);
+    StackPane.setAlignment(progressIndicator, Pos.CENTER);
+
+    anchorpane.getChildren().add(loadingOverlay);
+
+    Task<Void> loadingTask = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+            // Giả lập quá trình loading
+            Thread.sleep(1000);
+            return null;
+        }
+    };
+
+    loadingTask.setOnSucceeded(event -> {
+        // Xóa overlay loading
+        anchorpane.getChildren().remove(loadingOverlay);
+
+        // Chạy hành động được truyền vào sau khi loading
+        Platform.runLater(onLoadingComplete);
+    });
+
+    new Thread(loadingTask).start();
+}
 
     private void createStage(FXMLLoader loader) {
         Scene scene = null;
