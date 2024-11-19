@@ -1,11 +1,6 @@
 .client_cell_container {
-    -fx-background-color: #FFFFFF;
     -fx-background-radius: 10;
     -fx-effect: dropshadow(three-pass-box, #DDDDDD, 5, 0, 0, 7);
-}
-
-.client_cell_container FontAwesomeIconView {
-    -fx-fill: #132A13;
 }
 
 .client_cell_container HBox {
@@ -32,4 +27,22 @@
 
 .delete_btn:hover {
     -fx-cursor: hand;
+}
+
+.message-label {
+    -fx-text-fill: black;
+}
+
+/* Keep the message label text color black when the cell is selected */
+.list-cell:filled:selected .message-label,
+.list-cell:filled:selected:focused .message-label,
+.list-cell:filled:selected:hover .message-label {
+    -fx-text-fill: black;
+}
+
+/* Optional: Remove the selection background color */
+.list-cell:filled:selected,
+.list-cell:filled:selected:focused,
+.list-cell:filled:selected:hover {
+    -fx-background-color: transparent;
 }

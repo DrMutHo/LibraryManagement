@@ -1,10 +1,16 @@
 package main.Models;
+
 import main.Models.Client;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.sql.Timestamp;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import main.Views.NotificationType;
+import main.Views.RecipientType;
 import main.Views.ViewFactory;
 
 public class Model {
@@ -13,6 +19,7 @@ public class Model {
     private boolean clientLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
+    private final ObservableList<Notification> allNotifications;
     private final Client client;
 
     private Model() {
@@ -20,6 +27,7 @@ public class Model {
         this.clientLoginSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
+        this.allNotifications = FXCollections.observableArrayList();
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "");
     }
 
@@ -87,34 +95,91 @@ public class Model {
         }
         return null;
     }
-    
+
     public void evaluateClientCred(String username) {
-    ResultSet resultSet = databaseDriver.getClientData(username);
-    try {
-        if (resultSet != null && resultSet.next()) {
-            this.client.setClientId(resultSet.getInt("client_id")); 
-            this.client.setName(resultSet.getString("name")); 
-            this.client.setLibraryCardNumber(resultSet.getString("library_card_number"));
-            this.client.setEmail(resultSet.getString("email")); 
-            this.client.setPhoneNumber(resultSet.getString("phone_number"));
-            this.client.setAddress(resultSet.getString("address"));
-            this.client.setRegistrationDate(resultSet.getDate("registration_date"));
-            this.client.setOutstandingFees(resultSet.getDouble("outstanding_fees"));
-            this.client.setUsername(resultSet.getString("username"));
-            this.client.setPasswordHash(resultSet.getString("password_hash"));
-            this.clientLoginSuccessFlag = true;
+        ResultSet resultSet = databaseDriver.getClientData(username);
+        try {
+            if (resultSet != null && resultSet.next()) {
+                this.client.setClientId(resultSet.getInt("client_id"));
+                this.client.setName(resultSet.getString("name"));
+                this.client.setLibraryCardNumber(resultSet.getString("library_card_number"));
+                this.client.setEmail(resultSet.getString("email"));
+                this.client.setPhoneNumber(resultSet.getString("phone_number"));
+                this.client.setAddress(resultSet.getString("address"));
+                this.client.setRegistrationDate(resultSet.getDate("registration_date"));
+                this.client.setOutstandingFees(resultSet.getDouble("outstanding_fees"));
+                this.client.setUsername(resultSet.getString("username"));
+                this.client.setPasswordHash(resultSet.getString("password_hash"));
+                this.clientLoginSuccessFlag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-    } catch (SQLException e) {
-        e.printStackTrace(); 
-    } finally {
-        if (resultSet != null) {
+    }
+
+    private void prepareNotifications(ObservableList<Notification> notifications, int limit) {
+        ResultSet resultSet = databaseDriver.getNotifications(this.client.getClientId(), limit);
+        try {
+            while (resultSet != null && resultSet.next()) {
+                int notificationId = resultSet.getInt("notification_id");
+                int recipientId = resultSet.getInt("recipient_id");
+                String recipientTypeStr = resultSet.getString("recipient_type");
+                RecipientType recipientType = RecipientType.fromString(recipientTypeStr);
+                String notificationTypeStr = resultSet.getString("notification_type");
+                NotificationType notificationType = NotificationType.fromString(notificationTypeStr);
+                String message = resultSet.getString("message");
+                Timestamp timestamp = resultSet.getTimestamp("created_at");
+                LocalDateTime createdAt = timestamp.toLocalDateTime();
+                boolean isRead = resultSet.getBoolean("is_read");
+
+                Notification notification = new Notification(
+                        notificationId,
+                        recipientId,
+                        recipientType,
+                        notificationType,
+                        message,
+                        createdAt,
+                        isRead);
+
+                notifications.add(notification);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
             try {
-                resultSet.close();
+                if (resultSet != null && !resultSet.isClosed()) {
+                    resultSet.close();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
-}
+
+    public void deleteNotification(Notification notification) {
+        databaseDriver.deleteNotification(notification.getNotificationId());
+        allNotifications.remove(notification);
+    }
+
+    public void updateNotification(Notification notification) {
+        databaseDriver.updateNotification(notification.getNotificationId(), true);
+        notification.setRead(true);
+    }
+
+    public void setAllNotifications() {
+        prepareNotifications(this.allNotifications, -1);
+    }
+
+    public ObservableList<Notification> getAllNotifications() {
+        return allNotifications;
+    }
 
 }

@@ -2,32 +2,27 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane prefHeight="50.0" prefWidth="750.0" styleClass="client_cell_container"
-            stylesheets="@../../Styles/Client/NotificationCell.css" xmlns="http://javafx.com/javafx/23"
-            xmlns:fx="http://javafx.com/fxml/1">
-   <ImageView fx:id="userIcon" layoutX="14.0" layoutY="14.0" fitWidth="20" fitHeight="20" AnchorPane.leftAnchor="14.0"
-              AnchorPane.topAnchor="14.0" />
+<AnchorPane fx:id="rootPane" prefHeight="124.0" prefWidth="750.0" styleClass="client_cell_container" stylesheets="@../../Styles/Client/NotificationCell.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1">
+   <ImageView fx:id="userIcon" fitHeight="20" fitWidth="20" layoutX="14.0" layoutY="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
    
-   <HBox layoutX="74.0" layoutY="-25.0" prefHeight="40.0" prefWidth="550.0" AnchorPane.leftAnchor="60.0"
-         AnchorPane.topAnchor="5.0">
-      <Label fx:id="fName_lbl" text="Benjamin"/>
-      <Label fx:id="lName_lbl" text="Baker"/>
-      <Label fx:id="pAddress_lbl" text="\@bBaker1"/>
-      <Label fx:id="ch_acc_lbl" styleClass="acc_display_lbl" text="25469921"/>
-      <Label fx:id="sv_acc_lbl" styleClass="acc_display_lbl" text="23330213"/>
-      <Label fx:id="date_lbl" text="2022-07-08"/>
+   <HBox layoutX="74.0" layoutY="-25.0" prefHeight="40.0" prefWidth="550.0" AnchorPane.leftAnchor="60.0" AnchorPane.topAnchor="5.0">
+      <Label fx:id="client_name_lbl" text="Baker" />
+      <Label fx:id="recipient_type_lbl" styleClass="acc_display_lbl" text="RECIPIENT TYPE" />
+      <Label fx:id="notification_type_lbl" styleClass="acc_display_lbl" text="NOTIFICATION TYPE" />
+      <Label fx:id="date_lbl" text="2022-07-08" />
    </HBox>
+   <Label fx:id="message_lbl" layoutX="60.0" layoutY="53.0" text="Label" styleClass="message-label" />
    
-   <Button fx:id="delete_btn" layoutX="684.0" layoutY="12.0" mnemonicParsing="false" styleClass="delete_btn"
-           text="Delete" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="12.0">
+   <Button fx:id="delete_btn" layoutX="666.0" layoutY="49.0" mnemonicParsing="false" styleClass="delete_btn" text="Delete" AnchorPane.rightAnchor="14.4" AnchorPane.topAnchor="49.0">
       <graphic>
-         <ImageView fitWidth="15" fitHeight="15">
+         <ImageView fitHeight="15" fitWidth="15">
              <image>
-                 <Image url="@../../Images/close_icon.png"/>
+               <Image url="@../../Images/close_icon.png" />
              </image>
          </ImageView>
       </graphic>

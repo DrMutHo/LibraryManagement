@@ -8,6 +8,8 @@ import java.time.format.DateTimeFormatter;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.cdimascio.dotenv.Dotenv;
+import main.Views.NotificationType;
+import main.Views.RecipientType;
 
 public class DatabaseDriver {
     private HikariDataSource dataSource;
@@ -135,5 +137,125 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
     }
-}
 
+    public String getClientNameById(int clientId) {
+        String query = "SELECT name FROM Client WHERE client_id = ?;";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, clientId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("name");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ResultSet getNotifications(int recipientId, int limit) {
+        String query = "SELECT * FROM Notification WHERE recipient_id = ? ORDER BY is_read ASC, created_at DESC";
+        if (limit > 0) {
+            query += " LIMIT ?";
+        }
+        try {
+            Connection conn = dataSource.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, recipientId);
+            if (limit > 0) {
+                pstmt.setInt(2, limit);
+            }
+            return pstmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void deleteNotification(int notificationId) {
+        String query = "DELETE FROM Notification WHERE notification_id = ?;";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, notificationId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateNotification(int notificationId, boolean isRead) {
+        String query = "UPDATE Notification SET is_read = ? WHERE notification_id = ?;";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setBoolean(1, isRead);
+            pstmt.setInt(2, notificationId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean insertNotification(Notification notification) {
+        String query = "INSERT INTO Notification (recipient_id, recipient_type, notification_type, message, created_at, is_read) VALUES (?, ?, ?, ?, ?, ?);";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, notification.getRecipientId());
+            pstmt.setString(2, notification.getRecipientType().toString());
+            pstmt.setString(3, notification.getNotificationType().toString());
+            pstmt.setString(4, notification.getMessage());
+            pstmt.setTimestamp(5, Timestamp.valueOf(notification.getCreatedAt()));
+            pstmt.setBoolean(6, notification.isRead());
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        notification.setNotificationId(rs.getInt(1));
+                    }
+                }
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Notification getNotificationById(int notificationId) {
+        String query = "SELECT * FROM Notification WHERE notification_id = ?;";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, notificationId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int recipientId = rs.getInt("recipient_id");
+                RecipientType recipientType = RecipientType.valueOf(rs.getString("recipient_type"));
+                NotificationType notificationType = NotificationType.valueOf(rs.getString("notification_type"));
+                String message = rs.getString("message");
+                LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
+                boolean isRead = rs.getBoolean("is_read");
+                return new Notification(notificationId, recipientId, recipientType, notificationType, message,
+                        createdAt, isRead);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public int countUnreadNotifications(int recipientId) {
+        String query = "SELECT COUNT(*) AS unread_count FROM Notification WHERE recipient_id = ? AND is_read = false;";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, recipientId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("unread_count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+}
