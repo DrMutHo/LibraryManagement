@@ -252,8 +252,18 @@ public class SignupController implements Initializable {
     private void onExit() {
         stage = (Stage) signup_exitButton.getScene().getWindow();
         Model.getInstance().getViewFactory().showLoading(() -> {
-            Model.getInstance().getViewFactory().showLoginWindow();
-            Model.getInstance().getViewFactory().closeStage(stage);
+            // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
+            try {
+                Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            
+            // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
+            Platform.runLater(() -> {
+                Model.getInstance().getViewFactory().showLoginWindow();
+                Model.getInstance().getViewFactory().closeStage(stage);
+            });
         }, signup_anchorpane);
     }
 
@@ -261,10 +271,21 @@ public class SignupController implements Initializable {
     private void onReturnToLogin() {
         stage = (Stage) returnToLoginButton.getScene().getWindow();
         Model.getInstance().getViewFactory().showLoading(() -> {
-            Model.getInstance().getViewFactory().showLoginWindow();
-            Model.getInstance().getViewFactory().closeStage(stage);
+            // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
+            try {
+                Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            
+            // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
+            Platform.runLater(() -> {
+                Model.getInstance().getViewFactory().showLoginWindow();
+                Model.getInstance().getViewFactory().closeStage(stage);
+            });
         }, signup_anchorpane);
     }
+    
 
     @FXML
     private void onCreateNewAccount() {

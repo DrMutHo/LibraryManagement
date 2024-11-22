@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import jakarta.mail.MessagingException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -178,8 +179,18 @@ public class LoginController implements Initializable {
         stage = (Stage) forgotaccountButton.getScene().getWindow();
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
             Model.getInstance().getViewFactory().showLoading(() -> {
-                Model.getInstance().getViewFactory().ShowResetPasswordWindow();
-                Model.getInstance().getViewFactory().closeStage(stage);
+                // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
+                try {
+                    Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                
+                // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
+                Platform.runLater(() -> {
+                    Model.getInstance().getViewFactory().ShowResetPasswordWindow();;
+                    Model.getInstance().getViewFactory().closeStage(stage);
+                });
             }, outer_pane);
         }
     }
@@ -194,8 +205,15 @@ public class LoginController implements Initializable {
                 Model.getInstance().getDatabaseDriver().getClientData(username);
                 Model.getInstance().evaluateClientCred(username);
                 Model.getInstance().getViewFactory().showLoading(() -> {
-                    Model.getInstance().getViewFactory().showClientWindow();;
-                    Model.getInstance().getViewFactory().closeStage(stage);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    Platform.runLater(() -> {
+                        Model.getInstance().getViewFactory().showClientWindow();
+                        Model.getInstance().getViewFactory().closeStage(stage);
+                    });
                 }, outer_pane);
             } else {
                 lib_image.setVisible(false);
@@ -248,8 +266,18 @@ public class LoginController implements Initializable {
         stage = (Stage) createnewaccountButton.getScene().getWindow();
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
             Model.getInstance().getViewFactory().showLoading(() -> {
-                Model.getInstance().getViewFactory().showSignUpWindow();
-                Model.getInstance().getViewFactory().closeStage(stage);
+                // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
+                try {
+                    Thread.sleep(1000); // Thời gian chuẩn bị tài nguyên giả lập 500ms
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                
+                // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
+                Platform.runLater(() -> {
+                    Model.getInstance().getViewFactory().showSignUpWindow();
+                    Model.getInstance().getViewFactory().closeStage(stage);
+                });
             }, outer_pane);
         }
     }

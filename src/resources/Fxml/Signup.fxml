@@ -145,7 +145,7 @@
                         <Image url="@../Images/success.png" />
                      </image>
                   </ImageView>
-                  <Text layoutX="231.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="alert_notice" text="Please check your new password in your email !" wrappingWidth="134.4000000000001" />
+                  <Text layoutX="214.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="alert_notice" text="Please return to login page for siging in!" wrappingWidth="168.0" />
                </children>
             </AnchorPane>
             <ImageView fx:id="signup_imageErrorIcon6" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="465.0" pickOnBounds="true" preserveRatio="true" />

@@ -125,32 +125,53 @@ public class ViewFactory {
         createStage(loader);
     }
 
-    public void showLoading(Runnable onLoadingComplete, AnchorPane anchorpane) {
-    StackPane loadingOverlay = new StackPane();
-    loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-    loadingOverlay.setPrefSize(anchorpane.getWidth(), anchorpane.getHeight());
+    public void showLoading(Runnable task, AnchorPane anchorpane) {
+        // Tạo lớp phủ với loading
+        StackPane loadingOverlay = new StackPane();
+        loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        loadingOverlay.setPrefSize(anchorpane.getWidth(), anchorpane.getHeight());
+    
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        loadingOverlay.getChildren().add(progressIndicator);
+        StackPane.setAlignment(progressIndicator, Pos.CENTER);
+    
+        // Đảm bảo lớp phủ được thêm vào giao diện
+        Platform.runLater(() -> {
+            if (!anchorpane.getChildren().contains(loadingOverlay)) {
+                anchorpane.getChildren().add(loadingOverlay);
+            }
+        });
+    
+        // Thực hiện công việc chính trong một Thread riêng biệt
+        new Thread(() -> {
+            long startTime = System.currentTimeMillis(); // Ghi lại thời gian bắt đầu
+    
+            // Tính thời gian chuẩn bị tài nguyên (chạy trước khi thực hiện task)
+            long preparationTime = System.currentTimeMillis() - startTime;
+    
+            task.run(); // Thực hiện công việc chính
+    
+            long elapsedTime = System.currentTimeMillis() - startTime; // Tính thời gian đã chạy
+    
+            // Đảm bảo thời gian hiển thị lớp phủ tối thiểu bằng thời gian chuẩn bị tài nguyên
+            long minimumDisplayTime = preparationTime; // Thời gian chuẩn bị tài nguyên
+            long remainingTime = minimumDisplayTime - elapsedTime;
+    
+            if (remainingTime > 0) {
+                try {
+                    Thread.sleep(remainingTime); // Chờ thêm nếu cần
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Khôi phục trạng thái ngắt
+                }
+            }
+    
+            // Gỡ bỏ lớp phủ loading
+            Platform.runLater(() -> anchorpane.getChildren().remove(loadingOverlay));
+        }).start();
+    }
+    
+    
 
-    ProgressIndicator progressIndicator = new ProgressIndicator();
-    loadingOverlay.getChildren().add(progressIndicator);
-    StackPane.setAlignment(progressIndicator, Pos.CENTER);
-
-    anchorpane.getChildren().add(loadingOverlay);
-
-    Task<Void> loadingTask = new Task<>() {
-        @Override
-        protected Void call() throws Exception {
-            Thread.sleep(1000);
-            return null;
-        }
-    };
-
-    loadingTask.setOnSucceeded(event -> {
-        anchorpane.getChildren().remove(loadingOverlay);
-        Platform.runLater(onLoadingComplete);
-    });
-
-    new Thread(loadingTask).start();
-}
 
     private void createStage(FXMLLoader loader) {
         Scene scene = null;
