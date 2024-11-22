@@ -139,17 +139,13 @@ public class ViewFactory {
     Task<Void> loadingTask = new Task<>() {
         @Override
         protected Void call() throws Exception {
-            // Giả lập quá trình loading
             Thread.sleep(1000);
             return null;
         }
     };
 
     loadingTask.setOnSucceeded(event -> {
-        // Xóa overlay loading
         anchorpane.getChildren().remove(loadingOverlay);
-
-        // Chạy hành động được truyền vào sau khi loading
         Platform.runLater(onLoadingComplete);
     });
 

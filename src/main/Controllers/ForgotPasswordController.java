@@ -132,18 +132,15 @@ public class ForgotPasswordController implements Initializable {
 
     private void enableAllComponents(AnchorPane root) {
         for (javafx.scene.Node node : root.getChildren()) {
-            // Kiểm tra nếu node là StackPane, tiếp tục kiểm tra failedNotification trong đó
             if (node instanceof StackPane) {
                 StackPane stackPane = (StackPane) node;
                 for (javafx.scene.Node stackNode : stackPane.getChildren()) {
-                    // Nếu node là failedNotification, bỏ qua nó và các con của nó
                     if (stackNode instanceof AnchorPane && ((AnchorPane) stackNode).getId() != null &&
                             ((AnchorPane) stackNode).getId().equals("failedNotification")) {
-                        continue;  // Không disable các thành phần bên trong failedNotification
+                        continue; 
                     }
                 }
             }
-            // Nếu không phải StackPane chứa failedNotification, tiến hành enable node
             else {
                 node.setDisable(false);
             }
@@ -152,18 +149,15 @@ public class ForgotPasswordController implements Initializable {
 
     private void disableAllComponents(AnchorPane root) {
         for (javafx.scene.Node node : root.getChildren()) {
-            // Kiểm tra nếu node là StackPane, tiếp tục kiểm tra failedNotification trong đó
             if (node instanceof StackPane) {
                 StackPane stackPane = (StackPane) node;
                 for (javafx.scene.Node stackNode : stackPane.getChildren()) {
-                    // Nếu node là failedNotification, bỏ qua nó và các con của nó
                     if (stackNode instanceof AnchorPane && ((AnchorPane) stackNode).getId() != null &&
                             ((AnchorPane) stackNode).getId().equals("failedNotification")) {
-                        continue;  // Không disable các thành phần bên trong failedNotification
+                        continue; 
                     }
                 }
             }
-            // Nếu không phải StackPane chứa failedNotification, tiến hành disable node
             else {
                 node.setDisable(true);
             }
@@ -179,32 +173,26 @@ public class ForgotPasswordController implements Initializable {
             failedNotification.setVisible(true);
             disableAllComponents(innerAnchorPane);
         } else {
+            Model.getInstance().getViewFactory().showLoading(() -> {
             try {
                 sendNewPassword(getEmailByUsername(username), newPassword);
-                successNotification.setVisible(true);
-                updatePassword(username, newPassword);
             } catch (MessagingException e) {
+   
                 e.printStackTrace();
             }
+            successNotification.setVisible(true);
+            updatePassword(username, newPassword);
+            }, outerAnchorPane);
         }
     }
 
     public void updatePassword(String username, String newPassword) {
-        // Mã hóa mật khẩu mới sử dụng jBCrypt
         String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-
-        // Câu lệnh SQL để cập nhật mật khẩu mới cho người dùng
         String query = "UPDATE client SET password_hash = ? WHERE username = ?";
-
-        // Sử dụng try-with-resources để tự động đóng tài nguyên
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            // Đặt giá trị cho PreparedStatement
-            preparedStatement.setString(1, hashedPassword);  // Mật khẩu đã mã hóa
-            preparedStatement.setString(2, username);        // Tên đăng nhập của người dùng
-
-            // Thực thi câu lệnh SQL
+            preparedStatement.setString(1, hashedPassword); 
+            preparedStatement.setString(2, username);       
             int rowsUpdated = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -212,58 +200,44 @@ public class ForgotPasswordController implements Initializable {
     }
 
     private String getEmailByUsername(String username) {
-        // Câu lệnh SQL truy vấn email theo username
         String query = "SELECT email FROM client WHERE username = ?";
     
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-             
-            // Thiết lập giá trị cho tham số truy vấn
             preparedStatement.setString(1, username);
-    
-            // Thực thi truy vấn
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    // Lấy giá trị email từ kết quả truy vấn
                     return resultSet.getString("email");
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
-        return null; // Trả về null nếu username không tồn tại hoặc có lỗi xảy ra
+        return null;
     }
 
     public void sendNewPassword(String recipientEmail, String newPassword) throws MessagingException {
-        // Cấu hình SMTP server của Gmail
-        String smtpHost = "smtp.gmail.com"; // SMTP của Gmail
-        String smtpPort = "587"; // 587 cho TLS, 465 cho SSL
-        String senderEmail = "thuha25121976@gmail.com"; // Thay bằng email của bạn
-        String senderPassword = "bbjh xcbp oxtj qozz"; // Mật khẩu ứng dụng (do bạn tạo ở Google)
+        String smtpHost = "smtp.gmail.com";
+        String smtpPort = "587"; 
+        String senderEmail = "thuha25121976@gmail.com"; 
+        String senderPassword = "bbjh xcbp oxtj qozz";
     
         Properties properties = new Properties();
         properties.put("mail.smtp.host", smtpHost);
         properties.put("mail.smtp.port", smtpPort);
         properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true"); // Kích hoạt TLS
-    
-        // Tạo session cho email
+        properties.put("mail.smtp.starttls.enable", "true"); 
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(senderEmail, senderPassword);
             }
         });
-    
-        // Tạo email
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(senderEmail));
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
         message.setSubject("Your New Password");
         message.setText("Dear customer,\n\nYour new password is: " + newPassword + "\n\nPlease log in and change your password as soon as possible.\n\nThank you.");
-    
-        // Gửi email
         Transport.send(message);
         System.out.println("Email sent successfully to " + recipientEmail);
     }
