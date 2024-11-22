@@ -23,6 +23,7 @@ public class ViewFactory {
     private BorderPane profileView;
     private BorderPane browsingView;
     private BorderPane notiView;
+    private BorderPane booktransactionView;
 
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
@@ -86,6 +87,19 @@ public class ViewFactory {
             }
         }
         return browsingView;
+    }
+
+    public BorderPane getBookTransactionView() {
+        if (booktransactionView == null) {
+            try {
+                booktransactionView = new FXMLLoader(
+                        getClass().getResource("/resources/Fxml/Client/BookTransaction.fxml"))
+                        .load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return booktransactionView;
     }
 
     public BorderPane getNotiView() {
