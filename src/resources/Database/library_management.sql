@@ -114,6 +114,10 @@ CREATE TABLE IF NOT EXISTS BookReview (
     FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE
 );
 
+ALTER TABLE BookReview
+ADD CONSTRAINT unique_book_client UNIQUE (book_id, client_id);
+
+
 
 -- Insert sample data into Client with securely hashed passwords
 -- Passwords are hashed using bcrypt

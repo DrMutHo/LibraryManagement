@@ -1,5 +1,6 @@
 package main.Controllers.Client;
 
+import main.Models.DatabaseDriver;
 import main.Models.Model;
 import main.Models.Notification;
 import main.Views.NotificationCellFactory;
@@ -8,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.application.Platform;
@@ -21,6 +23,9 @@ public class NotificationsController implements Initializable {
 
     @FXML
     private Label unread_count_lbl;
+
+    @FXML
+    private Button markAllAsReadBtn;
 
     private int recipientId;
 
@@ -48,6 +53,10 @@ public class NotificationsController implements Initializable {
                 });
             });
         }
+
+        markAllAsReadBtn.setOnAction(event -> {
+            handleMarkAllAsRead();
+        });
     }
 
     private void initAllNotificationsList() {
@@ -59,5 +68,10 @@ public class NotificationsController implements Initializable {
     private void updateUnreadCount(int recipientId) {
         int unreadCount = Model.getInstance().getDatabaseDriver().countUnreadNotifications(recipientId);
         unread_count_lbl.setText("Unread Notifications: " + unreadCount);
+    }
+
+    private void handleMarkAllAsRead() {
+        Model.getInstance().markAllNotificationsAsRead(recipientId);
+        updateUnreadCount(recipientId);
     }
 }

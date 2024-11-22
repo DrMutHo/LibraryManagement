@@ -7,18 +7,16 @@ public class BookTransaction {
     private int book_id;
     private int user_id;
     private LocalDate transaction_date;
-    private LocalDate due_date; // Ngày dự kiến trả
-    private String transaction_type; // borrow, return, purchase, reservation
+    private LocalDate due_date;
+    private String transaction_type;
     private int quantity;
     private double total_price;
-    private String status; // pending, completed, overdue, canceled
+    private String status;
     private String notes;
 
-    // Constructor không tham số
     public BookTransaction() {
     }
 
-    // Constructor đầy đủ với tất cả các thuộc tính
     public BookTransaction(int transaction_id, int book_id, int user_id, LocalDate transaction_date,
             LocalDate due_date, String transaction_type, int quantity, double total_price,
             String status, String notes) {
@@ -33,8 +31,6 @@ public class BookTransaction {
         this.status = status;
         this.notes = notes;
     }
-
-    // Getters và Setters cho tất cả các thuộc tính
 
     public int getTransaction_id() {
         return transaction_id;

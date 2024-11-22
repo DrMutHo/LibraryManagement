@@ -20,6 +20,7 @@ public class ClientMenuController implements Initializable {
     public Button profile_btn;
     public Button browsing_btn;
     public Button noti_btn;
+    public ImageView noti_img;
 
     private final Image defaultNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_off.png"));
     private final Image activeNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_on.png"));
@@ -88,17 +89,11 @@ public class ClientMenuController implements Initializable {
                 .countUnreadNotifications(Model.getInstance().getClient().getClientId());
 
         if (unreadCount > 0) {
-            ImageView newIcon = new ImageView(activeNotiIcon);
-            newIcon.setFitHeight(25);
-            newIcon.setFitWidth(20);
-            noti_btn.setGraphic(newIcon);
+            noti_img.setImage(activeNotiIcon);
             noti_btn.setStyle("-fx-background-color: #FFCCCC;");
             noti_btn.setText("Notification");
         } else {
-            ImageView defaultIcon = new ImageView(defaultNotiIcon);
-            defaultIcon.setFitHeight(25);
-            defaultIcon.setFitWidth(20);
-            noti_btn.setGraphic(defaultIcon);
+            noti_img.setImage(defaultNotiIcon);
             noti_btn.setStyle("");
             noti_btn.setText("Notification");
         }

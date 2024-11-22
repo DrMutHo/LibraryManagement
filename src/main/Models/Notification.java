@@ -26,7 +26,6 @@ public class Notification {
         this.isRead = new SimpleBooleanProperty(false);
     }
 
-    // Constructor đầy đủ
     public Notification(int notificationId, int recipientId, RecipientType recipientType,
             NotificationType notificationType, String message, LocalDateTime createdAt, boolean isRead) {
         this.notificationId = new SimpleIntegerProperty(notificationId);
@@ -38,7 +37,6 @@ public class Notification {
         this.isRead = new SimpleBooleanProperty(isRead);
     }
 
-    // Getters và Setters với Property Methods
     public int getNotificationId() {
         return notificationId.get();
     }

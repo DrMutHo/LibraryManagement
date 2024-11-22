@@ -59,6 +59,7 @@ public class Model {
     }
 
     public void setAllBook() {
+        allBook.clear();
         ResultSet resultSet = databaseDriver.getAllBookData();
         try {
             while (resultSet.next()) {
@@ -172,6 +173,14 @@ public class Model {
     public void updateNotification(Notification notification) {
         databaseDriver.updateNotification(notification.getNotificationId(), true);
         notification.setRead(true);
+    }
+
+    public void markAllNotificationsAsRead(int recipientId) {
+        databaseDriver.markAllNotificationsAsRead(recipientId);
+
+        for (Notification notification : allNotifications) {
+            notification.setRead(true);
+        }
     }
 
     public void setAllNotifications() {

@@ -65,9 +65,9 @@
                </DropShadow>
             </effect>
             <graphic>
-               <ImageView fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <ImageView fx:id="noti_img" fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                     <Image url="@../../Images/profile-user.png" />
+                     <Image url="@../../Images/noti_off.png" />
                   </image>
                </ImageView>
             </graphic>

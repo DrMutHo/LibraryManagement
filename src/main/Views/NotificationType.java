@@ -10,7 +10,6 @@ public enum NotificationType {
     UNKNOWN;
 
     public static NotificationType fromString(String type) {
-        System.out.println("Parsing NotificationType: \"" + type + "\"");
         for (NotificationType nt : NotificationType.values()) {
             if (nt.name().equalsIgnoreCase(type)) {
                 return nt;
