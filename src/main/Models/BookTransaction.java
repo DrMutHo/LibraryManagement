@@ -10,7 +10,6 @@ public class BookTransaction {
     private LocalDate returnDate; // Ngày trả sách
     private String status; // Trạng thái của giao dịch ("Processing" hoặc "Done")
 
-    // Constructor không tham số
     public BookTransaction() {
     }
 

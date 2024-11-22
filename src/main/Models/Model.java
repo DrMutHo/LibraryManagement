@@ -4,8 +4,13 @@ import main.Models.Client;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.sql.Timestamp;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import main.Views.NotificationType;
+import main.Views.RecipientType;
 import main.Views.ViewFactory;
 
 public class Model {
@@ -14,8 +19,7 @@ public class Model {
     private boolean clientLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
-    private ObservableList<Book> recentlyAddBook;
-    private final ObservableList<BookTransaction> bookTransactions;
+    private final ObservableList<Notification> allNotifications;
     private final Client client;
 
     private Model() {
@@ -23,8 +27,10 @@ public class Model {
         this.clientLoginSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
+        this.allNotifications = FXCollections.observableArrayList();
         this.recentlyAddBook = FXCollections.observableArrayList();
         this.bookTransactions = FXCollections.observableArrayList();
+
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "");
     }
 
@@ -56,6 +62,7 @@ public class Model {
     }
 
     public void setAllBook() {
+        allBook.clear();
         ResultSet resultSet = databaseDriver.getAllBookData();
         try {
             while (resultSet.next()) {
@@ -176,6 +183,71 @@ public class Model {
                 }
             }
         }
+    }
+
+    private void prepareNotifications(ObservableList<Notification> notifications, int limit) {
+        ResultSet resultSet = databaseDriver.getNotifications(this.client.getClientId(), limit);
+        try {
+            while (resultSet != null && resultSet.next()) {
+                int notificationId = resultSet.getInt("notification_id");
+                int recipientId = resultSet.getInt("recipient_id");
+                String recipientTypeStr = resultSet.getString("recipient_type");
+                RecipientType recipientType = RecipientType.fromString(recipientTypeStr);
+                String notificationTypeStr = resultSet.getString("notification_type");
+                NotificationType notificationType = NotificationType.fromString(notificationTypeStr);
+                String message = resultSet.getString("message");
+                Timestamp timestamp = resultSet.getTimestamp("created_at");
+                LocalDateTime createdAt = timestamp.toLocalDateTime();
+                boolean isRead = resultSet.getBoolean("is_read");
+
+                Notification notification = new Notification(
+                        notificationId,
+                        recipientId,
+                        recipientType,
+                        notificationType,
+                        message,
+                        createdAt,
+                        isRead);
+
+                notifications.add(notification);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null && !resultSet.isClosed()) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void deleteNotification(Notification notification) {
+        databaseDriver.deleteNotification(notification.getNotificationId());
+        allNotifications.remove(notification);
+    }
+
+    public void updateNotification(Notification notification) {
+        databaseDriver.updateNotification(notification.getNotificationId(), true);
+        notification.setRead(true);
+    }
+
+    public void markAllNotificationsAsRead(int recipientId) {
+        databaseDriver.markAllNotificationsAsRead(recipientId);
+
+        for (Notification notification : allNotifications) {
+            notification.setRead(true);
+        }
+    }
+
+    public void setAllNotifications() {
+        prepareNotifications(this.allNotifications, -1);
+    }
+
+    public ObservableList<Notification> getAllNotifications() {
+        return allNotifications;
     }
 
 }
