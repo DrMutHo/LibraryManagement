@@ -41,20 +41,5 @@ public class CardController implements Initializable {
         // rating.setText(book.getAverage_rating() + " (" + book.getReview_count() +
         // ")");
 
-        addOpenBookEffect();
-    }
-
-    private void addOpenBookEffect() {
-        ScaleTransition scaleUp = new ScaleTransition(Duration.seconds(0.5), imageView);
-        scaleUp.setToX(1.2);
-        scaleUp.setToY(1.2);
-
-        ScaleTransition scaleDown = new ScaleTransition(Duration.seconds(0.5), imageView);
-        scaleDown.setToX(1.0);
-        scaleDown.setToY(1.0);
-
-        imageView.setOnMouseEntered(event -> scaleUp.playFromStart());
-
-        imageView.setOnMouseExited(event -> scaleDown.playFromStart());
     }
 }

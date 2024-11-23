@@ -1,0 +1,138 @@
+/* General Styles */
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #f0f8ff, #e6ffee);
+    /* Nhạt dần xanh và trắng */
+}
+
+/* Header Styles */
+.hbox-header {
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+    -fx-background-color: linear-gradient(to right, #4caf50, #81c784);
+    -fx-border-color: #d9d9d9;
+    -fx-border-width: 2;
+}
+
+.label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    /* Chữ trắng trên nền xanh lá */
+}
+
+/* Welcome Label */
+#welcome {
+    -fx-font-size: 14px;
+    -fx-font-style: italic;
+    -fx-text-fill: #ffffff;
+    -fx-pref-width: 200px;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+/* Section Titles */
+.label-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #388e3c;
+    /* Xanh đậm hơn */
+    -fx-padding: 10 0 10 0;
+}
+
+/* ScrollPane Styles */
+.scroll-pane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c8e6c9;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+/* Book Container Styles */
+.hbox-recentlyAdd {
+    -fx-spacing: 15;
+    -fx-background-color: #fffde7;
+}
+
+.grid-pane-recommend {
+    -fx-hgap: 15;
+    -fx-vgap: 15;
+    -fx-padding: 10;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d9d9d9;
+    -fx-border-radius: 5;
+}
+
+/* Buttons */
+.action-button {
+    -fx-background-color: linear-gradient(to right, #ff8a65, #ff7043);
+    /* Gradient cam nhạt */
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-padding: 10 20;
+    -fx-font-weight: bold;
+}
+
+.action-button:hover {
+    -fx-background-color: #e64a19;
+    /* Cam đậm hơn khi hover */
+    -fx-cursor: hand;
+}
+
+/* Book Details Section */
+.detail-panel {
+    -fx-background-color: #fffde7;
+    -fx-padding: 15;
+    -fx-border-color: #ffe082;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.detail-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6d4c41;
+    /* Nâu nhạt */
+}
+
+.detail-value {
+    -fx-font-size: 14px;
+    -fx-text-fill: #5d4037;
+    /* Nâu đậm */
+}
+
+/* Ratings */
+.rating-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555555;
+}
+
+/* Profile Icon */
+.profile-icon {
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+}
+
+/* Description Section */
+.description-panel {
+    -fx-background-color: #fffde7;
+    -fx-padding: 10;
+    -fx-border-color: #ffe082;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.description-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffb300;
+    /* Vàng cam */
+}
+
+.description-area {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffcc80;
+    -fx-border-radius: 5;
+    -fx-padding: 10;
+    -fx-text-fill: #333333;
+}

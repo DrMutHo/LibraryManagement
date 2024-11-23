@@ -14,7 +14,7 @@ public class Model {
     private boolean clientLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
-    private ObservableList<Book> recentlyAddBook;
+    private final ObservableList<Book> HighestRatedBooks;
     private final ObservableList<BookTransaction> bookTransactions;
     private final Client client;
 
@@ -23,7 +23,7 @@ public class Model {
         this.clientLoginSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
-        this.recentlyAddBook = FXCollections.observableArrayList();
+        this.HighestRatedBooks = FXCollections.observableArrayList();
         this.bookTransactions = FXCollections.observableArrayList();
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "");
     }
@@ -81,8 +81,8 @@ public class Model {
         }
     }
 
-    public void setRecentlyBook() {
-        ResultSet resultSet = databaseDriver.getBookByClientID(Model.getInstance().getClient().getClientId());
+    public void setHighestRatedBook() {
+        ResultSet resultSet = databaseDriver.getHighestRatingBooks();
         try {
             while (resultSet.next()) {
                 int book_id = resultSet.getInt("book_id");
@@ -100,7 +100,7 @@ public class Model {
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count);
 
-                recentlyAddBook.add(book);
+                HighestRatedBooks.add(book);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,6 +129,34 @@ public class Model {
         }
     }
 
+    public Book getBookDataByCopyID(int copy_id) {
+        ResultSet resultSet = databaseDriver.getBookDataByCopyID(copy_id);
+        Book res = new Book();
+        try {
+            while (resultSet.next()) {
+                int book_id = resultSet.getInt("book_id");
+                String title = resultSet.getString("title");
+                String author = resultSet.getString("author");
+                String isbn = resultSet.getString("isbn");
+                String genre = resultSet.getString("genre");
+                String language = resultSet.getString("language");
+                String description = resultSet.getString("description");
+                int publication_year = resultSet.getInt("publication_year");
+                String image_path = resultSet.getString("image_path");
+                Double average_rating = resultSet.getDouble("average_rating");
+                int review_count = resultSet.getInt("review_count");
+
+                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
+                        image_path, average_rating, review_count);
+                res = book;
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
     public ObservableList<BookTransaction> getBookTransaction() {
         return bookTransactions;
     }
@@ -137,8 +165,8 @@ public class Model {
         return allBook;
     }
 
-    public ObservableList<Book> getRecentlyAddBook() {
-        return recentlyAddBook;
+    public ObservableList<Book> getHighestRatedBook() {
+        return HighestRatedBooks;
     }
 
     public Book findBookByISBN(String ISBN) {

@@ -3,11 +3,11 @@
 /* Định kiểu cho toàn bộ VBox */
 .vbox-card {
     -fx-alignment: center;
-    -fx-pref-height: 204px;
+    -fx-pref-height: 215px;
     -fx-pref-width: 160px;
     -fx-background-color: #f0f0f0;
     /* Màu nền cho VBox */
-    -fx-margin: 5px;
+    -fx-margin: 3px;
     /* Khoảng cách trong cho VBox */
     -fx-background-radius: 10;
     /* Bo góc cho VBox */
@@ -18,7 +18,7 @@
 
 /* Định kiểu cho Label title */
 .vbox-card .label-title {
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
     /* Padding cho khoảng cách trong */
@@ -26,7 +26,7 @@
 
 /* Định kiểu cho Label author */
 .vbox-card .label-author {
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-text-fill: #666666;
     /* Màu chữ nhạt hơn */
 }

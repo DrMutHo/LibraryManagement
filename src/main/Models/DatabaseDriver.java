@@ -128,6 +128,22 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    public ResultSet getHighestRatingBooks() {
+        ResultSet resultSet = null;
+        String query = "SELECT * FROM Book " +
+                "ORDER BY average_rating DESC " +
+                "LIMIT 10";
+        try {
+            Connection connection = this.dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultSet;
+    }
+
     public ResultSet getClientData(String username) {
         Statement statement;
         ResultSet resultSet = null;
