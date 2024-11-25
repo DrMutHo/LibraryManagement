@@ -115,6 +115,7 @@ public class Model {
             if (book.getIsbn().equals(ISBN))
                 return book;
         }
+<<<<<<< Updated upstream
         return null;
     }
 
@@ -169,6 +170,22 @@ public class Model {
             }
         } catch (Exception e) {
             e.printStackTrace();
+=======
+
+        public boolean getAdminLoginSuccessFlag() {
+            return this.adminLoginSuccessFlag;
+        }
+    
+        public void setAdminLoginSuccessFlag(boolean flag) {
+            this.clientLoginSuccessFlag = flag;
+        }
+        public boolean getClientLoginSuccessFlag() {
+            return this.adminLoginSuccessFlag;
+        }
+    
+        public void setClientLoginSuccessFlag(boolean flag) {
+            this.clientLoginSuccessFlag = flag;
+>>>>>>> Stashed changes
         }
     }
 

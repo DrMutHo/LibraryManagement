@@ -181,14 +181,14 @@ public class LoginController implements Initializable {
             Model.getInstance().getViewFactory().showLoading(() -> {
                 // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
                 try {
-                    Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
+                    Thread.sleep(1000); // Thời gian chuẩn bị tài nguyên giả lập 500ms
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
                 
                 // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
                 Platform.runLater(() -> {
-                    Model.getInstance().getViewFactory().ShowResetPasswordWindow();;
+                    Model.getInstance().getViewFactory().showResetPasswordWindow();
                     Model.getInstance().getViewFactory().closeStage(stage);
                 });
             }, outer_pane);
@@ -199,45 +199,55 @@ public class LoginController implements Initializable {
         stage = (Stage) loginButton.getScene().getWindow();
         String username = usernameField.getText();
         String password = passwordField.getText();
-        
-        if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
-            if (isValidClientCredentials(username, password)) {
-                Model.getInstance().evaluateClientCred(username);
-                Model.getInstance().getViewFactory().showLoading(() -> {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                    Platform.runLater(() -> {
-                        Model.getInstance().getViewFactory().showClientWindow();
-                        Model.getInstance().getViewFactory().closeStage(stage);
-                    });
-                }, outer_pane);
-            } else {
-                lib_image.setVisible(false);
-                notificationPane.setVisible(true);
-                disableAllComponents(inner_pane);
-                passwordField.clear(); 
-            }
-        } else {
-            if (isValidAdminCredentials(username, password)) {
-                Model.getInstance().evaluateAdminCred(username);
-                Model.getInstance().getViewFactory().showLoading(() -> {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                    Platform.runLater(() -> {
-                        Model.getInstance().getViewFactory().showAdminWindow();
-                        Model.getInstance().getViewFactory().closeStage(stage);
-                    });
-                }, outer_pane);
-            }
+        AccountType accountType = Model.getInstance().getViewFactory().getLoginAccountType();
 
+        if (isValidCredentials(accountType, username, password)) {
+            evaluateCredentials(accountType, username);
+            showLoadingAndProceed(accountType);
+        } else {
+            handleInvalidCredentials();
         }
     }
+
+    private boolean isValidCredentials(AccountType accountType, String username, String password) {
+        return accountType == AccountType.CLIENT
+            ? isValidClientCredentials(username, password)
+            : isValidAdminCredentials(username, password);
+    }
+
+    private void evaluateCredentials(AccountType accountType, String username) {
+        if (accountType == AccountType.CLIENT) {
+            Model.getInstance().evaluateClientCred(username);
+        } else {
+            Model.getInstance().evaluateAdminCred(username);
+        }
+    }
+
+    private void showLoadingAndProceed(AccountType accountType) {
+        Model.getInstance().getViewFactory().showLoading(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            Platform.runLater(() -> {
+                if (accountType == AccountType.CLIENT) {
+                    Model.getInstance().getViewFactory().showClientWindow();
+                } else {
+                    Model.getInstance().getViewFactory().showClientWindow();
+                }
+                Model.getInstance().getViewFactory().closeStage(stage);
+            });
+        }, outer_pane);
+    }
+
+    private void handleInvalidCredentials() {
+        lib_image.setVisible(false);
+        notificationPane.setVisible(true);
+        disableAllComponents(inner_pane);
+        passwordField.clear();
+    }
+
 
     @FXML
     public void handleOkButtonAction() {
@@ -298,7 +308,7 @@ public class LoginController implements Initializable {
     }
 
     private boolean isValidAdminCredentials(String username, String password) {
-        String query = "SELECT * FROM admin WHERE username = ?";
+        String query = "SELECT * FROM Admin WHERE username = ?";
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             if (connection == null || connection.isClosed()) {
@@ -309,6 +319,7 @@ public class LoginController implements Initializable {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 String storedPasswordHash = resultSet.getString("password_hash");
+                System.out.println(storedPasswordHash);
                 return verifyPassword(password, storedPasswordHash);
             }
         } catch (SQLException e) {
@@ -316,6 +327,7 @@ public class LoginController implements Initializable {
         }
         return false;
     }
+
     private boolean isValidClientCredentials(String username, String password) {
         String query = "SELECT * FROM Client WHERE username = ?";
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 

@@ -134,7 +134,7 @@ public class ViewFactory {
         createStage(loader);
     }
 
-    public void ShowResetPasswordWindow() {
+    public void showResetPasswordWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Forgotpassword.fxml"));
         createStage(loader);
     }
