@@ -5,5 +5,6 @@ public enum ClientMenuOptions {
     HOME,
     PROFILE,
     BROWSING,
-    NOTIFICATION
+    NOTIFICATION,
+    BOOKTRANSACTION
 }

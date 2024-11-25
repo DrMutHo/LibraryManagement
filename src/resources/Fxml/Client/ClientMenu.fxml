@@ -65,6 +65,22 @@
                </DropShadow>
             </effect>
             <graphic>
+               <ImageView fx:id="noti_img" fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../../Images/noti_off.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+         </Button>
+         <Button fx:id="transaction_btn" mnemonicParsing="false" text="Transaction">
+            <effect>
+               <DropShadow blurType="TWO_PASS_BOX">
+                  <color>
+                     <Color red="0.6666666865348816" green="0.6666666865348816" blue="0.6666666865348816" />
+                  </color>
+               </DropShadow>
+            </effect>
+            <graphic>
                <ImageView fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                   <image>
                      <Image url="@../../Images/profile-user.png" />
