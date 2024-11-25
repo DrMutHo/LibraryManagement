@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="signup_anchorpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="signup_anchorpane" stylesheets="@../Styles/Signup.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.SignupController">
    <children>
@@ -30,7 +31,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <AnchorPane layoutX="209.0" layoutY="92.0" prefHeight="594.0" prefWidth="421.0" styleClass="signup_inner_anchorpane">
+      <AnchorPane layoutX="209.0" layoutY="95.0" prefHeight="594.0" prefWidth="421.0" styleClass="signup_inner_anchorpane">
          <children>
             <HBox fx:id="signup_hbox4" alignment="CENTER" layoutX="89.0" layoutY="246.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
@@ -136,6 +137,17 @@
                   </ImageView>
                </children>
             </HBox>
+            <AnchorPane fx:id="successNotification" layoutX="24.0" layoutY="14.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="221.0" prefWidth="411.0" styleClass="success_anchorpane" stylesheets="@../Styles/Notification.css" visible="false">
+               <children>
+                  <Button fx:id="returnToLoginButton" layoutX="231.0" layoutY="136.0" mnemonicParsing="false" onAction="#onReturnToLogin" prefHeight="30.0" prefWidth="134.0" styleClass="alert_okButton" text="RETURN TO LOGIN" />
+                  <ImageView fitHeight="240.0" fitWidth="179.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/success.png" />
+                     </image>
+                  </ImageView>
+                  <Text layoutX="214.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="alert_notice" text="Please return to login page for siging in!" wrappingWidth="168.0" />
+               </children>
+            </AnchorPane>
             <ImageView fx:id="signup_imageErrorIcon6" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="465.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </AnchorPane>

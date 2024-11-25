@@ -14,7 +14,8 @@ public class Client {
     private String username;
     private String passwordHash;
 
-    public Client(int clientId, String name, String libraryCardNumber, String email, String phoneNumber, String address, Date registrationDate, double outstandingFees, String username, String passwordHash) {
+    public Client(int clientId, String name, String libraryCardNumber, String email, String phoneNumber, 
+    String address, Date registrationDate, double outstandingFees, String username, String passwordHash) {
         this.clientId = clientId;
         this.name = name;
         this.libraryCardNumber = libraryCardNumber;

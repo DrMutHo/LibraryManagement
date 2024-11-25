@@ -32,9 +32,9 @@
                </image>
             </ImageView>
             <Label fx:id="errorLabel" text="Error Message" visible="false" />
-            <Button fx:id="loginButton" layoutX="125.0" layoutY="452.0" mnemonicParsing="false" prefHeight="38.49" prefWidth="190.31" styleClass="button_login" text="Login" />
-            <Button fx:id="forgotaccountButton" alignment="CENTER" layoutX="138.0" layoutY="495.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="163.0" styleClass="button_forgotPassword" text="Forgotten your account?" textAlignment="CENTER" />
-            <Button fx:id="createnewaccountButton" layoutX="141.0" layoutY="530.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="Sign Up" />
+            <Button fx:id="loginButton" layoutX="125.0" layoutY="452.0" mnemonicParsing="false" prefHeight="38.49" prefWidth="190.31" styleClass="button_login" text="LOGIN" />
+            <Button fx:id="forgotaccountButton" alignment="CENTER" layoutX="134.0" layoutY="491.0" mnemonicParsing="false" onAction="#onResetPassword" prefHeight="35.0" prefWidth="171.0" styleClass="button_forgotPassword" text="Forgotten your password?" textAlignment="CENTER" />
+            <Button fx:id="createnewaccountButton" layoutX="141.0" layoutY="530.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="SIGN UP" />
             <ChoiceBox fx:id="acc_selector" layoutX="274.0" layoutY="289.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="26.0" prefWidth="94.0" styleClass="choose_account_selector">
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -77,7 +77,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <AnchorPane fx:id="notificationPane" layoutX="7.0" layoutY="53.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="212.0" prefWidth="411.0" styleClass="alert_anchorpane" stylesheets="@../Styles/Alert.css" visible="false">
+            <AnchorPane fx:id="notificationPane" layoutX="7.0" layoutY="53.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="212.0" prefWidth="411.0" styleClass="alert_anchorpane" stylesheets="@../Styles/Notification.css" visible="false">
                <children>
                   <Button fx:id="alert_button" layoutX="255.0" layoutY="154.0" mnemonicParsing="false" onAction="#handleOkButtonAction" prefHeight="30.0" prefWidth="88.0" styleClass="alert_okButton" text="OK!" />
                   <ImageView fitHeight="240.0" fitWidth="179.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">

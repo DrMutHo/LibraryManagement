@@ -103,6 +103,10 @@ public class SignupController implements Initializable {
     private AnchorPane signup_anchorpane;
     @FXML
     private Stage stage;
+    @FXML
+    private AnchorPane successNotification;
+    @FXML
+    private Button returnToLoginButton;
 
     @Override 
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -113,6 +117,7 @@ public class SignupController implements Initializable {
             e.getStackTrace();
         }
         signup_createNewAccountButton.setOnAction(event -> onCreateNewAccount());
+        signup_exitButton.setOnAction(event -> onExit());
     }
     public void passwordField_init() {
         signup_passwordField.setVisible(true);
@@ -130,7 +135,7 @@ public class SignupController implements Initializable {
         signup_imageIcon.setImage(signup_eyeClosed);
         signup_imageIcon1.setImage(signup_eyeClosed);
         signup_toggleButton1.setOnAction(event -> togglePasswordVisibility1());
-        signup_toggleButton.setOnAction(even -> togglePasswordVisibility());
+        signup_toggleButton.setOnAction(event -> togglePasswordVisibility());
         
     }
 
@@ -242,42 +247,45 @@ public class SignupController implements Initializable {
             signup_imageIcon1.setImage(signup_eyeClosed);
         }
     }
-    public void showLoadingAndCloseSignUpWindow() {
-        StackPane loadingOverlay = new StackPane();
-        loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);"); 
-        loadingOverlay.setPrefSize(signup_anchorpane.getWidth(), signup_anchorpane.getHeight()); 
-    
-        ProgressIndicator progressIndicator = new ProgressIndicator();
-        loadingOverlay.getChildren().add(progressIndicator);
-    
-        StackPane.setAlignment(progressIndicator, Pos.CENTER);
-    
-        signup_anchorpane.getChildren().add(loadingOverlay);
-    
-        Task<Void> loadingTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                // Giả lập một tác vụ dài
-                for (int i = 0; i <= 1; i++) {
-                    Thread.sleep(500); 
-                }
-                return null;
+
+    @FXML
+    private void onExit() {
+        stage = (Stage) signup_exitButton.getScene().getWindow();
+        Model.getInstance().getViewFactory().showLoading(() -> {
+            // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
+            try {
+                Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-        };
-        loadingTask.setOnSucceeded(event -> {
-            signup_anchorpane.getChildren().remove(loadingOverlay);
+            
+            // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
             Platform.runLater(() -> {
                 Model.getInstance().getViewFactory().showLoginWindow();
                 Model.getInstance().getViewFactory().closeStage(stage);
             });
-        });
-        new Thread(loadingTask).start();
+        }, signup_anchorpane);
     }
+
     @FXML
-    private void onExit() {
-        stage = (Stage) signup_exitButton.getScene().getWindow();
-        showLoadingAndCloseSignUpWindow();
+    private void onReturnToLogin() {
+        stage = (Stage) returnToLoginButton.getScene().getWindow();
+        Model.getInstance().getViewFactory().showLoading(() -> {
+            // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
+            try {
+                Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            
+            // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
+            Platform.runLater(() -> {
+                Model.getInstance().getViewFactory().showLoginWindow();
+                Model.getInstance().getViewFactory().closeStage(stage);
+            });
+        }, signup_anchorpane);
     }
+    
 
     @FXML
     private void onCreateNewAccount() {
@@ -291,16 +299,8 @@ public class SignupController implements Initializable {
         String hashedPassword = BCrypt.hashpw(password1, BCrypt.gensalt());
         if (isValidSignUp(email, phoneNum, username, password, password1, address, name)) {
             Model.getInstance().getDatabaseDriver().createClient(email, phoneNum, address, username, hashedPassword, name);
-            signup_showAlert("Thông báo!", "Đăng ký thành công");
+            successNotification.setVisible(true);
         } 
-    }
-
-    private void signup_showAlert(String title, String message) {
-    Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.setTitle(title);
-    alert.setHeaderText(null);
-    alert.setContentText(message);
-    alert.showAndWait();
     }
 
     private boolean isValidSignUp(String email, String phoneNum,

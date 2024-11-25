@@ -1,6 +1,7 @@
 package main.Models;
 
 import main.Models.Client;
+import main.Models.Admin;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -17,21 +18,26 @@ public class Model {
     private static Model model;
     private ViewFactory viewFactory;
     private boolean clientLoginSuccessFlag;
+    private boolean adminLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
     private final ObservableList<Notification> allNotifications;
+    private final ObservableList<Book> recentlyAddBook;
+    private final ObservableList<BookTransaction> bookTransactions;
     private final Client client;
+    private final Admin admin;
 
     private Model() {
         this.viewFactory = new ViewFactory();
         this.clientLoginSuccessFlag = false;
+        this.adminLoginSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
         this.allNotifications = FXCollections.observableArrayList();
         this.recentlyAddBook = FXCollections.observableArrayList();
         this.bookTransactions = FXCollections.observableArrayList();
-
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "");
+        this.admin = new Admin(0, "", "", "");
     }
 
     public static synchronized Model getInstance() {
@@ -53,12 +59,24 @@ public class Model {
         this.clientLoginSuccessFlag = flag;
     }
 
+    public boolean getAdminLoginSuccessFlag() {
+        return this.adminLoginSuccessFlag;
+    }
+
+    public void setadminLoginSuccessFlag(boolean flag) {
+        this.adminLoginSuccessFlag = flag;
+    }
+
     public DatabaseDriver getDatabaseDriver() {
         return databaseDriver;
     }
 
     public Client getClient() {
         return client;
+    }
+
+    public Admin getAdmin() {
+        return admin;
     }
 
     public void setAllBook() {
@@ -88,7 +106,20 @@ public class Model {
         }
     }
 
+    public ObservableList<Book> getAllBook() {
+        return allBook;
+    }
+
+    public Book findBookByISBN(String ISBN) {
+        for (Book book : allBook) {
+            if (book.getIsbn().equals(ISBN))
+                return book;
+        }
+        return null;
+    }
+
     public void setRecentlyBook() {
+        recentlyAddBook.clear();
         ResultSet resultSet = databaseDriver.getBookByClientID(Model.getInstance().getClient().getClientId());
         try {
             while (resultSet.next()) {
@@ -114,8 +145,13 @@ public class Model {
         }
     }
 
+    public ObservableList<Book> getRecentlyAddBook() {
+        return recentlyAddBook;
+    }
+
     public void setBookTransaction() {
-        ResultSet resultSet = databaseDriver.getTransactionByClientID(Model.getInstance().getClient().getClientId());
+        bookTransactions.clear();
+        ResultSet resultSet = databaseDriver.getTransactionByClientID(this.client.getClientId());
         try {
             while (resultSet.next()) {
                 int transactionId = resultSet.getInt("transaction_id");
@@ -140,22 +176,6 @@ public class Model {
         return bookTransactions;
     }
 
-    public ObservableList<Book> getAllBook() {
-        return allBook;
-    }
-
-    public ObservableList<Book> getRecentlyAddBook() {
-        return recentlyAddBook;
-    }
-
-    public Book findBookByISBN(String ISBN) {
-        for (Book book : allBook) {
-            if (book.getIsbn().equals(ISBN))
-                return book;
-        }
-        return null;
-    }
-
     public void evaluateClientCred(String username) {
         ResultSet resultSet = databaseDriver.getClientData(username);
         try {
@@ -174,6 +194,29 @@ public class Model {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void evaluateAdminCred(String username) {
+        ResultSet resultSet = databaseDriver.getAdminData(username);
+        try {
+            if (resultSet != null && resultSet.next()) {
+                this.admin.setadmin_id(resultSet.getInt("admin_id"));
+                this.admin.setUsername(resultSet.getString("username"));
+                this.admin.setPassword_hash(resultSet.getString("password_hash"));
+                this.admin.setEmail(resultSet.getString("email"));
+                this.adminLoginSuccessFlag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); 
         } finally {
             if (resultSet != null) {
                 try {
@@ -243,11 +286,11 @@ public class Model {
     }
 
     public void setAllNotifications() {
+        allNotifications.clear();
         prepareNotifications(this.allNotifications, -1);
     }
 
     public ObservableList<Notification> getAllNotifications() {
         return allNotifications;
     }
-
 }

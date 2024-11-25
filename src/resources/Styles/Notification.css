@@ -1,6 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Modak&family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&display=swap');
 
-
+.success_anchorpane {
+    -fx-background-color: white;    
+    -fx-border-color: #32CD32;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+}
 .alert_anchorpane {
     -fx-background-color: white;    
     -fx-border-color: RED;
