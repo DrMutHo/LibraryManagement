@@ -201,12 +201,11 @@ public class LoginController implements Initializable {
         String password = passwordField.getText();
         
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
-            if (isValidCredentials(username, password)) {
-                Model.getInstance().getDatabaseDriver().getClientData(username);
+            if (isValidClientCredentials(username, password)) {
                 Model.getInstance().evaluateClientCred(username);
                 Model.getInstance().getViewFactory().showLoading(() -> {
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
@@ -221,6 +220,22 @@ public class LoginController implements Initializable {
                 disableAllComponents(inner_pane);
                 passwordField.clear(); 
             }
+        } else {
+            if (isValidAdminCredentials(username, password)) {
+                Model.getInstance().evaluateAdminCred(username);
+                Model.getInstance().getViewFactory().showLoading(() -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    Platform.runLater(() -> {
+                        Model.getInstance().getViewFactory().showAdminWindow();
+                        Model.getInstance().getViewFactory().closeStage(stage);
+                    });
+                }, outer_pane);
+            }
+
         }
     }
 
@@ -282,7 +297,26 @@ public class LoginController implements Initializable {
         }
     }
 
-    private boolean isValidCredentials(String username, String password) {
+    private boolean isValidAdminCredentials(String username, String password) {
+        String query = "SELECT * FROM admin WHERE username = ?";
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return false;
+            }
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                String storedPasswordHash = resultSet.getString("password_hash");
+                return verifyPassword(password, storedPasswordHash);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    private boolean isValidClientCredentials(String username, String password) {
         String query = "SELECT * FROM Client WHERE username = ?";
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
