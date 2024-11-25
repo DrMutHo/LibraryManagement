@@ -18,8 +18,7 @@
       <Label fx:id="author" styleClass="label-author" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Label text="★" />
-            <Label fx:id="ratingText" />
+            <Label fx:id="rating" styleClass="label-rating" />
          </children>
       </HBox>
    </children>

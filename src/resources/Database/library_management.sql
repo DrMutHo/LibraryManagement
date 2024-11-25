@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS Client (
     registration_date DATETIME DEFAULT CURRENT_TIMESTAMP, -- Date of registration
     outstanding_fees DECIMAL(10, 2) DEFAULT 0,        -- Outstanding fees for the client
     username VARCHAR(255) UNIQUE NOT NULL,            -- Username for client login
-    password_hash VARCHAR(255) NOT NULL               -- Password hash for client login
+    password_hash VARCHAR(255) NOT NULL,              -- Password hash for client login
+    image_path VARCHAR(255) DEFAULT NULL
 );
 
 -- Table for Admins
@@ -113,6 +114,10 @@ CREATE TABLE IF NOT EXISTS BookReview (
     FOREIGN KEY (book_id) REFERENCES Book(book_id) ON DELETE CASCADE,
     FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE
 );
+
+ALTER TABLE BookReview
+ADD CONSTRAINT unique_book_client UNIQUE (book_id, client_id);
+
 
 
 -- Insert sample data into Client with securely hashed passwords

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
@@ -15,65 +14,62 @@
 <BorderPane prefHeight="750.0" prefWidth="850.0" stylesheets="@../../Styles/Client/Browsing.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.BrowsingController">
 
     <center>
-        <VBox fx:id="centerContainer" styleClass="center-container">
-            <HBox fx:id="detailsContainer" prefHeight="361.0" prefWidth="336.0" styleClass="details-container">
-                <VBox prefHeight="379.0" prefWidth="158.0" styleClass="book-details-container">
-               <VBox alignment="CENTER" prefHeight="250.0" prefWidth="158.0">
-                  <children>
-                          <ImageView fx:id="bookImageView" fitHeight="221.0" fitWidth="157.0" preserveRatio="true" styleClass="book-image" />
-                  </children>
-               </VBox>
-                    <VBox fx:id="ratingContainer" prefHeight="100.0" prefWidth="113.0" styleClass="rating-container">
-                        <children>
-                            <Label styleClass="label" text="Average Rating:" />
-                            <Label fx:id="labelAverageRating" styleClass="detail-label" />
-                            <Label styleClass="label" text="Review Count:" />
-                            <Label fx:id="labelReviewCount" styleClass="detail-label" />
-                        </children>
-                    </VBox>
-                </VBox>
-                <VBox fx:id="infoContainer" prefHeight="307.0" prefWidth="157.0" styleClass="info-container">
-                    <Label styleClass="label" text="Title:" />
-                    <Label fx:id="labelTitle" styleClass="detail-label" />
-                    <Label styleClass="label" text="Author:" />
-                    <Label fx:id="labelAuthor" styleClass="detail-label" />
-                    <Label styleClass="label" text="ISBN:" />
-                    <Label fx:id="labelISBN" styleClass="detail-label" />
-                    <Label styleClass="label" text="Genre:" />
-                    <Label fx:id="labelGenre" styleClass="detail-label" />
-                    <Label styleClass="label" text="Language:" />
-                    <Label fx:id="labelLanguage" styleClass="detail-label" />
-                    <Label styleClass="label" text="Publication Year:" />
-                    <Label fx:id="labelPublicationYear" styleClass="detail-label" />
-                </VBox>
-            </HBox>
-            <Label styleClass="description-label" text="Description:" />
-            <TextArea fx:id="textDescription" editable="false" prefHeight="231.0" prefWidth="298.0" styleClass="description-area" wrapText="true" />
-        </VBox>
-    </center>
-   <left>
-        <VBox fx:id="topContainer" prefHeight="730.0" prefWidth="433.0" styleClass="top-container" BorderPane.alignment="CENTER">
-            <HBox fx:id="searchContainer" prefHeight="36.0" prefWidth="512.0" styleClass="search-container">
-                <Label styleClass="search-label" text="Search:" />
-                <TextField fx:id="searchField" promptText="Enter book title or author" styleClass="search-field" />
-                <Button onAction="#onSearch" styleClass="search-button" text="Search" />
+        <VBox spacing="15" styleClass="main-panel">
+
+            <HBox alignment="CENTER" spacing="15" styleClass="search-bar-container">
+                <TextField fx:id="searchField" promptText="Search books by title or author..." styleClass="search-bar" />
+                <Button onAction="#onSearch" styleClass="search-button" text="🔍 Search" />
             </HBox>
 
-            <TableView fx:id="bookTable" onMouseClicked="#onBookSelect" prefHeight="600.0" prefWidth="512.0" styleClass="book-table">
-                <columns>
-                    <TableColumn fx:id="colTitle" prefWidth="150" styleClass="table-column" text="Title" />
-                    <TableColumn fx:id="colAuthor" prefWidth="100" styleClass="table-column" text="Author" />
-                    <TableColumn fx:id="colGenre" prefWidth="100" styleClass="table-column" text="Genre" />
-                    <TableColumn fx:id="colYear" prefWidth="80" styleClass="table-column" text="Year" />
-                    <TableColumn fx:id="colRating" prefWidth="80" styleClass="table-column" text="Rating" />
-                </columns>
-            <columnResizePolicy>
-               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-            </columnResizePolicy>
-            </TableView>
+            <HBox prefHeight="632.0" prefWidth="817.0" spacing="15" styleClass="content-panel">
+                
+                <VBox prefHeight="562.0" prefWidth="587.0" spacing="10" styleClass="book-list-panel">
+                    <Label styleClass="section-title" text="📋 Book List" />
+                    <TableView fx:id="bookTable" onMouseClicked="#onBookSelect" prefHeight="355.0" prefWidth="494.0" styleClass="book-table">
+                        <columns>
+                            <TableColumn fx:id="colTitle" prefWidth="200.0" text="Title" />
+                            <TableColumn fx:id="colAuthor" prefWidth="150.0" text="Author" />
+                            <TableColumn fx:id="colGenre" prefWidth="100.0" text="Genre" />
+                            <TableColumn fx:id="colYear" prefWidth="80.0" text="Year" />
+                            <TableColumn fx:id="colRating" prefWidth="80.0" text="⭐ Rating" />
+                        </columns>
+                  <columnResizePolicy>
+                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                  </columnResizePolicy>
+                    </TableView>
+      
+                  <VBox spacing="10" styleClass="description-panel">
+                      <Label styleClass="description-title" text="Description:" />
+                      <TextArea fx:id="textDescription" editable="false" prefHeight="120" promptText="No description available." styleClass="description-area" wrapText="true" />
+                  </VBox>
+                </VBox>
+
+                <VBox maxWidth="250.0" minWidth="250.0" prefWidth="250.0" spacing="15" styleClass="detail-panel">
+                    <Label styleClass="section-title" text="📖 Book Details" />
+                    <ImageView fx:id="bookImageView" fitHeight="150.0" fitWidth="150.0" preserveRatio="true" smooth="true" styleClass="book-image" />
+                    
+                    <VBox alignment="CENTER_LEFT" spacing="10">
+                        <Label styleClass="detail-label" text="Title:" />
+                        <Label fx:id="labelTitle" styleClass="detail-value" text="-" />
+                        <Label styleClass="detail-label" text="Author:" />
+                        <Label fx:id="labelAuthor" styleClass="detail-value" text="-" />
+                        <Label styleClass="detail-label" text="Genre:" />
+                        <Label fx:id="labelGenre" styleClass="detail-value" text="-" />
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="10">
+                        <Button onAction="#openDetailWindow" styleClass="action-button" text="📄 View Details" />
+                        <Button onAction="#openReviewWindow" styleClass="action-button" text="✍ Write Review" />
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="10">
+                        <Label styleClass="rating-label" text="Your Rating:" />
+                        <HBox fx:id="ratingStars" alignment="CENTER" spacing="5">
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </HBox>
         </VBox>
-   </left>
-   <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-   </padding>
+    </center>
+
 </BorderPane>

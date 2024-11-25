@@ -1,18 +1,16 @@
 /* General Styles */
 .root {
     -fx-font-family: 'Roboto', sans-serif;
-    -fx-background-color: linear-gradient(to bottom, #f0f8ff, #e6ffee);
+    -fx-background-color: linear-gradient(to bottom, #fffbf0, #e6ffee);
     /* Nhạt dần xanh và trắng */
 }
 
 /* Header Styles */
 .hbox-header {
-    -fx-padding: 10;
-    -fx-spacing: 10;
-    -fx-alignment: center-left;
+    -fx-padding: 15;
     -fx-background-color: linear-gradient(to right, #4caf50, #81c784);
-    -fx-border-color: #d9d9d9;
-    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-alignment: center;
 }
 
 .label {
@@ -29,6 +27,12 @@
     -fx-text-fill: #ffffff;
     -fx-pref-width: 200px;
     -fx-alignment: CENTER_RIGHT;
+}
+
+.header-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
 }
 
 /* Section Titles */
@@ -50,6 +54,7 @@
 
 /* Book Container Styles */
 .hbox-recentlyAdd {
+    -fx-pref-height: 220px;
     -fx-spacing: 15;
     -fx-background-color: #fffde7;
 }
@@ -77,6 +82,72 @@
     -fx-background-color: #e64a19;
     /* Cam đậm hơn khi hover */
     -fx-cursor: hand;
+}
+
+.combo-box {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-size: 14px;
+    -fx-pref-height: 30px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #81c784;
+    /* Màu xanh lá nhạt để hợp tone */
+    -fx-border-radius: 5px;
+    -fx-padding: 5;
+}
+
+.combo-box:hover {
+    -fx-background-color: #f1f8e9;
+    /* Xanh lá rất nhạt khi hover */
+    -fx-border-color: #4caf50;
+    /* Màu xanh lá đậm hơn cho viền */
+}
+
+/* Mũi tên trong ComboBox */
+.combo-box .arrow {
+    -fx-background-color: #81c784;
+    -fx-border-color: #388e3c;
+    -fx-border-radius: 3px;
+    -fx-padding: 5;
+    -fx-shape: "M0 0 L4 4 L8 0 Z";
+}
+
+.combo-box .arrow:hover {
+    -fx-background-color: #66bb6a;
+    /* Xanh lá đậm hơn khi hover */
+    -fx-border-color: #2e7d32;
+    /* Xanh lá đậm cho viền khi hover */
+}
+
+/* Popup danh sách cuộn */
+.combo-box-popup .list-view {
+    -fx-background-color: #ffffff;
+    -fx-control-inner-background: #ffffff;
+    -fx-border-color: #81c784;
+    /* Màu xanh lá nhạt */
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.combo-box-popup .list-cell {
+    -fx-text-fill: #333333;
+    /* Màu xám đậm */
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 5 10;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #e6ffee;
+    /* Xanh lá nhạt để hover */
+    -fx-text-fill: #000000;
+    /* Màu đen */
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #4caf50;
+    /* Xanh lá đậm khi được chọn */
+    -fx-text-fill: #ffffff;
+    /* Màu chữ trắng */
 }
 
 /* Book Details Section */

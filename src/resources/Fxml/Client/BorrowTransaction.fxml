@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="750.0" prefWidth="850.0" stylesheets="@../../Styles/Client/Browsing.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.BrowsingController">
+<BorderPane prefHeight="750.0" prefWidth="850.0" stylesheets="@../../Styles/Client/Browsing.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.BorrowTransactionController">
 
     <center>
         <VBox spacing="15" styleClass="main-panel">
@@ -23,9 +23,9 @@
 
             <HBox prefHeight="632.0" prefWidth="817.0" spacing="15" styleClass="content-panel">
                 
-                <VBox maxWidth="-Infinity" prefHeight="602.0" prefWidth="648.0" spacing="10" styleClass="book-list-panel">
+                <VBox prefHeight="562.0" prefWidth="587.0" spacing="10" styleClass="book-list-panel">
                     <Label styleClass="section-title" text="📋 Book List" />
-                    <TableView fx:id="bookTable" onMouseClicked="#onBookSelect" prefHeight="355.0" prefWidth="494.0" styleClass="book-table">
+                    <TableView fx:id="bookTable" onMouseClicked="#onTransactionSelect" prefHeight="355.0" prefWidth="494.0" styleClass="book-table">
                         <columns>
                             <TableColumn fx:id="transactionIdColumn" prefWidth="140.0" text="Transaction ID" />
                             <TableColumn fx:id="titleColumn" prefWidth="160.0" text="Title" />
@@ -44,7 +44,7 @@
                   </VBox>
                 </VBox>
 
-                <VBox maxWidth="250.0" minWidth="155.0" prefHeight="602.0" prefWidth="155.0" spacing="15" styleClass="detail-panel">
+                <VBox maxWidth="250.0" minWidth="250.0" prefWidth="250.0" spacing="15" styleClass="detail-panel">
                     <Label styleClass="section-title" text="📖 Book Details" />
                     <ImageView fx:id="bookImageView" fitHeight="150.0" fitWidth="150.0" preserveRatio="true" smooth="true" styleClass="book-image" />
                     
@@ -59,7 +59,7 @@
 
                     <VBox alignment="CENTER" spacing="10">
                         <Button onAction="#openDetailWindow" styleClass="action-button" text="📄 View Details" />
-                        <Button onAction="#openReviewWindow" styleClass="action-button" text="✍ Write Review" />
+                        <Button onAction="#openDetailWindow" styleClass="action-button" text="✍ Write Review" />
                     </VBox>
 
                     <VBox alignment="CENTER" spacing="10">

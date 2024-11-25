@@ -38,8 +38,8 @@ public class CardController implements Initializable {
         imageView.setImage(bookCoverImage);
         title.setText(book.getTitle());
         author.setText("By " + book.getAuthor());
-        // rating.setText(book.getAverage_rating() + " (" + book.getReview_count() +
-        // ")");
+        rating.setText("★ " + book.getAverage_rating() + " (" + book.getReview_count() +
+                ")");
 
     }
 }

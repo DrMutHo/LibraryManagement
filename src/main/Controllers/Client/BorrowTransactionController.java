@@ -1,6 +1,7 @@
 package main.Controllers.Client;
 
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -8,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -16,61 +18,74 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.Models.Book;
 import main.Models.BookReview;
+import main.Models.BorrowTransaction;
 import main.Models.Model;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
-public class BrowsingController implements Initializable {
+public class BorrowTransactionController implements Initializable {
 
     @FXML
     private TextField searchField;
+
     @FXML
-    private TableView<Book> bookTable;
+    private TableView<BorrowTransaction> bookTable;
+
     @FXML
-    private TableColumn<Book, String> colTitle, colAuthor, colGenre;
+    private TableColumn<BorrowTransaction, Integer> transactionIdColumn;
     @FXML
-    private TableColumn<Book, Integer> colYear;
+    private TableColumn<BorrowTransaction, String> titleColumn;
     @FXML
-    private TableColumn<Book, Double> colRating;
+    private TableColumn<BorrowTransaction, Integer> copyIdColumn;
+    @FXML
+    private TableColumn<BorrowTransaction, LocalDate> borrowDateColumn;
+    @FXML
+    private TableColumn<BorrowTransaction, LocalDate> returnDateColumn;
+    @FXML
+    private TableColumn<BorrowTransaction, String> statusColumn;
+
     @FXML
     private ImageView bookImageView;
+
     @FXML
     private Label labelTitle, labelAuthor, labelISBN, labelGenre, labelLanguage, labelPublicationYear,
             labelAverageRating, labelReviewCount;
+
     @FXML
     private TextArea textDescription;
     @FXML
     private HBox ratingStars;
 
-    private Book selectedBook;
+    private FilteredList<BorrowTransaction> filteredData;
+    private SortedList<BorrowTransaction> sortedData;
 
-    private FilteredList<Book> filteredData;
-    private SortedList<Book> sortedData;
+    private BorrowTransaction selectedTransaction;
+    private Book selectedBook;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Model.getInstance().setAllBook();
-        colTitle.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
-        colAuthor.setCellValueFactory(cellData -> cellData.getValue().authorProperty());
-        colGenre.setCellValueFactory(cellData -> cellData.getValue().genreProperty());
-        colYear.setCellValueFactory(cellData -> cellData.getValue().publication_yearProperty().asObject());
-        colRating.setCellValueFactory(cellData -> cellData.getValue().average_ratingProperty().asObject());
+        // Load data and set up table columns
+        Model.getInstance().setBorrowTransaction();
+        transactionIdColumn.setCellValueFactory(new PropertyValueFactory<>("transactionId"));
+        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        borrowDateColumn.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
+        returnDateColumn.setCellValueFactory(new PropertyValueFactory<>("returnDate"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        filteredData = new FilteredList<>(Model.getInstance().getAllBook(), p -> true);
+        // Apply filtering and sorting
+        filteredData = new FilteredList<>(Model.getInstance().getBorrowTransaction(), p -> true);
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(book -> {
+            filteredData.setPredicate(transaction -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
-
                 String lowerCaseFilter = newValue.toLowerCase();
 
-                if (book.getTitle().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (book.getAuthor().toLowerCase().contains(lowerCaseFilter)) {
+                if (transaction.getTitle().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
                 return false;
@@ -79,12 +94,26 @@ public class BrowsingController implements Initializable {
 
         sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(bookTable.comparatorProperty());
-
         bookTable.setItems(sortedData);
 
         initializeRatingStars();
 
-        bookTable.setOnMouseClicked(this::onBookSelect);
+        bookTable.setOnMouseClicked(this::onTransactionSelect);
+    }
+
+    @FXML
+    private void onSearch() {
+    }
+
+    @FXML
+    private void onTransactionSelect(MouseEvent event) {
+        if (event.getClickCount() == 1) {
+            selectedTransaction = bookTable.getSelectionModel().getSelectedItem();
+            if (selectedTransaction != null) {
+                this.selectedBook = Model.getInstance().getBookDataByCopyID(selectedTransaction.getCopyId());
+                displayTransactionDetails(selectedBook);
+            }
+        }
     }
 
     private void initializeRatingStars() {
@@ -168,7 +197,7 @@ public class BrowsingController implements Initializable {
             }
 
             if (selectedBook != null && selectedBook.getBook_id() == book.getBook_id()) {
-                displayBookDetails(book);
+                displayTransactionDetails(book);
             }
 
             updateRatingStarsBasedOnUserReview(book);
@@ -195,26 +224,10 @@ public class BrowsingController implements Initializable {
         return sumRatings / totalReviews;
     }
 
-    @FXML
-    private void onSearch() {
-    }
-
-    @FXML
-    private void onBookSelect(MouseEvent event) {
-        if (event.getClickCount() == 1) {
-            Book selectedBook = bookTable.getSelectionModel().getSelectedItem();
-            if (selectedBook != null) {
-                this.selectedBook = selectedBook;
-                displayBookDetails(selectedBook);
-                updateRatingStarsBasedOnUserReview(selectedBook);
-            }
-        }
-    }
-
-    private void displayBookDetails(Book book) {
+    private void displayTransactionDetails(Book book) {
         labelTitle.textProperty().bind(Bindings.concat("Title: ", book.titleProperty()));
-        labelAuthor.textProperty().bind(Bindings.concat("Author: ", book.authorProperty()));
-        labelGenre.textProperty().bind(Bindings.concat("Genre: ", book.genreProperty()));
+        labelAuthor.textProperty().bind(Bindings.concat("Author: ", book.getAuthor()));
+        labelGenre.textProperty().bind(Bindings.concat("Genre: ", book.getGenre()));
         textDescription.setText(book.getDescription());
 
         if (book.getImagePath() != null && !book.getImagePath().isEmpty()) {
@@ -228,17 +241,15 @@ public class BrowsingController implements Initializable {
         } else {
             bookImageView.setImage(null);
         }
-
-        updateRatingStarsBasedOnUserReview(book);
     }
 
     @FXML
     private void openDetailWindow() {
-        if (selectedBook == null) {
+        if (selectedTransaction == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Chưa Chọn Sách");
+            alert.setTitle("No Transaction Selected");
             alert.setHeaderText(null);
-            alert.setContentText("Vui lòng chọn một cuốn sách để xem chi tiết.");
+            alert.setContentText("Please select a transaction to view details.");
             alert.showAndWait();
             return;
         }
@@ -247,7 +258,7 @@ public class BrowsingController implements Initializable {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/resources/Fxml/Client/BookDetailWithReview.fxml"));
             Stage stage = new Stage();
-            stage.setTitle("Chi Tiết Sách");
+            stage.setTitle("Transaction Details");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(loader.load()));
 
@@ -258,45 +269,9 @@ public class BrowsingController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Lỗi");
+            alert.setTitle("Error");
             alert.setHeaderText(null);
-            alert.setContentText("Không thể mở cửa sổ chi tiết sách.");
-            alert.showAndWait();
-        }
-    }
-
-    @FXML
-    private void openReviewWindow() {
-        if (selectedBook == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Chưa Chọn Sách");
-            alert.setHeaderText(null);
-            alert.setContentText("Vui lòng chọn một cuốn sách để viết đánh giá.");
-            alert.showAndWait();
-            return;
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/resources/Fxml/Client/BookDetailWithReview.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Viết Đánh Giá");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(loader.load()));
-
-            BookDetailWithReviewController controller = loader.getController();
-            controller.setBook(selectedBook);
-
-            stage.showAndWait();
-
-            Model.getInstance().setAllBook();
-            displayBookDetails(selectedBook);
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Lỗi");
-            alert.setHeaderText(null);
-            alert.setContentText("Không thể mở cửa sổ viết đánh giá.");
+            alert.setContentText("Cannot open the transaction details window.");
             alert.showAndWait();
         }
     }

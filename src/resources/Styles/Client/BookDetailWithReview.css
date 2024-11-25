@@ -1,0 +1,123 @@
+.main-layout {
+    -fx-padding: 15;
+    -fx-background-color: linear-gradient(to bottom, #f0f8ff, #e6ffee);
+    -fx-spacing: 15;
+}
+
+.book-details-section {
+    -fx-background-color: #f9fbe7;
+    -fx-padding: 15;
+    -fx-border-color: #cddc39;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-pref-width: 250;
+}
+
+.book-details-section Label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6d4c41;
+    -fx-font-weight: bold;
+}
+
+.book-details-section ImageView {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 5);
+    -fx-padding: 5;
+    -fx-background-radius: 10;
+}
+
+.reviews-section {
+    -fx-background-color: #f3f9f3;
+    -fx-padding: 15;
+    -fx-border-color: #c8e6c9;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.reviews-section Label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #388e3c;
+}
+
+.TableView {
+    -fx-border-color: #c8e6c9;
+    -fx-border-radius: 5;
+    -fx-background-color: #ffffff;
+}
+
+.TableColumn {
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-text-fill: #4caf50;
+}
+
+.description-section {
+    -fx-background-color: #fffde7;
+    -fx-padding: 15;
+    -fx-border-color: #ffe082;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-pref-width: 250;
+}
+
+.description-section Label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4caf50;
+}
+
+.description-section TextArea {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffcc80;
+    -fx-border-radius: 5;
+    -fx-padding: 10;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+.write-review-panel {
+    -fx-background-color: #fbe9e7;
+    -fx-padding: 15;
+    -fx-border-radius: 10;
+    -fx-border-color: #ff8a65;
+    -fx-border-width: 2;
+    -fx-pref-width: 400;
+}
+
+.write-review-panel Label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e64a19;
+}
+
+.write-review-panel .action-button {
+    -fx-background-color: linear-gradient(to right, #ff7043, #ff8a65);
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-font-weight: bold;
+    -fx-padding: 10 15;
+    -fx-font-size: 14px;
+}
+
+.write-review-panel .action-button:hover {
+    -fx-background-color: #e64a19;
+    -fx-cursor: hand;
+}
+
+HBox#writeReviewStars .star {
+    -fx-font-size: 24px;
+    -fx-text-fill: gold;
+    -fx-cursor: hand;
+}
+
+HBox#writeReviewStars .star:hover {
+    -fx-text-fill: orange;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e7d32;
+    -fx-underline: true;
+}
