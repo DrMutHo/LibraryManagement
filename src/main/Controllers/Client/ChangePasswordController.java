@@ -20,11 +20,11 @@ public class ChangePasswordController implements Initializable {
     @FXML
     private PasswordField passwordField2; // Retype new password
     @FXML
-    private Button toggleVisibilityButton0; // Button to toggle visibility for passwordField0
+    private Button toggleButton0; // Button to toggle visibility for passwordField0
     @FXML
-    private Button toggleVisibilityButton1; // Button to toggle visibility for passwordField1
+    private Button toggleButton1; // Button to toggle visibility for passwordField1
     @FXML
-    private Button toggleVisibilityButton2; // Button to toggle visibility for passwordField2
+    private Button toggleButton2; // Button to toggle visibility for passwordField2
     @FXML
     private ImageView imageView0;
     @FXML
@@ -48,9 +48,9 @@ public class ChangePasswordController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         passwordField_init();
-        toggleVisibilityButton0.setOnAction(event -> togglePasswordVisibility0());
-        toggleVisibilityButton1.setOnAction(event -> togglePasswordVisibility1());
-        toggleVisibilityButton2.setOnAction(event -> togglePasswordVisibility2());
+        toggleButton0.setOnAction(event -> togglePasswordVisibility0());
+        toggleButton1.setOnAction(event -> togglePasswordVisibility1());
+        toggleButton2.setOnAction(event -> togglePasswordVisibility2());
     }
     public void passwordField_init() {
         // Set prompt text to guide the user

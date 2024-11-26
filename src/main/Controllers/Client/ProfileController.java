@@ -78,7 +78,6 @@ public class ProfileController implements Initializable {
     }
 
     @FXML
-<<<<<<< Updated upstream
     private void changePassword() { 
         // Cập nhật kích thước của StackPane sao cho phù hợp với ChangePasswordView
         changePasswordPane = Model.getInstance().getViewFactory().getChangePasswordView();
@@ -91,22 +90,6 @@ public class ProfileController implements Initializable {
         }
     
         vBox.setVisible(false);  // Ẩn VBox
-        
-=======
-    private void changePassword() {
-        // Lấy reference đến ChangePasswordView
-        changePasswordPane = Model.getInstance().getViewFactory().getChangePasswordView();
-    
-        // Đảm bảo ChangePasswordView đã được hiển thị và tính toán kích thước
-        changePasswordPane.setVisible(true);
-    
-        // Cập nhật kích thước của StackPane sao cho phù hợp với ChangePasswordView
-        stackPane.setPrefWidth(changePasswordPane.getWidth());
-        stackPane.setPrefHeight(changePasswordPane.getHeight());
-    
-        // Ẩn VBox và hiển thị ChangePasswordPane
-        vBox.setVisible(false);
->>>>>>> Stashed changes
     }
     
 }
