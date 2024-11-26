@@ -31,7 +31,7 @@ public class BrowsingController implements Initializable {
     @FXML
     private TableColumn<Book, String> colTitle, colAuthor, colGenre;
     @FXML
-    private TableColumn<Book, Integer> colYear;
+    private TableColumn<Book, Integer> colYear, colId;
     @FXML
     private TableColumn<Book, Double> colRating;
     @FXML
@@ -52,6 +52,7 @@ public class BrowsingController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Model.getInstance().setAllBook();
+        colId.setCellValueFactory(cellData -> cellData.getValue().book_idProperty().asObject());
         colTitle.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
         colAuthor.setCellValueFactory(cellData -> cellData.getValue().authorProperty());
         colGenre.setCellValueFactory(cellData -> cellData.getValue().genreProperty());

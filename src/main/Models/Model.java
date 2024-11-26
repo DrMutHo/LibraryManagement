@@ -1,12 +1,16 @@
 package main.Models;
 
+import main.Controllers.Client.ClientMenuController;
+import main.Controllers.Client.NotificationsController;
 import main.Models.Client;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.sql.Timestamp;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.Views.NotificationType;
@@ -20,6 +24,8 @@ public class Model {
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
     private final ObservableList<Notification> allNotifications;
+    private final List<ModelListenerClient> listenersClient;
+    private final List<ModelListenerAdmin> listenersAdmin;
     private final Client client;
 
     private Model() {
@@ -28,7 +34,27 @@ public class Model {
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
         this.allNotifications = FXCollections.observableArrayList();
+        this.listenersClient = FXCollections.observableArrayList();
+        this.listenersAdmin = FXCollections.observableArrayList();
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "");
+    }
+
+    public interface ModelListenerClient {
+        void onBorrowTransactionClientCreated();
+    }
+
+    public void addListener(ModelListenerClient listener) {
+        listenersClient.add(listener);
+    }
+
+    public void removeListener(ModelListenerClient listener) {
+        listenersClient.remove(listener);
+    }
+
+    public void notifyBorrowTransactionClientCreated() {
+        for (ModelListenerClient listener : listenersClient) {
+            listener.onBorrowTransactionClientCreated();
+        }
     }
 
     public static synchronized Model getInstance() {
@@ -175,6 +201,14 @@ public class Model {
         notification.setRead(true);
     }
 
+    public void insertNotification(Notification notification) {
+        if (databaseDriver.insertNotification(notification)) {
+            Platform.runLater(() -> {
+                allNotifications.add(notification);
+            });
+        }
+    }
+
     public void markAllNotificationsAsRead(int recipientId) {
         databaseDriver.markAllNotificationsAsRead(recipientId);
 
@@ -189,6 +223,34 @@ public class Model {
 
     public ObservableList<Notification> getAllNotifications() {
         return allNotifications;
+    }
+
+    public void notifyBorrowTransactionClientCreatedEvent() {
+        notifyBorrowTransactionClientCreated();
+    }
+
+    // Admin section //
+
+    public interface ModelListenerAdmin {
+        void onBorrowTransactionAdminCreated();
+
+        void onBookReturnProcessed();
+    }
+
+    public void notifyBookReturnProcessed() {
+        for (ModelListenerAdmin listener : listenersAdmin) {
+            listener.onBookReturnProcessed();
+        }
+    }
+
+    public void notifyBorrowTransactionAdminCreated() {
+        for (ModelListenerAdmin listener : listenersAdmin) {
+            listener.onBorrowTransactionAdminCreated();
+        }
+    }
+
+    public void notifyBorrowTransactionAdminCreatedEvent() {
+        notifyBorrowTransactionAdminCreated();
     }
 
 }

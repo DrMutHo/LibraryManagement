@@ -25,6 +25,11 @@
                 <Label fx:id="labelPublicationYear" text="Publication Year" />
                 <Label fx:id="labelAverageRating" text="Average Rating: 0.0" />
                 <Label fx:id="labelReviewCount" text="Number of Reviews: 0" />
+
+                <HBox spacing="10" alignment="CENTER">
+                    <Button fx:id="borrowButton" text="Borrow" onAction="#onBorrowClick" styleClass="borrow-button" />
+                    <Button fx:id="notifyMeButton" text="Notify Me" styleClass="notify-me-button" />
+                </HBox>
             </VBox>
 
             <VBox spacing="20" styleClass="center-section">

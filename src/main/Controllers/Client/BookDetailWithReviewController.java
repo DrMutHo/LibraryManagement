@@ -12,7 +12,14 @@ import javafx.scene.image.ImageView;
 import main.Models.Book;
 import main.Models.BookReview;
 import main.Models.Model;
+import main.Models.Notification;
+import main.Models.NotificationRequest;
+import main.Views.NotificationType;
+import main.Views.RecipientType;
+import main.Models.BookCopy;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class BookDetailWithReviewController {
@@ -36,6 +43,10 @@ public class BookDetailWithReviewController {
     private HBox writeReviewStars;
     @FXML
     private TextArea writeReviewTextArea;
+    @FXML
+    private Button notifyMeButton;
+
+    private NotificationRequest currentNotificationRequest = null;
 
     private Book currentBook;
     private BookReview userReview = null;
@@ -46,6 +57,22 @@ public class BookDetailWithReviewController {
         displayBookDetails();
         loadReviews();
         initializeWriteReviewSection();
+        checkNotificationRequest();
+
+    }
+
+    private void checkNotificationRequest() {
+        int clientId = Model.getInstance().getClient().getClientId();
+        int bookId = currentBook.getBook_id();
+        currentNotificationRequest = Model.getInstance().getDatabaseDriver().getNotificationRequest(clientId, bookId);
+
+        if (currentNotificationRequest == null) {
+            notifyMeButton.setText("Notify Me");
+            notifyMeButton.setOnAction(event -> onNotifyMeClick());
+        } else {
+            notifyMeButton.setText("Cancel Request");
+            notifyMeButton.setOnAction(event -> onCancelRequestClick());
+        }
     }
 
     private void displayBookDetails() {
@@ -221,5 +248,145 @@ public class BookDetailWithReviewController {
         selectedRating = userReview != null ? (int) Math.round(userReview.getRating()) : 0;
         writeReviewTextArea.setText(userReview != null ? userReview.getComment() : "");
         updateWriteReviewStars();
+    }
+
+    @FXML
+    private void onBorrowClick() {
+        int clientId = Model.getInstance().getClient().getClientId();
+        int activeBorrows = Model.getInstance().getDatabaseDriver().getActiveBorrowTransactions(clientId).size();
+        if (activeBorrows >= 3) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Borrow Limit Reached");
+            alert.setHeaderText(null);
+            alert.setContentText("You have reached the maximum limit of 3 borrowed books.");
+            alert.showAndWait();
+            return;
+        }
+
+        boolean hasActiveBorrow = Model.getInstance().getDatabaseDriver().hasActiveBorrowForBook(clientId,
+                currentBook.getBook_id());
+        if (hasActiveBorrow) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Duplicate Borrow");
+            alert.setHeaderText(null);
+            alert.setContentText(
+                    "You have already borrowed this book. You cannot borrow multiple copies of the same book at the same time.");
+            alert.showAndWait();
+            return;
+        }
+
+        BookCopy availableCopy = Model.getInstance().getDatabaseDriver().getAvailableBookCopy(currentBook.getBook_id());
+        if (availableCopy == null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("No Copies Available");
+            alert.setHeaderText(null);
+            alert.setContentText(
+                    "No copies are currently available. You can click 'Notify Me' to be notified when a copy becomes available.");
+            alert.showAndWait();
+            return;
+        }
+
+        boolean transactionCreated = Model.getInstance().getDatabaseDriver().createBorrowTransaction(clientId,
+                availableCopy.getCopyId());
+        if (transactionCreated) {
+            boolean copyUpdated = Model.getInstance().getDatabaseDriver()
+                    .updateBookCopyAvailability(availableCopy.getCopyId(), false);
+            if (copyUpdated) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Borrow Successful");
+                alert.setHeaderText(null);
+                alert.setContentText("You have successfully borrowed the book.");
+                alert.showAndWait();
+                createBorrowConfirmedNotification(clientId, currentBook.getBook_id());
+                notifyBorrowTransactionCreated();
+                loadReviews();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Unable to update book copy availability.");
+                alert.showAndWait();
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Unable to create borrow transaction.");
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
+    private void onNotifyMeClick() {
+        int clientId = Model.getInstance().getClient().getClientId();
+        boolean requestCreated = Model.getInstance().getDatabaseDriver().createNotificationRequest(clientId,
+                currentBook.getBook_id());
+        if (requestCreated) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Notification Request");
+            alert.setHeaderText(null);
+            alert.setContentText("You will be notified when the book becomes available.");
+            alert.showAndWait();
+            sendNotificationBorrowRequestConfirmed();
+            checkNotificationRequest();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Unable to create notification request.");
+            alert.showAndWait();
+        }
+    }
+
+    private void onCancelRequestClick() {
+        if (currentNotificationRequest != null) {
+            boolean success = Model.getInstance().getDatabaseDriver()
+                    .deleteNotificationRequest(currentNotificationRequest.getRequestId());
+            if (success) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Request Canceled");
+                alert.setHeaderText(null);
+                alert.setContentText("Your notification request has been canceled.");
+                alert.showAndWait();
+
+                currentNotificationRequest = null;
+                notifyMeButton.setText("Notify Me");
+                notifyMeButton.setOnAction(event -> onNotifyMeClick());
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Unable to cancel your notification request. Please try again later.");
+                alert.showAndWait();
+            }
+        }
+    }
+
+    private void notifyBorrowTransactionCreated() {
+        Model.getInstance().notifyBorrowTransactionClientCreatedEvent();
+    }
+
+    private void sendNotificationBorrowRequestConfirmed() {
+        String bookTitle = currentBook.getTitle();
+        int recipientId = Model.getInstance().getClient().getClientId();
+        RecipientType recipientType = RecipientType.Client;
+        NotificationType notificationType = NotificationType.BorrowRequestConfirmed;
+        String message = "Your notification request on " + bookTitle + " has been confirmed.";
+        Notification notification = new Notification(recipientId, recipientType, notificationType, message);
+        Model.getInstance().insertNotification(notification);
+    }
+
+    private void createBorrowConfirmedNotification(int clientId, int bookId) {
+        String bookTitle = currentBook.getTitle();
+        int recipientId = Model.getInstance().getClient().getClientId();
+        RecipientType recipientType = RecipientType.Client;
+        NotificationType notificationType = NotificationType.BorrowConfirmed;
+        String message = String.format("Bạn đã mượn thành công cuốn sách có ID: %d. Hạn trả sách là ngày %s.",
+                bookId, LocalDate.now().plusDays(7).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+
+        Notification borrowConfirmedNotification = new Notification(recipientId, recipientType, notificationType,
+                message);
+
+        Model.getInstance().insertNotification(borrowConfirmedNotification);
     }
 }

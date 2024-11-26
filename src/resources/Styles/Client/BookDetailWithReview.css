@@ -121,3 +121,37 @@ HBox#writeReviewStars .star:hover {
     -fx-text-fill: #2e7d32;
     -fx-underline: true;
 }
+
+
+/* Borrow and Notify Me Buttons */
+.borrow-button {
+    -fx-background-color: linear-gradient(to right, #4caf50, #81c784);
+    /* Green Gradient */
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-padding: 10 15;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.borrow-button:hover {
+    -fx-background-color: #388e3c;
+    /* Darker Green on Hover */
+    -fx-cursor: hand;
+}
+
+.notify-me-button {
+    -fx-background-color: linear-gradient(to right, #ff9800, #ffb74d);
+    /* Orange Gradient */
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-padding: 10 15;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.notify-me-button:hover {
+    -fx-background-color: #f57c00;
+    /* Darker Orange on Hover */
+    -fx-cursor: hand;
+}

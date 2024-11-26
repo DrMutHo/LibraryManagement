@@ -27,11 +27,12 @@
                     <Label styleClass="section-title" text="📋 Book List" />
                     <TableView fx:id="bookTable" onMouseClicked="#onBookSelect" prefHeight="355.0" prefWidth="494.0" styleClass="book-table">
                         <columns>
-                            <TableColumn fx:id="colTitle" prefWidth="200.0" text="Title" />
+                            <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
+                            <TableColumn fx:id="colTitle" prefWidth="180.0" text="Title" />
                             <TableColumn fx:id="colAuthor" prefWidth="150.0" text="Author" />
                             <TableColumn fx:id="colGenre" prefWidth="100.0" text="Genre" />
                             <TableColumn fx:id="colYear" prefWidth="80.0" text="Year" />
-                            <TableColumn fx:id="colRating" prefWidth="80.0" text="⭐ Rating" />
+                            <TableColumn fx:id="colRating" prefWidth="80.0" text="⭐" />
                         </columns>
                   <columnResizePolicy>
                      <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -44,7 +45,7 @@
                   </VBox>
                 </VBox>
 
-                <VBox maxWidth="250.0" minWidth="250.0" prefWidth="250.0" spacing="15" styleClass="detail-panel">
+                <VBox maxWidth="250.0" minWidth="230.0" prefWidth="250.0" spacing="15" styleClass="detail-panel">
                     <Label styleClass="section-title" text="📖 Book Details" />
                     <ImageView fx:id="bookImageView" fitHeight="150.0" fitWidth="150.0" preserveRatio="true" smooth="true" styleClass="book-image" />
                     
