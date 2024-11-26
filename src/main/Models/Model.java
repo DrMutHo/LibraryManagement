@@ -21,8 +21,9 @@ public class Model {
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
     private final ObservableList<Book> HighestRatedBooks;
-    private final ObservableList<BorrowTransaction> BorrowTransactions;
     private final ObservableList<Notification> allNotifications;
+    private final ObservableList<Book> recentlyAddBook;
+    private final ObservableList<BookTransaction> bookTransactions;
     private final Client client;
     private final Admin admin;
 
@@ -34,9 +35,10 @@ public class Model {
         this.allBook = FXCollections.observableArrayList();
         this.HighestRatedBooks = FXCollections.observableArrayList();
         this.allNotifications = FXCollections.observableArrayList();
-        this.BorrowTransactions = FXCollections.observableArrayList();
-
+        this.recentlyAddBook = FXCollections.observableArrayList();
+        this.bookTransactions = FXCollections.observableArrayList();
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "", "");
+        this.admin = new Admin(0, "", "", "");
     }
 
     public static synchronized Model getInstance() {
@@ -106,24 +108,20 @@ public class Model {
         }
     }
 
-    public void setHighestRatedBooks(String genre) {
-        HighestRatedBooks.clear();
+    public ObservableList<Book> getRecentlyAddBook() {
+        return recentlyAddBook;
+    }
 
-        ResultSet resultSet;
-        if (genre.equalsIgnoreCase("ALL")) {
-            resultSet = databaseDriver.getHighestRatingBooks();
-        } else {
-            resultSet = databaseDriver.getHighestRatingBooksByGenre(genre);
-        }
-
+public void setRecentlyBook() {
+        recentlyAddBook.clear();
+        ResultSet resultSet = databaseDriver.getBookByClientID(Model.getInstance().getClient().getClientId());
         try {
             while (resultSet.next()) {
-                // Lấy thông tin từ ResultSet
                 int book_id = resultSet.getInt("book_id");
                 String title = resultSet.getString("title");
                 String author = resultSet.getString("author");
                 String isbn = resultSet.getString("isbn");
-                String genreResult = resultSet.getString("genre");
+                String genre = resultSet.getString("genre");
                 String language = resultSet.getString("language");
                 String description = resultSet.getString("description");
                 int publication_year = resultSet.getInt("publication_year");
@@ -131,26 +129,23 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
-                Book book = new Book(book_id, title, author, isbn, genreResult, language, description, publication_year,
+                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count);
 
-                HighestRatedBooks.add(book);
+                recentlyAddBook.add(book);
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
+    }	
+
+public ObservableList<BookTransaction> getBookTransaction() {
+        return bookTransactions;
     }
 
-    public void setBorrowTransaction() {
-        ResultSet resultSet = databaseDriver.getTransactionByClientID(Model.getInstance().getClient().getClientId());
+ public void setBookTransaction() {
+        bookTransactions.clear();
+        ResultSet resultSet = databaseDriver.getTransactionByClientID(this.client.getClientId());
         try {
             while (resultSet.next()) {
                 int transactionId = resultSet.getInt("transaction_id");
@@ -162,10 +157,9 @@ public class Model {
                         : null;
                 String status = resultSet.getString("status");
 
-                BorrowTransaction transaction = new BorrowTransaction(transactionId, title, copyId, borrowDate,
-                        returnDate,
+                BookTransaction transaction = new BookTransaction(transactionId, title, copyId, borrowDate, returnDate,
                         status);
-                BorrowTransactions.add(transaction);
+                bookTransactions.add(transaction);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -200,10 +194,6 @@ public class Model {
         return res;
     }
 
-    public ObservableList<BorrowTransaction> getBorrowTransaction() {
-        return BorrowTransactions;
-    }
-
     public ObservableList<Book> getAllBook() {
         return allBook;
     }
@@ -220,6 +210,29 @@ public class Model {
         return null;
     }
 
+    public void evaluateAdminCred(String username) {
+        ResultSet resultSet = databaseDriver.getAdminData(username);
+        try {
+            if (resultSet != null && resultSet.next()) {
+                this.admin.setadmin_id(resultSet.getInt("admin_id"));
+                this.admin.setUsername(resultSet.getString("username"));
+                this.admin.setPassword_hash(resultSet.getString("password_hash"));
+                this.admin.setEmail(resultSet.getString("email"));
+                this.adminLoginSuccessFlag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); 
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public void evaluateClientCred(String username) {
         ResultSet resultSet = databaseDriver.getClientData(username);
         try {
@@ -234,7 +247,7 @@ public class Model {
                 this.client.setOutstandingFees(resultSet.getDouble("outstanding_fees"));
                 this.client.setUsername(resultSet.getString("username"));
                 this.client.setPasswordHash(resultSet.getString("password_hash"));
-                this.client.setAvatarImagePath(resultSet.getString("avatar_image_path"));
+                //this.client.setAvatarImagePath(resultSet.getString("avatar_image_path"));
                 this.clientLoginSuccessFlag = true;
             }
         } catch (SQLException e) {

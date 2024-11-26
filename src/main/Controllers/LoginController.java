@@ -230,10 +230,15 @@ public class LoginController implements Initializable {
                         Thread.currentThread().interrupt();
                     }
                     Platform.runLater(() -> {
-                        Model.getInstance().getViewFactory().showAdminWindow();
+                        Model.getInstance().getViewFactory().showClientWindow();
                         Model.getInstance().getViewFactory().closeStage(stage);
                     });
                 }, outer_pane);
+            } else {
+                lib_image.setVisible(false);
+                notificationPane.setVisible(true);
+                disableAllComponents(inner_pane);
+                passwordField.clear(); 
             }
 
         }

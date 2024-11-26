@@ -14,6 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import main.Models.Model;
@@ -33,11 +36,17 @@ public class ProfileController implements Initializable {
     private Button changeEmailButton;
     @FXML
     private Button deleteAccountButton;
+    @FXML
+    private AnchorPane changePasswordPane;
+    @FXML
+    private StackPane stackPane;
+    @FXML
+    private VBox vBox;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Image image = new Image(Model.getInstance().getClient().getAvatarImagePath());
-        profileImageView.setImage(image);
+        //Image image = new Image(Model.getInstance().getClient().getAvatarImagePath());
+        //profileImageView.setImage(image);
         labelLibraryCardNumber.setText(Model.getInstance().getClient().getLibraryCardNumber());
         labelFullName.setText(Model.getInstance().getClient().getName());
         labelUsername.setText(Model.getInstance().getClient().getUsername());
@@ -48,6 +57,8 @@ public class ProfileController implements Initializable {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(Model.getInstance().getClient().getRegistrationDate());
         labelRegistrationDate.setText(formattedDate);
+        changePasswordPane = null;
+        changePasswordButton.setOnAction(event -> changePassword());
     }
 
     @FXML
@@ -65,4 +76,21 @@ public class ProfileController implements Initializable {
             profileImageView.setImage(image);
         }
     }
+
+    @FXML
+    private void changePassword() { 
+        // Cập nhật kích thước của StackPane sao cho phù hợp với ChangePasswordView
+        changePasswordPane = Model.getInstance().getViewFactory().getChangePasswordView();
+        if (changePasswordPane != null) {
+            changePasswordPane.setVisible(true);
+            stackPane.setPrefWidth(changePasswordPane.getWidth());
+            stackPane.setPrefHeight(changePasswordPane.getHeight());  // Hiển thị ChangePasswordPane
+        } else {
+            System.out.println("changePasswordPane is not initialized.");
+        }
+    
+        vBox.setVisible(false);  // Ẩn VBox
+        
+    }
+    
 }

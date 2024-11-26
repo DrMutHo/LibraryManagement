@@ -28,6 +28,8 @@ public class ViewFactory {
     private BorderPane browsingView;
     private BorderPane notiView;
     private BorderPane booktransactionView;
+    private AnchorPane changePasswordView;
+    
 
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
@@ -91,6 +93,17 @@ public class ViewFactory {
             }
         }
         return browsingView;
+    }
+
+    public AnchorPane getChangePasswordView() {
+        if (changePasswordView == null) {
+            try {
+                changePasswordView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/ChangePassword.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return changePasswordView;
     }
 
     public BorderPane getBookTransactionView() {

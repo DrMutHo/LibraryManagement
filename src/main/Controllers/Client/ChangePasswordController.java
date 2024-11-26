@@ -1,13 +1,18 @@
 package main.Controllers.Client;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.PasswordField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
 
-public class ChangePasswordController {
+public class ChangePasswordController implements Initializable {
     @FXML
     private PasswordField passwordField0; // Current password
     @FXML
@@ -32,12 +37,21 @@ public class ChangePasswordController {
     private HBox hBox1;
     @FXML
     private HBox hBox2;
+    
 
     // Flags to track visibility of each password field
     private boolean passwordVisible0 = false;
     private boolean passwordVisible1 = false;
     private boolean passwordVisible2 = false;
 
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        passwordField_init();
+        toggleVisibilityButton0.setOnAction(event -> togglePasswordVisibility0());
+        toggleVisibilityButton1.setOnAction(event -> togglePasswordVisibility1());
+        toggleVisibilityButton2.setOnAction(event -> togglePasswordVisibility2());
+    }
     public void passwordField_init() {
         // Set prompt text to guide the user
         passwordField0.setPromptText("Enter your current password");
