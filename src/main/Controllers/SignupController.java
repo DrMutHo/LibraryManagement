@@ -140,6 +140,14 @@ public class SignupController implements Initializable {
     }
 
     public void signup_prompt_init() {
+        // Set prompt text for all fields
+        setPromptText();
+    
+        // Add focus listeners to handle style changes when fields are focused
+        addFocusListeners();
+    }
+    
+    private void setPromptText() {
         signup_usernameField.setPromptText("Enter your username");
         signup_passwordField.setPromptText("Password must be 6+ characters");
         signup_textField.setPromptText("Password must be 6+ characters");
@@ -149,71 +157,43 @@ public class SignupController implements Initializable {
         signup_addressField.setPromptText("Enter your home address");
         signup_phoneNumField.setPromptText("Enter your phone number");   
         signup_name.setPromptText("Enter your fullname");
-
-        signup_passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+    }
+    
+    private void addFocusListeners() {
+        // Add focus listeners to password fields
+        addFocusListener(signup_passwordField, signup_hbox1);
+        addFocusListener(signup_textField, signup_hbox1);
+        addFocusListener(signup_passwordField1, signup_hbox2);
+        addFocusListener(signup_textField1, signup_hbox2);
+    
+        // Add focus listeners to other fields
+        addFocusListener(signup_usernameField, signup_hbox0);
+        addFocusListener(signup_emailField, signup_hbox3);
+        addFocusListener(signup_phoneNumField, signup_hbox4);
+        addFocusListener(signup_name, signup_hbox6);
+        addFocusListener(signup_addressField, signup_hbox5);
+    }
+    
+    private void addFocusListener(TextField field, HBox hbox) {
+        field.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
-                signup_hbox1.getStyleClass().add("signup_hbox_set-focused");
+                hbox.getStyleClass().add("signup_hbox_set-focused");
             } else {
-                signup_hbox1.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_usernameField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox0.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox0.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox1.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox1.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_passwordField1.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox2.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox2.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_textField1.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox2.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox2.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_emailField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox3.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox3.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_phoneNumField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox4.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox4.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_name.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox6.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox6.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_addressField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox5.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox5.getStyleClass().remove("signup_hbox_set-focused");
+                hbox.getStyleClass().remove("signup_hbox_set-focused");
             }
         });
     }
+    
+    private void addFocusListener(PasswordField field, HBox hbox) {
+        field.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                hbox.getStyleClass().add("signup_hbox_set-focused");
+            } else {
+                hbox.getStyleClass().remove("signup_hbox_set-focused");
+            }
+        });
+    }
+    
     @FXML
     private void togglePasswordVisibility() {
         if (signup_passwordField.isVisible()) {

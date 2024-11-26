@@ -1,7 +1,6 @@
 package main.Models;
 
 import main.Models.Client;
-import main.Models.Admin;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -21,9 +20,9 @@ public class Model {
     private boolean adminLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
+    private final ObservableList<Book> HighestRatedBooks;
+    private final ObservableList<BorrowTransaction> BorrowTransactions;
     private final ObservableList<Notification> allNotifications;
-    private final ObservableList<Book> recentlyAddBook;
-    private final ObservableList<BookTransaction> bookTransactions;
     private final Client client;
     private final Admin admin;
 
@@ -33,11 +32,11 @@ public class Model {
         this.adminLoginSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
+        this.HighestRatedBooks = FXCollections.observableArrayList();
         this.allNotifications = FXCollections.observableArrayList();
-        this.recentlyAddBook = FXCollections.observableArrayList();
-        this.bookTransactions = FXCollections.observableArrayList();
-        this.client = new Client(0, "", "", "", "", "", null, 0, "", "");
-        this.admin = new Admin(0, "", "", "");
+        this.BorrowTransactions = FXCollections.observableArrayList();
+
+        this.client = new Client(0, "", "", "", "", "", null, 0, "", "", "");
     }
 
     public static synchronized Model getInstance() {
@@ -46,6 +45,7 @@ public class Model {
         }
         return model;
     }
+    
 
     public ViewFactory getViewFactory() {
         return viewFactory;
@@ -55,16 +55,16 @@ public class Model {
         return this.clientLoginSuccessFlag;
     }
 
-    public void setclientLoginSuccessFlag(boolean flag) {
+    public void setClientLoginSuccessFlag(boolean flag) {
         this.clientLoginSuccessFlag = flag;
     }
 
     public boolean getAdminLoginSuccessFlag() {
-        return this.adminLoginSuccessFlag;
+        return this.clientLoginSuccessFlag;
     }
 
-    public void setadminLoginSuccessFlag(boolean flag) {
-        this.adminLoginSuccessFlag = flag;
+    public void setAdminLoginSuccessFlag(boolean flag) {
+        this.clientLoginSuccessFlag = flag;
     }
 
     public DatabaseDriver getDatabaseDriver() {
@@ -106,21 +106,75 @@ public class Model {
         }
     }
 
-    public ObservableList<Book> getAllBook() {
-        return allBook;
-    }
+    public void setHighestRatedBooks(String genre) {
+        HighestRatedBooks.clear();
 
-    public Book findBookByISBN(String ISBN) {
-        for (Book book : allBook) {
-            if (book.getIsbn().equals(ISBN))
-                return book;
+        ResultSet resultSet;
+        if (genre.equalsIgnoreCase("ALL")) {
+            resultSet = databaseDriver.getHighestRatingBooks();
+        } else {
+            resultSet = databaseDriver.getHighestRatingBooksByGenre(genre);
         }
-        return null;
+
+        try {
+            while (resultSet.next()) {
+                // Lấy thông tin từ ResultSet
+                int book_id = resultSet.getInt("book_id");
+                String title = resultSet.getString("title");
+                String author = resultSet.getString("author");
+                String isbn = resultSet.getString("isbn");
+                String genreResult = resultSet.getString("genre");
+                String language = resultSet.getString("language");
+                String description = resultSet.getString("description");
+                int publication_year = resultSet.getInt("publication_year");
+                String image_path = resultSet.getString("image_path");
+                Double average_rating = resultSet.getDouble("average_rating");
+                int review_count = resultSet.getInt("review_count");
+
+                Book book = new Book(book_id, title, author, isbn, genreResult, language, description, publication_year,
+                        image_path, average_rating, review_count);
+
+                HighestRatedBooks.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public void setRecentlyBook() {
-        recentlyAddBook.clear();
-        ResultSet resultSet = databaseDriver.getBookByClientID(Model.getInstance().getClient().getClientId());
+    public void setBorrowTransaction() {
+        ResultSet resultSet = databaseDriver.getTransactionByClientID(Model.getInstance().getClient().getClientId());
+        try {
+            while (resultSet.next()) {
+                int transactionId = resultSet.getInt("transaction_id");
+                String title = resultSet.getString("title");
+                int copyId = resultSet.getInt("copy_id");
+                LocalDate borrowDate = resultSet.getDate("borrow_date").toLocalDate();
+                LocalDate returnDate = resultSet.getDate("return_date") != null
+                        ? resultSet.getDate("return_date").toLocalDate()
+                        : null;
+                String status = resultSet.getString("status");
+
+                BorrowTransaction transaction = new BorrowTransaction(transactionId, title, copyId, borrowDate,
+                        returnDate,
+                        status);
+                BorrowTransactions.add(transaction);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Book getBookDataByCopyID(int copy_id) {
+        ResultSet resultSet = databaseDriver.getBookDataByCopyID(copy_id);
+        Book res = new Book();
         try {
             while (resultSet.next()) {
                 int book_id = resultSet.getInt("book_id");
@@ -137,43 +191,33 @@ public class Model {
 
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count);
+                res = book;
 
-                recentlyAddBook.add(book);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return res;
     }
 
-    public ObservableList<Book> getRecentlyAddBook() {
-        return recentlyAddBook;
+    public ObservableList<BorrowTransaction> getBorrowTransaction() {
+        return BorrowTransactions;
     }
 
-    public void setBookTransaction() {
-        bookTransactions.clear();
-        ResultSet resultSet = databaseDriver.getTransactionByClientID(this.client.getClientId());
-        try {
-            while (resultSet.next()) {
-                int transactionId = resultSet.getInt("transaction_id");
-                String title = resultSet.getString("title");
-                int copyId = resultSet.getInt("copy_id");
-                LocalDate borrowDate = resultSet.getDate("borrow_date").toLocalDate();
-                LocalDate returnDate = resultSet.getDate("return_date") != null
-                        ? resultSet.getDate("return_date").toLocalDate()
-                        : null;
-                String status = resultSet.getString("status");
+    public ObservableList<Book> getAllBook() {
+        return allBook;
+    }
 
-                BookTransaction transaction = new BookTransaction(transactionId, title, copyId, borrowDate, returnDate,
-                        status);
-                bookTransactions.add(transaction);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public ObservableList<Book> getHighestRatedBook() {
+        return HighestRatedBooks;
+    }
+
+    public Book findBookByISBN(String ISBN) {
+        for (Book book : allBook) {
+            if (book.getIsbn().equals(ISBN))
+                return book;
         }
-    }
-
-    public ObservableList<BookTransaction> getBookTransaction() {
-        return bookTransactions;
+        return null;
     }
 
     public void evaluateClientCred(String username) {
@@ -190,33 +234,11 @@ public class Model {
                 this.client.setOutstandingFees(resultSet.getDouble("outstanding_fees"));
                 this.client.setUsername(resultSet.getString("username"));
                 this.client.setPasswordHash(resultSet.getString("password_hash"));
+                this.client.setAvatarImagePath(resultSet.getString("avatar_image_path"));
                 this.clientLoginSuccessFlag = true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    public void evaluateAdminCred(String username) {
-        ResultSet resultSet = databaseDriver.getAdminData(username);
-        try {
-            if (resultSet != null && resultSet.next()) {
-                this.admin.setadmin_id(resultSet.getInt("admin_id"));
-                this.admin.setUsername(resultSet.getString("username"));
-                this.admin.setPassword_hash(resultSet.getString("password_hash"));
-                this.admin.setEmail(resultSet.getString("email"));
-                this.adminLoginSuccessFlag = true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); 
         } finally {
             if (resultSet != null) {
                 try {
@@ -286,11 +308,11 @@ public class Model {
     }
 
     public void setAllNotifications() {
-        allNotifications.clear();
         prepareNotifications(this.allNotifications, -1);
     }
 
     public ObservableList<Notification> getAllNotifications() {
         return allNotifications;
     }
+
 }

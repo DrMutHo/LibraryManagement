@@ -13,9 +13,11 @@ public class Client {
     private double outstandingFees;
     private String username;
     private String passwordHash;
+    private String avatarImagePath;
 
-    public Client(int clientId, String name, String libraryCardNumber, String email, String phoneNumber, 
-    String address, Date registrationDate, double outstandingFees, String username, String passwordHash) {
+    public Client(int clientId, String name, String libraryCardNumber, String email, String phoneNumber, String address,
+            Date registrationDate, double outstandingFees, String username, String passwordHash,
+            String avatarImagePath) {
         this.clientId = clientId;
         this.name = name;
         this.libraryCardNumber = libraryCardNumber;
@@ -26,8 +28,17 @@ public class Client {
         this.outstandingFees = outstandingFees;
         this.username = username;
         this.passwordHash = passwordHash;
+        this.avatarImagePath = avatarImagePath;
     }
-    
+
+    public String getAvatarImagePath() {
+        return avatarImagePath;
+    }
+
+    public void setAvatarImagePath(String avatarImagePath) {
+        this.avatarImagePath = avatarImagePath;
+    }
+
     public int getClientId() {
         return clientId;
     }
