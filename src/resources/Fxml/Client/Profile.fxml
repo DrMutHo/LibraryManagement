@@ -32,7 +32,11 @@
    <left>
       <StackPane fx:id="stackPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="692.0" prefWidth="697.0">
          <children>
+<<<<<<< Updated upstream
             <VBox fx:id="vBox" alignment="TOP_CENTER" prefHeight="692.0" prefWidth="687.0" StackPane.alignment="CENTER">
+=======
+            <VBox alignment="TOP_CENTER" prefHeight="692.0" prefWidth="687.0" StackPane.alignment="CENTER">
+>>>>>>> Stashed changes
                <children>
                   <Label text="Your Profile" />
                   <ImageView fx:id="profileImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
@@ -54,7 +58,11 @@
                   <Label fx:id="labelRegistrationDate" />
                </children>
             </VBox>
+<<<<<<< Updated upstream
             <AnchorPane fx:id="changePasswordPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="692.0" prefWidth="691.0" visible="false" />
+=======
+            <AnchorPane fx:id="changePasswordPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="692.0" prefWidth="691.0" />
+>>>>>>> Stashed changes
          </children>
       </StackPane>
    </left>
