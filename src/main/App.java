@@ -2,7 +2,6 @@ package main;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import main.Models.GoogleBooksAPI;
 import main.Models.Model;
 
 public class App extends Application {

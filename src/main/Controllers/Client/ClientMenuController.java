@@ -3,7 +3,11 @@ package main.Controllers.Client;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
+<<<<<<< HEAD
 import javafx.collections.ObservableList;
+=======
+import javax.swing.plaf.ButtonUI;
+>>>>>>> 6f734a79e5dd5a5118ac3dbb4427ba77543e7449
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -25,6 +29,7 @@ public class ClientMenuController implements Initializable {
 
     private final Image defaultNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_off.png"));
     private final Image activeNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_on.png"));
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -95,5 +100,9 @@ public class ClientMenuController implements Initializable {
             noti_btn.setStyle("");
             noti_btn.setText("Notification");
         }
+    }
+
+    private void onTransaction() {
+        Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.BOOKTRANSACTION);
     }
 }

@@ -25,6 +25,8 @@ public class ClientController implements Initializable {
                             client_parent.setCenter(Model.getInstance().getViewFactory().getBrowsingView());
                         case NOTIFICATION ->
                             client_parent.setCenter(Model.getInstance().getViewFactory().getNotiView());
+                        case BOOKTRANSACTION ->
+                            client_parent.setCenter(Model.getInstance().getViewFactory().getBookTransactionView());
                         default -> client_parent.setCenter(Model.getInstance().getViewFactory().getDashboardView());
                     }
                 });

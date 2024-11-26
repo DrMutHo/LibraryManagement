@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import main.Models.Book;
@@ -15,12 +16,15 @@ import main.Models.Model;
 public class HomeController implements Initializable {
     @FXML
     private HBox recentlyAddBook;
+    @FXML
+    private Label welcome;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Model.getInstance().setAllBook();
+        Model.getInstance().setRecentlyBook();
+        welcome.setText("Hello, " + Model.getInstance().getClient().getUsername());
 
-        for (Book book : Model.getInstance().getAllBook()) {
+        for (Book book : Model.getInstance().getRecentlyAddBook()) {
             addBookToRecentlyAdded(book);
         }
     }

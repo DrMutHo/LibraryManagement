@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -15,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" stylesheets="@../../Styles/Client/Home.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.HomeController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.HomeController">
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="700.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
@@ -25,20 +24,14 @@
                </font>
             </Label>
             <Separator maxHeight="-Infinity" orientation="VERTICAL" prefHeight="21.0" prefWidth="0.0" />
-            <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="25.0" prefWidth="203.0">
-               <children>
-                  <TextField prefHeight="25.0" prefWidth="204.0" promptText="Searching" />
-                  <ImageView fitHeight="23.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../Images/search.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </HBox>
+            <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="25.0" prefWidth="203.0" />
             <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Label prefHeight="28.0" prefWidth="62.0" text="Hello, user" />
+                  <Label fx:id="welcome" prefHeight="28.0" prefWidth="94.0" textAlignment="RIGHT" textFill="#4a34f7">
+                     <font>
+                        <Font name="Monotype Corsiva" size="14.0" />
+                     </font></Label>
                   <ImageView fitHeight="45.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../Images/profile-user.png" />
