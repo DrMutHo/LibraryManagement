@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.ResourceBundle.Control;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -96,22 +97,7 @@ public class LoginController implements Initializable {
         forgotaccountButton.setOnAction(event -> onResetPassword());
     }
 
-    @FXML
-    private void togglePasswordVisibility() {
-        if (passwordField.isVisible()) {
-            passwordField.setVisible(false);
-            passwordField.setManaged(false);
-            textField.setVisible(true);
-            textField.setManaged(true);
-            imageIcon.setImage(eyeOpen);
-        } else {
-            textField.setVisible(false);
-            textField.setManaged(false);
-            passwordField.setVisible(true);
-            passwordField.setManaged(true);
-            imageIcon.setImage(eyeClosed);
-        }
-    }
+    
 
     @FXML
     private void setAcc_selector() {
@@ -133,34 +119,49 @@ public class LoginController implements Initializable {
     }
 
     public void username_password_promptext_init() {
+        // Set prompt text for the username and password fields
+        setPromptText();
+    
+        // Add focus listeners for each field (usernameField, passwordField, textField)
+        addTextFieldFocusListener(usernameField, hbox_0);
+        addPasswordFieldFocusListener(passwordField, hbox_1);
+        addTextFieldFocusListener(textField, hbox_1); // textField shares the same hbox as passwordField
+    }
+    
+    // Helper method to set prompt text
+    private void setPromptText() {
         usernameField.setPromptText("Enter your username");
         passwordField.setPromptText("Enter your password");
         textField.setPromptText("Enter your password");
-
-        passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+    }
+    
+    // Focus listener for passwordField
+    private void addPasswordFieldFocusListener(PasswordField field, HBox hbox) {
+        field.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
-                hbox_1.getStyleClass().add("hbox_set-focused");
+                // When passwordField is focused, add the focus style to the corresponding HBox
+                hbox.getStyleClass().add("hbox_set-focused");
             } else {
-                hbox_1.getStyleClass().remove("hbox_set-focused");
-            }
-        });
-
-        usernameField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                hbox_0.getStyleClass().add("hbox_set-focused");
-            } else {
-                hbox_0.getStyleClass().remove("hbox_set-focused");
-            }
-        });
-
-        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                hbox_1.getStyleClass().add("hbox_set-focused");
-            } else {
-                hbox_1.getStyleClass().remove("hbox_set-focused");
+                // When focus is lost, remove the focus style from the HBox
+                hbox.getStyleClass().remove("hbox_set-focused");
             }
         });
     }
+    
+    // Focus listener for textField
+    private void addTextFieldFocusListener(TextField field, HBox hbox) {
+        field.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                // When textField is focused, add the focus style to the corresponding HBox
+                hbox.getStyleClass().add("hbox_set-focused");
+            } else {
+                // When focus is lost, remove the focus style from the HBox
+                hbox.getStyleClass().remove("hbox_set-focused");
+            }
+        });
+    }
+    
+     
 
     public void passwordField_init() {
         passwordField.setVisible(true);
@@ -173,6 +174,22 @@ public class LoginController implements Initializable {
         eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
         imageIcon.setImage(eyeClosed);
         toggleButton.setOnAction(event -> togglePasswordVisibility());
+    }
+    @FXML
+    private void togglePasswordVisibility() {
+        if (passwordField.isVisible()) {
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+            textField.setVisible(true);
+            textField.setManaged(true);
+            imageIcon.setImage(eyeOpen);
+        } else {
+            textField.setVisible(false);
+            textField.setManaged(false);
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+            imageIcon.setImage(eyeClosed);
+        }
     }
     @FXML 
     private void onResetPassword() {

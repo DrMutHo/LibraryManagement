@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -37,9 +38,7 @@ public class ProfileController implements Initializable {
     @FXML
     private Button deleteAccountButton;
     @FXML
-    private AnchorPane changePasswordPane;
-    @FXML
-    private StackPane stackPane;
+    private BorderPane borderPane;
     @FXML
     private VBox vBox;
 
@@ -57,7 +56,6 @@ public class ProfileController implements Initializable {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(Model.getInstance().getClient().getRegistrationDate());
         labelRegistrationDate.setText(formattedDate);
-        changePasswordPane = null;
         changePasswordButton.setOnAction(event -> changePassword());
     }
 
@@ -78,18 +76,28 @@ public class ProfileController implements Initializable {
     }
 
     @FXML
-    private void changePassword() { 
-        // Cập nhật kích thước của StackPane sao cho phù hợp với ChangePasswordView
-        changePasswordPane = Model.getInstance().getViewFactory().getChangePasswordView();
-        if (changePasswordPane != null) {
-            changePasswordPane.setVisible(true);
-            stackPane.setPrefWidth(changePasswordPane.getWidth());
-            stackPane.setPrefHeight(changePasswordPane.getHeight());  // Hiển thị ChangePasswordPane
-        } else {
-            System.out.println("changePasswordPane is not initialized.");
-        }
-    
-        vBox.setVisible(false);  // Ẩn VBox
+private void changePassword() {
+    // Lấy changePasswordPane từ ViewFactory
+    AnchorPane changePasswordPane = Model.getInstance().getViewFactory().getChangePasswordView();
+
+    // Kiểm tra nếu changePasswordPane không null
+    if (changePasswordPane != null) {
+        // Đặt kích thước tối đa bằng với kích thước ưu tiên
+        changePasswordPane.setMaxWidth(changePasswordPane.getPrefWidth());  // Chiều rộng tối đa bằng chiều rộng ưu tiên
+        changePasswordPane.setMaxHeight(changePasswordPane.getPrefHeight()); // Chiều cao tối đa bằng chiều cao ưu tiên
+
+        // Đặt changePasswordPane vào Center của BorderPane
+        borderPane.setCenter(changePasswordPane);
+
+        // Hiển thị changePasswordPane và ẩn vBox
+        changePasswordPane.setVisible(true);
+        changePasswordPane.setManaged(true); // Đảm bảo changePasswordPane tham gia layout
+        vBox.setVisible(false);
+        vBox.setManaged(false); // Ẩn vBox khỏi layout
+
+    } else {
+        System.out.println("changePasswordPane is not initialized.");
     }
-    
+}
+
 }

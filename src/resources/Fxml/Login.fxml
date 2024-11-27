@@ -55,7 +55,7 @@
                <children>
                   <Button fx:id="toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#togglePasswordVisibility" prefHeight="26.0" prefWidth="22.0" styleClass="button_set" HBox.hgrow="NEVER">
                      <graphic>
-                        <ImageView fx:id="imageIcon" fitHeight="26.0" fitWidth="22.0" onMouseClicked="#togglePasswordVisibility" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="imageIcon" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                   </Button>
                   <StackPane prefHeight="38.0" prefWidth="190.0" HBox.hgrow="NEVER">

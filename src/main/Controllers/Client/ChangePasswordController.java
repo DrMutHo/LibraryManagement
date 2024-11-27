@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -20,6 +21,12 @@ public class ChangePasswordController implements Initializable {
     @FXML
     private PasswordField passwordField2; // Retype new password
     @FXML
+    private TextField textField0;
+    @FXML
+    private TextField textField1;
+    @FXML
+    private TextField textField2;
+    @FXML
     private Button toggleButton0; // Button to toggle visibility for passwordField0
     @FXML
     private Button toggleButton1; // Button to toggle visibility for passwordField1
@@ -31,6 +38,10 @@ public class ChangePasswordController implements Initializable {
     private ImageView imageView1;
     @FXML
     private ImageView imageView2;
+    @FXML 
+    private Image eyeOpen;
+    @FXML
+    private Image eyeClosed;
     @FXML
     private HBox hBox0;
     @FXML
@@ -48,72 +59,93 @@ public class ChangePasswordController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         passwordField_init();
-        toggleButton0.setOnAction(event -> togglePasswordVisibility0());
-        toggleButton1.setOnAction(event -> togglePasswordVisibility1());
-        toggleButton2.setOnAction(event -> togglePasswordVisibility2());
     }
     public void passwordField_init() {
-        // Set prompt text to guide the user
-        passwordField0.setPromptText("Enter your current password");
-        passwordField1.setPromptText("Enter your new password");
-        passwordField2.setPromptText("Retype your new password");
-        
+        // Set prompt text for the password fields
+        setPromptText();
+    
+        // Initialize password fields and text fields
+        initializePasswordAndTextFields(passwordField0, textField0, hBox0);
+        initializePasswordAndTextFields(passwordField1, textField1, hBox1);
+        initializePasswordAndTextFields(passwordField2, textField2, hBox2);
+    
         // Load eye icon images for showing/hiding passwords
-        Image eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
-        Image eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
-        
+        eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
+        eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
+    
+        // Set initial icon state
         imageView0.setImage(eyeClosed);
         imageView1.setImage(eyeClosed);
         imageView2.setImage(eyeClosed);
-
-        // Add focus listeners to change border color when password fields are focused
-        addFocusListener(passwordField0, hBox0);
-        addFocusListener(passwordField1, hBox1);
-        addFocusListener(passwordField2, hBox2);
+    
+        // Set toggle button actions
+        toggleButton0.setOnAction(event -> togglePasswordVisibility(passwordField0, textField0, imageView0));
+        toggleButton1.setOnAction(event -> togglePasswordVisibility(passwordField1, textField1, imageView1));
+        toggleButton2.setOnAction(event -> togglePasswordVisibility(passwordField2, textField2, imageView2));
     }
-
-    // Method to toggle visibility for passwordField0
-    @FXML
-    private void togglePasswordVisibility0() {
-        passwordVisible0 = !passwordVisible0; // Toggle visibility flag for passwordField0
-        toggleVisibility(passwordField0, passwordVisible0);
+    
+    // Helper method to set prompt text for all password fields
+    private void setPromptText() {
+        passwordField0.setPromptText("Enter your current password");
+        passwordField1.setPromptText("Enter your new password");
+        passwordField2.setPromptText("Retype your new password");
+        textField0.setPromptText("Enter your current password");
+        textField1.setPromptText("Enter your new password");
+        textField2.setPromptText("Retype your new password");
     }
-
-    // Method to toggle visibility for passwordField1
-    @FXML
-    private void togglePasswordVisibility1() {
-        passwordVisible1 = !passwordVisible1; // Toggle visibility flag for passwordField1
-        toggleVisibility(passwordField1, passwordVisible1);
+    
+    // Helper method to initialize password fields and text fields
+    private void initializePasswordAndTextFields(PasswordField passwordField, TextField textField, HBox hBox) {
+        passwordField.setVisible(true);
+        passwordField.setManaged(true);
+        textField.setVisible(false);
+        textField.setManaged(false);
+        textField.textProperty().bindBidirectional(passwordField.textProperty());
+    
+        // Add focus listeners
+        addPasswordFieldFocusListener(passwordField, hBox);
+        addTextFieldListener(textField, hBox);
     }
-
-    // Method to toggle visibility for passwordField2
-    @FXML
-    private void togglePasswordVisibility2() {
-        passwordVisible2 = !passwordVisible2; // Toggle visibility flag for passwordField2
-        toggleVisibility(passwordField2, passwordVisible2);
-    }
-
-    // Helper method to toggle visibility of a password field
-    private void toggleVisibility(PasswordField passwordField, boolean isVisible) {
-        if (isVisible) {
-            passwordField.setStyle("-fx-background-color: white;");
-            passwordField.setText(passwordField.getText()); // Show text
-        } else {
-            passwordField.setStyle("-fx-background-color: #f0f0f0;");
-            passwordField.setText(passwordField.getText()); // Hide text (default behavior of PasswordField)
-        }
-    }
-
-    // Helper method to add focus listener and change HBox border color
-    private void addFocusListener(PasswordField passwordField, HBox hbox) {
+    
+    // Focus listener for password fields
+    private void addPasswordFieldFocusListener(PasswordField passwordField, HBox hbox) {
         passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
-                // When focused, change the border color of the HBox
                 hbox.getStyleClass().add("hbox_set-focused");
             } else {
-                // When focus is lost, reset the border color of the HBox
-                hbox.getStyleClass().add("hbox_set-focused");
+                hbox.getStyleClass().remove("hbox_set-focused");
             }
         });
     }
+    
+    // Focus listener for text fields
+    private void addTextFieldListener(TextField textField, HBox hbox) {
+        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                hbox.getStyleClass().add("hbox_set-focused");
+            } else {
+                hbox.getStyleClass().remove("hbox_set-focused");
+            }
+        });
+    }
+    
+    // Toggle password visibility for each field
+    private void togglePasswordVisibility(PasswordField passwordField, TextField textField, ImageView imageView) {
+        if (passwordField.isVisible()) {
+            // Hide PasswordField, show TextField
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+            textField.setVisible(true);
+            textField.setManaged(true);
+            imageView.setImage(eyeOpen); // Set the eye-open icon
+        } else {
+            // Hide TextField, show PasswordField
+            textField.setVisible(false);
+            textField.setManaged(false);
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+            imageView.setImage(eyeClosed); // Set the eye-closed icon
+        }
+    }
+    
 }
