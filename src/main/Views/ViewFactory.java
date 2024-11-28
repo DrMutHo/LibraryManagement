@@ -9,13 +9,16 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.StackPane;
 import javafx.concurrent.Task;
+import main.Controllers.Client.ChangePasswordController;
 import main.Controllers.Client.ClientController;
+import main.Controllers.Client.ProfileController;
 import javafx.scene.layout.AnchorPane;
 
 public class ViewFactory {
@@ -28,6 +31,10 @@ public class ViewFactory {
     private BorderPane browsingView;
     private BorderPane notiView;
     private BorderPane booktransactionView;
+    private AnchorPane changePasswordView;
+    private AnchorPane editProfileView;
+    private AnchorPane deleteAccountView;
+    
 
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
@@ -93,6 +100,21 @@ public class ViewFactory {
         return browsingView;
     }
 
+    public AnchorPane getChangePasswordView() {
+        if (changePasswordView == null) {
+            try {
+                // Tải FXML và lưu vào changePasswordView chỉ một lần
+                changePasswordView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/ChangePassword.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Xử lý khi không thể tải tệp FXML
+                return null;  // Hoặc có thể ném ngoại lệ, tùy theo yêu cầu
+            }
+        }
+        return changePasswordView;
+    }
+    
+
     public BorderPane getBookTransactionView() {
         if (booktransactionView == null) {
             try {
@@ -117,6 +139,28 @@ public class ViewFactory {
         return notiView;
     }
 
+    public AnchorPane getEditProfileView() {
+        if (editProfileView == null) {
+            try {
+                editProfileView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/EditProfile.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return editProfileView;
+    }
+
+    public AnchorPane getDeleteAccountView() {
+        if (deleteAccountView == null) {
+            try {
+                deleteAccountView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/DeleteAccount.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return deleteAccountView;
+    }
+
     public void showClientWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Client.fxml"));
         ClientController clientController = new ClientController();
@@ -139,11 +183,11 @@ public class ViewFactory {
         createStage(loader);
     }
 
-    public void showLoading(Runnable task, AnchorPane anchorpane) {
+    public void showLoading(Runnable task, Pane pane) {
         // Tạo lớp phủ với loading
         StackPane loadingOverlay = new StackPane();
         loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-        loadingOverlay.setPrefSize(anchorpane.getWidth(), anchorpane.getHeight());
+        loadingOverlay.setPrefSize(pane.getWidth(), pane.getHeight());
     
         ProgressIndicator progressIndicator = new ProgressIndicator();
         loadingOverlay.getChildren().add(progressIndicator);
@@ -151,8 +195,8 @@ public class ViewFactory {
     
         // Đảm bảo lớp phủ được thêm vào giao diện
         Platform.runLater(() -> {
-            if (!anchorpane.getChildren().contains(loadingOverlay)) {
-                anchorpane.getChildren().add(loadingOverlay);
+            if (!pane.getChildren().contains(loadingOverlay)) {
+                pane.getChildren().add(loadingOverlay);
             }
         });
     
@@ -180,7 +224,7 @@ public class ViewFactory {
             }
     
             // Gỡ bỏ lớp phủ loading
-            Platform.runLater(() -> anchorpane.getChildren().remove(loadingOverlay));
+            Platform.runLater(() -> pane.getChildren().remove(loadingOverlay));
         }).start();
     }
     

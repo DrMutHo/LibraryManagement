@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.ResourceBundle.Control;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -82,49 +83,28 @@ public class LoginController implements Initializable {
 
     
     
-    @Override
+        @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         acc_selector_init();
         username_password_promptext_init();
-        try {
-            passwordField_init();
-        } catch (Exception e) {
-            System.err.println("Error initializing password field: " + e.getMessage());
-        }
+        initializePasswordField();
+        setButtonActions();
+    }
+
+    private void setButtonActions() {
         loginButton.setOnAction(event -> onLogin());
         createnewaccountButton.setOnAction(event -> onsignUp());
         forgotaccountButton.setOnAction(event -> onResetPassword());
-    }
-
-    @FXML
-    private void togglePasswordVisibility() {
-        if (passwordField.isVisible()) {
-            passwordField.setVisible(false);
-            passwordField.setManaged(false);
-            textField.setVisible(true);
-            textField.setManaged(true);
-            imageIcon.setImage(eyeOpen);
-        } else {
-            textField.setVisible(false);
-            textField.setManaged(false);
-            passwordField.setVisible(true);
-            passwordField.setManaged(true);
-            imageIcon.setImage(eyeClosed);
-        }
+        toggleButton.setOnAction(event -> togglePasswordVisibility());
     }
 
     @FXML
     private void setAcc_selector() {
         Model.getInstance().getViewFactory().setLoginAccountType(acc_selector.getValue());
-        if (acc_selector.getValue() == AccountType.ADMIN) {
-            forgotaccountButton.setVisible(false);
-            createnewaccountButton.setVisible(false);
-        } else {
-            forgotaccountButton.setVisible(true);
-            createnewaccountButton.setVisible(true);
-        }
+        boolean isAdmin = acc_selector.getValue() == AccountType.ADMIN;
+        forgotaccountButton.setVisible(!isAdmin);
+        createnewaccountButton.setVisible(!isAdmin);
     }
-
 
     public void acc_selector_init() {
         acc_selector.setItems(FXCollections.observableArrayList(AccountType.CLIENT, AccountType.ADMIN));
@@ -133,36 +113,44 @@ public class LoginController implements Initializable {
     }
 
     public void username_password_promptext_init() {
+        setPromptText();
+        addFocusListeners();
+    }
+
+    // Helper method to set prompt text
+    private void setPromptText() {
         usernameField.setPromptText("Enter your username");
         passwordField.setPromptText("Enter your password");
         textField.setPromptText("Enter your password");
-
-        passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                hbox_1.getStyleClass().add("hbox_set-focused");
-            } else {
-                hbox_1.getStyleClass().remove("hbox_set-focused");
-            }
-        });
-
-        usernameField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                hbox_0.getStyleClass().add("hbox_set-focused");
-            } else {
-                hbox_0.getStyleClass().remove("hbox_set-focused");
-            }
-        });
-
-        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                hbox_1.getStyleClass().add("hbox_set-focused");
-            } else {
-                hbox_1.getStyleClass().remove("hbox_set-focused");
-            }
-        });
     }
 
-    public void passwordField_init() {
+    // Set up focus listeners for username and password fields
+    private void addFocusListeners() {
+        addTextFieldFocusListener(usernameField, hbox_0);
+        addPasswordFieldFocusListener(passwordField, hbox_1);
+        addTextFieldFocusListener(textField, hbox_1); // textField shares the same HBox as passwordField
+    }
+
+    // Focus listener for PasswordField
+    private void addPasswordFieldFocusListener(PasswordField field, HBox hbox) {
+        field.focusedProperty().addListener((obs, oldVal, newVal) -> toggleFocusStyle(newVal, hbox));
+    }
+
+    // Focus listener for TextField
+    private void addTextFieldFocusListener(TextField field, HBox hbox) {
+        field.focusedProperty().addListener((obs, oldVal, newVal) -> toggleFocusStyle(newVal, hbox));
+    }
+
+    // Helper method to toggle focus style
+    private void toggleFocusStyle(boolean isFocused, HBox hbox) {
+        if (isFocused) {
+            hbox.getStyleClass().add("hbox_set-focused");
+        } else {
+            hbox.getStyleClass().remove("hbox_set-focused");
+        }
+    }
+
+    private void initializePasswordField() {
         passwordField.setVisible(true);
         passwordField.setManaged(true);
         textField.setVisible(false);
@@ -174,6 +162,17 @@ public class LoginController implements Initializable {
         imageIcon.setImage(eyeClosed);
         toggleButton.setOnAction(event -> togglePasswordVisibility());
     }
+
+    @FXML
+    private void togglePasswordVisibility() {
+        boolean isPasswordVisible = passwordField.isVisible();
+        passwordField.setVisible(!isPasswordVisible);
+        passwordField.setManaged(!isPasswordVisible);
+        textField.setVisible(isPasswordVisible);
+        textField.setManaged(isPasswordVisible);
+        imageIcon.setImage(isPasswordVisible ? eyeOpen : eyeClosed);
+    }
+
     @FXML 
     private void onResetPassword() {
         stage = (Stage) forgotaccountButton.getScene().getWindow();
@@ -230,10 +229,15 @@ public class LoginController implements Initializable {
                         Thread.currentThread().interrupt();
                     }
                     Platform.runLater(() -> {
-                        Model.getInstance().getViewFactory().showAdminWindow();
+                        Model.getInstance().getViewFactory().showClientWindow();
                         Model.getInstance().getViewFactory().closeStage(stage);
                     });
                 }, outer_pane);
+            } else {
+                lib_image.setVisible(false);
+                notificationPane.setVisible(true);
+                disableAllComponents(inner_pane);
+                passwordField.clear(); 
             }
 
         }

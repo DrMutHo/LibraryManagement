@@ -45,7 +45,7 @@
             </HBox>
             <HBox fx:id="signup_hbox1" alignment="CENTER" blendMode="SRC_ATOP" layoutX="89.0" layoutY="350.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
-                  <Button fx:id="signup_toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="26.0" minWidth="22.0" mnemonicParsing="false" onAction="#togglePasswordVisibility" prefHeight="26.0" prefWidth="22.0" styleClass="toggle_button" HBox.hgrow="NEVER">
+                  <Button fx:id="signup_toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="26.0" minWidth="22.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="22.0" styleClass="toggle_button" HBox.hgrow="NEVER">
                      <graphic>
                         <ImageView fx:id="signup_imageIcon" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
@@ -68,7 +68,7 @@
             </HBox>
             <HBox fx:id="signup_hbox2" alignment="CENTER" blendMode="SRC_ATOP" layoutX="89.0" layoutY="400.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
-                  <Button fx:id="signup_toggleButton1" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="22.0" mnemonicParsing="false" onAction="#togglePasswordVisibility1" prefHeight="26.0" prefWidth="22.0" styleClass="toggle_button" HBox.hgrow="NEVER">
+                  <Button fx:id="signup_toggleButton1" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="22.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="22.0" styleClass="toggle_button" HBox.hgrow="NEVER">
                      <graphic>
                         <ImageView fx:id="signup_imageIcon1" fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
@@ -76,7 +76,7 @@
                   <StackPane prefHeight="38.0" prefWidth="190.0" HBox.hgrow="NEVER">
                      <children>
                         <PasswordField fx:id="signup_passwordField1" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="126.0" styleClass="signup_passwordField" />
-                        <TextField fx:id="signup_textField1" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="194.0" styleClass="signup_passwordField" />
+                        <TextField fx:id="signup_textField1" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="167.0" styleClass="signup_passwordField" />
                      </children>
                   </StackPane>
                   <ImageView fitHeight="36.0" fitWidth="27.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
