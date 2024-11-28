@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Client (
     outstanding_fees DECIMAL(10, 2) DEFAULT 0,        -- Outstanding fees for the client
     username VARCHAR(255) UNIQUE NOT NULL,            -- Username for client login
     password_hash VARCHAR(255) NOT NULL,              -- Password hash for client login
-    image_path VARCHAR(255) DEFAULT NULL
+    avatar_image_path VARCHAR(255) DEFAULT "/resources/Images/527489.png"
 );
 
 -- Table for Admins

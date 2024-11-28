@@ -4,10 +4,13 @@ import java.util.ResourceBundle;
 
 import javafx.application.Platform;
 import javax.swing.plaf.ButtonUI;
+
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import main.Models.Model;
 import main.Views.ClientMenuOptions;
 import main.Models.Notification;
@@ -22,6 +25,7 @@ public class ClientMenuController implements Initializable {
     public Button browsing_btn;
     public Button noti_btn;
     public Button transaction_btn;
+    public Button logout_btn;
     public ImageView noti_img;
 
     private final Image defaultNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_off.png"));
@@ -85,6 +89,14 @@ public class ClientMenuController implements Initializable {
     private void onNotification() {
         Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.NOTIFICATION);
 
+    }
+
+    @FXML
+    private void onLogout() {
+        Stage stage = (Stage) dashboard_btn.getScene().getWindow();
+        Model.getInstance().getViewFactory().closeStage(stage);
+        Model.getInstance().getViewFactory().showLoginWindow();
+        Model.getInstance().setclientLoginSuccessFlag(false);
     }
 
     private void checkAndUpdateNotificationButton() {

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="418.0" prefWidth="590.0" styleClass="anchorPane" stylesheets="@../../Styles/Client/EditProfile.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.EditProfileController">
+   <children>
+      <!-- Label "New address:" -->
+      <Label layoutX="122.0" layoutY="134.0" styleClass="medium_label" text="New address:" />
+      
+      <!-- Label "New phonenumber:" -->
+      <Label layoutX="76.0" layoutY="236.0" styleClass="medium_label" text="New phonenumber:" />
+      
+      <!-- Label "New email:" -->
+      <Label layoutX="132.0" layoutY="344.0" styleClass="medium_label" text="New email:" />
+      
+      <!-- Title "Edit your profile" -->
+      <Label layoutX="147.0" layoutY="26.0" styleClass="title" text="Edit your profile" />
+      
+      <!-- Address field with icon -->
+      <HBox fx:id="hbox_0" alignment="CENTER" layoutX="226.0" layoutY="125.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="hbox_set">
+         <children>
+            <TextField fx:id="addressField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="password-field" HBox.hgrow="NEVER" />
+            <ImageView fitHeight="27.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
+               <image>
+                  <Image url="@../../Images/address.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      
+      <!-- Phone number field with icon -->
+      <HBox fx:id="hbox_01" alignment="CENTER" layoutX="226.0" layoutY="227.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="hbox_set">
+         <children>
+            <TextField fx:id="phoneField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="password-field" HBox.hgrow="NEVER" />
+            <ImageView fitHeight="27.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
+               <image>
+                  <Image url="@../../Images/phoneNum.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      
+      <!-- Email field with icon -->
+      <HBox fx:id="hbox_02" alignment="CENTER" layoutX="226.0" layoutY="335.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="hbox_set">
+         <children>
+            <TextField fx:id="emailField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="password-field" HBox.hgrow="NEVER" />
+            <ImageView fitHeight="27.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
+               <image>
+                  <Image url="@../../Images/email.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      
+      <!-- Image of thinking man -->
+      <ImageView fitHeight="191.0" fitWidth="109.0" layoutX="23.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../Images/who-am-i-png-what-663.png" />
+         </image>
+      </ImageView>
+      
+      <!-- Quote text -->
+      <Text fill="DIMGRAY" layoutX="140.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="&quot;Your online presence should evolve as quickly as the world around you.&quot;" wrappingWidth="500.0" />
+      <Line endX="133.5999755859375" layoutX="170.0" layoutY="53.0" startX="-22.999984741210938" />
+      <Button fx:id="changeAdress" layoutX="229.0" layoutY="172.0" mnemonicParsing="false" onAction="#handleChangeAddressButtonClick" prefHeight="23.0" prefWidth="132.0" styleClass="button_changePassword" text="CHANGE ADDRESS" />
+      <ImageView fx:id="warning0" fitHeight="39.0" fitWidth="34.0" layoutX="476.0" layoutY="164.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="warning01" fitHeight="39.0" fitWidth="34.0" layoutX="476.0" layoutY="227.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="warning02" fitHeight="39.0" fitWidth="34.0" layoutX="476.0" layoutY="285.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="changePhoneNum" layoutX="206.0" layoutY="273.0" mnemonicParsing="false" onAction="#handleChangePhoneButtonClick" prefHeight="23.0" prefWidth="177.0" styleClass="button_changePassword" text="CHANGE PHONE NUMBER" />
+      <Button fx:id="changeEmail" layoutX="229.0" layoutY="380.0" mnemonicParsing="false" onAction="#handleChangeEmailButtonClick" prefHeight="23.0" prefWidth="132.0" styleClass="button_changePassword" text="CHANGE EMAIL" />
+      <Line endX="118.20001220703125" layoutX="307.0" layoutY="209.0" startX="-140.99998474121094" styleClass="dashed-line" />
+      <Line endX="118.20001220703125" layoutX="306.0" layoutY="316.0" startX="-140.99998474121094" styleClass="dashed-line" />
+   </children>
+</AnchorPane>

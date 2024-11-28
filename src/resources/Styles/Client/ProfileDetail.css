@@ -1,0 +1,93 @@
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #dbe7f1, #beebcc);
+}
+
+.textfield {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-color: #818ce9;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-radius: 30;
+}
+
+.vbox-container {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #dbe7f1, #beebcc);
+}
+
+VBox,
+HBox {
+    -fx-spacing: 10;
+    -fx-padding: 15 10 15 20;
+}
+
+/* Padding top 5px, right 0px, bottom 0px, left 5px */
+Label {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #333333;
+}
+
+/* Style for TextField elements */
+.textfield {
+    -fx-pref-width: 300px;
+    /* Adjust width as per your design */
+    -fx-padding: 5;
+    -fx-border-radius: 5;
+    -fx-background-color: transparent;
+    /* No background color */
+    -fx-border-color: #ccc;
+}
+
+.textfield:focused {
+    -fx-background-color: #e6f7ff;
+    /* Light blue background on focus */
+    -fx-border-color: #4d90fe;
+    /* Blue border when focused */
+}
+
+/* Style for specific sections */
+VBox#account-info,
+VBox#contact-info {
+    -fx-border-radius: 8;
+    -fx-border-color: #dcdcdc;
+    -fx-padding: 15;
+    -fx-spacing: 20;
+}
+
+/* Style for individual sections inside VBox */
+VBox#account-info Label,
+VBox#contact-info Label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #005d6e;
+}
+
+/* Adding padding between sections */
+HBox {
+    -fx-alignment: center-left;
+    -fx-spacing: 20;
+}
+
+.Pane {
+    -fx-min-width: 10;
+}
+
+/* Profile Title Section */
+HBox#profile-title {
+    -fx-alignment: center;
+    -fx-padding: 20;
+}
+
+Label#profileTitle {
+    -fx-font-size: 24px;
+    -fx-text-fill: #2a2a2a;
+    -fx-font-weight: bold;
+}
+
+/* Section Labels (Account and Contact Information) */
+Label#accountInfoLabel,
+Label#contactInfoLabel {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}

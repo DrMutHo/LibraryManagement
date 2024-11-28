@@ -102,6 +102,19 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    public ResultSet getAllBorrowTransactions() {
+        ResultSet resultSet = null;
+        String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status FROM BorrowTransaction";
+        try {
+            Connection connection = this.dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultSet;
+    }
+
     public ResultSet getBookByClientID(int client_id) {
         ResultSet resultSet = null;
         String query = "SELECT " +
@@ -110,6 +123,48 @@ public class DatabaseDriver {
                 "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
                 "JOIN Book b ON bc.book_id = b.book_id " +
                 "WHERE bt.client_id = ?";
+        try {
+            Connection connection = this.dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, client_id);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultSet;
+    }
+
+    public ResultSet getWishList(int client_id) {
+        ResultSet resultSet = null;
+        String query = "SELECT " +
+                "b.* " +
+                "FROM BorrowTransaction bt " +
+                "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
+                "JOIN Book b ON bc.book_id = b.book_id " +
+                "WHERE bt.client_id = ? AND bt.status = 'Processing' " +
+                "LIMIT 1";
+        try {
+            Connection connection = this.dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, client_id);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultSet;
+    }
+
+    public ResultSet getReadingBook(int client_id) {
+        ResultSet resultSet = null;
+        String query = "SELECT " +
+                "b.* " +
+                "FROM BorrowTransaction bt " +
+                "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
+                "JOIN Book b ON bc.book_id = b.book_id " +
+                "WHERE bt.client_id = ? AND bt.status = 'Processing' " +
+                "LIMIT 1";
         try {
             Connection connection = this.dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -141,7 +196,7 @@ public class DatabaseDriver {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book " +
                 "ORDER BY average_rating DESC " +
-                "LIMIT 10";
+                "LIMIT 6";
         try {
             Connection connection = this.dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -728,5 +783,17 @@ public class DatabaseDriver {
 
         return new Book(book_id, title, author, isbn, genre, language, description, publication_year, image_path,
                 average_rating, review_count);
+    }
+
+    public void setClientAvatar(int clientId, String fileURI) {
+        String query = "UPDATE Client SET avatar_image_path = ? WHERE client_id = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, fileURI);
+            stmt.setInt(2, clientId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
