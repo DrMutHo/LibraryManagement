@@ -697,8 +697,10 @@ public class DatabaseDriver {
         double average_rating = rs.getDouble("average_rating");
         int review_count = rs.getInt("review_count");
 
+        int quantity = countBookCopies(book_id);
+
         return new Book(book_id, title, author, isbn, genre, language, description, publication_year, image_path,
-                average_rating, review_count);
+                average_rating, review_count, quantity);
     }
 
     public BookCopy getAvailableBookCopy(int bookId) {
@@ -718,6 +720,40 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public int getBookIdByCopyId(int copyId) {
+        int bookId = -1;
+
+        String query = "SELECT book_id FROM BookCopy WHERE copy_id = ?";
+        try (Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, copyId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    bookId = rs.getInt("book_id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookId;
+    }
+
+    public int countBookCopies(int book_id) {
+        int count = 0;
+        String query = "SELECT COUNT(*) AS count FROM BookCopy WHERE book_id = ? AND is_available = true";
+        try (Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, book_id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt("count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 
     public boolean createBorrowTransaction(int clientId, int copyId) {

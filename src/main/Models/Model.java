@@ -1,5 +1,6 @@
 package main.Models;
 
+import main.Controllers.Client.ClientController;
 import main.Controllers.Client.ClientMenuController;
 import main.Controllers.Client.NotificationsController;
 import main.Models.Client;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.sql.Timestamp;
 
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.Views.NotificationType;
@@ -29,6 +32,8 @@ public class Model {
 
     private final List<ModelListenerClient> listenersClient;
     private final List<ModelListenerAdmin> listenersAdmin;
+    private ClientController clientController;
+    private ObjectProperty<Book> selectedBook;
     private final Client client;
 
     private Model() {
@@ -41,6 +46,7 @@ public class Model {
         this.listenersAdmin = FXCollections.observableArrayList();
         this.recentlyAddBook = FXCollections.observableArrayList();
         this.bookTransactions = FXCollections.observableArrayList();
+        selectedBook = new SimpleObjectProperty<>(null);
 
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "");
     }
@@ -90,6 +96,22 @@ public class Model {
         return client;
     }
 
+    public void setClientController(ClientController controller) {
+        this.clientController = controller;
+    }
+
+    public ClientController getClientController() {
+        return clientController;
+    }
+
+    public ObjectProperty<Book> getBookSelectionListener() {
+        return selectedBook;
+    }
+
+    public void setSelectedBook(Book book) {
+        selectedBook.set(book);
+    }
+
     public void setAllBook() {
         allBook.clear();
         ResultSet resultSet = databaseDriver.getAllBookData();
@@ -107,8 +129,10 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
+                int quantity = databaseDriver.countBookCopies(book_id);
+
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
-                        image_path, average_rating, review_count);
+                        image_path, average_rating, review_count, quantity);
 
                 allBook.add(book);
             }
@@ -133,8 +157,10 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
+                int quantity = databaseDriver.countBookCopies(book_id);
+
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
-                        image_path, average_rating, review_count);
+                        image_path, average_rating, review_count, quantity);
 
                 recentlyAddBook.add(book);
             }

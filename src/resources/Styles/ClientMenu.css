@@ -1,98 +1,141 @@
+/* Container chính của menu */
 .main_menu_container {
-    -fx-background-color: #EEEEEE;
+    -fx-background-color: #F7F7F7;
+    /* Màu nền sáng hơn */
     -fx-alignment: center;
     -fx-padding: 0 10 0 10;
 }
 
+/* Container bên trái */
 .left_container {
     -fx-background-color: #FFFFFF;
+    /* Nền trắng sáng */
     -fx-background-radius: 10;
     -fx-effect: dropshadow(two-pass-box, #AAAAAA, 5, 0, 0, 4);
 }
 
-/* Title/Logo Section */
+/* Tiêu đề */
 .title_container {
-    -fx-background-color: #FFFFFF;
-    -fx-background-radius: 20 20 0 0;
+    -fx-background-color: #3C6E71;
+    /* Màu xanh đậm tinh tế */
+    -fx-background-radius: 10 10 0 0;
     -fx-alignment: top_center;
     -fx-padding: 10;
 }
 
+/* FontAwesome Icon trong tiêu đề */
 .title_container FontAwesomeIconView {
-    -fx-fill: #132A13;
+    -fx-fill: #3C6E71;
+    /* Biểu tượng có màu giống tiêu đề */
 }
 
+/* Chữ trong tiêu đề */
 .title_container Text {
-    -fx-fill: #000000;
-    -fx-font-size: 2em;
+    -fx-fill: #FFFFFF;
+    /* Chữ trắng nổi bật */
+    -fx-font-size: 2.3em;
+    -fx-font-weight: bold;
+    -fx-padding-top: 10;
 }
 
-/* Navigation Section */
+/* Các nút trong menu */
 .menu_container {
     -fx-padding: 10 10 10 20;
     -fx-spacing: 20;
 }
 
+/* Các nút menu */
 .menu_container Button {
     -fx-pref-width: 115;
     -fx-pref-height: 40;
     -fx-background-color: #FFFFFF;
-    -fx-text-fill: #132A13;
+    /* Nền trắng */
+    -fx-text-fill: #3C6E71;
+    /* Màu chữ xanh đậm */
     -fx-font-size: 1.1em;
     -fx-alignment: center_left;
     -fx-effect: dropshadow(three-pass-box, #DDDDDD, 5, 0, 0, 6);
 }
 
+/* Khi hover lên các nút */
 .menu_container Button:hover {
     -fx-cursor: hand;
+    -fx-background-color: #F1F1F1;
+    /* Màu nền sáng hơn khi hover */
 }
 
+/* Biểu tượng FontAwesome trong các nút */
 .menu_container Button FontAwesomeIconView {
-    -fx-fill: #132A13;
+    -fx-fill: #3C6E71;
+    /* Biểu tượng có màu giống chữ */
 }
 
+/* Các nút Profile, Logout với thiết kế khác biệt */
 .alt_menu_btn {
     -fx-pref-width: 115;
     -fx-pref-height: 40;
-    -fx-background-color: #132A13;
+    -fx-background-color: #3C6E71;
+    /* Màu nền xanh đậm */
     -fx-text-fill: #FFFFFF;
+    /* Chữ trắng */
     -fx-font-size: 1.1em;
     -fx-alignment: center_left;
 }
 
-.alt_menu_btn FontAwesomeIconView {
-    -fx-fill: #FFFFFF;
+/* Hiệu ứng hover cho nút Profile và Logout */
+.alt_menu_btn:hover {
+    -fx-background-color: #2E4F4F;
+    /* Nền tối hơn khi hover */
 }
 
-/* Report Bug/Suggestion */
+/* Biểu tượng FontAwesome trong các nút Profile và Logout */
+.alt_menu_btn FontAwesomeIconView {
+    -fx-fill: #FFFFFF;
+    /* Biểu tượng trắng */
+}
+
+/* Container báo cáo lỗi/suggestions */
 .report_container {
-    -fx-background-color: #EEFFEE;
+    -fx-background-color: #E3F2F1;
+    /* Nền xanh nhạt, dễ nhìn */
     -fx-background-radius: 10;
     -fx-alignment: center;
     -fx-spacing: 10;
     -fx-padding: 10 0 10 0;
 }
 
+/* Chữ trong phần báo cáo */
 .report_container Text {
     -fx-font-weight: bold;
-    -fx-fill: #132A13;
+    -fx-fill: #3C6E71;
+    /* Chữ xanh đậm, nổi bật */
 }
 
+/* Chỉnh sửa cho label trong phần báo cáo */
 .report_container Label {
     -fx-text-alignment: center;
     -fx-wrap-text: true;
+    -fx-font-size: 1em;
 }
 
+/* Các nút báo cáo lỗi */
 .report_container Button {
     -fx-pref-width: 80;
-    -fx-background-color: #132A13;
+    -fx-background-color: #3C6E71;
+    /* Nền xanh đậm */
     -fx-text-fill: #FFFFFF;
+    /* Chữ trắng */
 }
 
+/* Hiệu ứng hover cho nút báo cáo */
 .report_container Button:hover {
     -fx-cursor: hand;
+    -fx-background-color: #2E4F4F;
+    /* Màu nền tối hơn khi hover */
 }
 
+/* Biểu tượng FontAwesome trong nút báo cáo */
 .report_container Button FontAwesomeIconView {
     -fx-fill: #FFFFFF;
+    /* Biểu tượng trắng */
 }

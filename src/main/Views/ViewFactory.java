@@ -12,7 +12,9 @@ import javafx.stage.Stage;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
 import javafx.concurrent.Task;
+import main.Controllers.Client.BookDetailWithReviewController;
 import main.Controllers.Client.ClientController;
+import main.Models.Book;
 
 public class ViewFactory {
     private AccountType loginAccountType;
@@ -24,6 +26,7 @@ public class ViewFactory {
     private BorderPane browsingView;
     private BorderPane notiView;
     private BorderPane booktransactionView;
+    private BorderPane bookDetailsView;
 
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
@@ -111,6 +114,19 @@ public class ViewFactory {
             }
         }
         return notiView;
+    }
+
+    public BorderPane getBookDetailsView(Book book) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/resources/Fxml/Client/BookDetailWithReview.fxml"));
+            bookDetailsView = loader.load();
+            BookDetailWithReviewController bookDetailController = loader.getController();
+            bookDetailController.setBook(book);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bookDetailsView;
     }
 
     public void showClientWindow() {
