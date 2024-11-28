@@ -108,72 +108,98 @@ public class SignupController implements Initializable {
     @FXML
     private Button returnToLoginButton;
 
-    @Override 
+        @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         signup_prompt_init();
-        try { 
+        try {
             passwordField_init();
         } catch (Exception e) {
-            e.getStackTrace();
+            e.printStackTrace(); // Better to log or handle the exception
         }
+        setButtonActions();
+    }
+
+    private void setButtonActions() {
         signup_createNewAccountButton.setOnAction(event -> onCreateNewAccount());
         signup_exitButton.setOnAction(event -> onExit());
     }
+
     public void passwordField_init() {
-        signup_passwordField.setVisible(true);
-        signup_passwordField.setManaged(true);
-        signup_textField.setVisible(false);
-        signup_textField.setManaged(false);
-        signup_passwordField1.setVisible(true);
-        signup_passwordField1.setManaged(true);
-        signup_textField1.setVisible(false);
-        signup_textField1.setManaged(false);
-        signup_textField.textProperty().bindBidirectional(signup_passwordField.textProperty());
-        signup_textField1.textProperty().bindBidirectional(signup_passwordField1.textProperty());
+        initializePasswordFields(signup_passwordField, signup_textField);
+        initializePasswordFields(signup_passwordField1, signup_textField1);
+
+        // Set initial eye icons for password visibility
+        initializeEyeIcons();
+
+        // Set actions for toggle buttons
+        setPasswordToggleActions();
+    }
+
+    private void initializePasswordFields(PasswordField passwordField, TextField textField) {
+        passwordField.setVisible(true);
+        passwordField.setManaged(true);
+        textField.setVisible(false);
+        textField.setManaged(false);
+        textField.textProperty().bindBidirectional(passwordField.textProperty());
+    }
+
+    private void initializeEyeIcons() {
         signup_eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
         signup_eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
         signup_imageIcon.setImage(signup_eyeClosed);
         signup_imageIcon1.setImage(signup_eyeClosed);
-        signup_toggleButton1.setOnAction(event -> togglePasswordVisibility1());
-        signup_toggleButton.setOnAction(event -> togglePasswordVisibility());
-        
+    }
+
+    private void setPasswordToggleActions() {
+        signup_toggleButton.setOnAction(event -> togglePasswordVisibility(signup_passwordField, signup_textField, signup_imageIcon, signup_eyeOpen, signup_eyeClosed));
+        signup_toggleButton1.setOnAction(event -> togglePasswordVisibility(signup_passwordField1, signup_textField1, signup_imageIcon1, signup_eyeOpen, signup_eyeClosed));
+    }
+
+    private void togglePasswordVisibility(PasswordField passwordField, TextField textField, ImageView imageIcon, Image eyeOpen, Image eyeClosed) {
+        if (passwordField.isVisible()) {
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+            textField.setVisible(true);
+            textField.setManaged(true);
+            imageIcon.setImage(eyeOpen);
+        } else {
+            textField.setVisible(false);
+            textField.setManaged(false);
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+            imageIcon.setImage(eyeClosed);
+        }
     }
 
     public void signup_prompt_init() {
-        // Set prompt text for all fields
         setPromptText();
-    
-        // Add focus listeners to handle style changes when fields are focused
         addFocusListeners();
     }
-    
+
     private void setPromptText() {
         signup_usernameField.setPromptText("Enter your username");
         signup_passwordField.setPromptText("Password must be 6+ characters");
         signup_textField.setPromptText("Password must be 6+ characters");
         signup_passwordField1.setPromptText("Confirmed password");
         signup_textField1.setPromptText("Confirmed password");
-        signup_emailField.setPromptText("Enter your email"); 
+        signup_emailField.setPromptText("Enter your email");
         signup_addressField.setPromptText("Enter your home address");
-        signup_phoneNumField.setPromptText("Enter your phone number");   
+        signup_phoneNumField.setPromptText("Enter your phone number");
         signup_name.setPromptText("Enter your fullname");
     }
-    
+
     private void addFocusListeners() {
-        // Add focus listeners to password fields
         addFocusListener(signup_passwordField, signup_hbox1);
         addFocusListener(signup_textField, signup_hbox1);
         addFocusListener(signup_passwordField1, signup_hbox2);
         addFocusListener(signup_textField1, signup_hbox2);
-    
-        // Add focus listeners to other fields
         addFocusListener(signup_usernameField, signup_hbox0);
         addFocusListener(signup_emailField, signup_hbox3);
         addFocusListener(signup_phoneNumField, signup_hbox4);
         addFocusListener(signup_name, signup_hbox6);
         addFocusListener(signup_addressField, signup_hbox5);
     }
-    
+
     private void addFocusListener(TextField field, HBox hbox) {
         field.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -183,7 +209,7 @@ public class SignupController implements Initializable {
             }
         });
     }
-    
+
     private void addFocusListener(PasswordField field, HBox hbox) {
         field.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -192,40 +218,6 @@ public class SignupController implements Initializable {
                 hbox.getStyleClass().remove("signup_hbox_set-focused");
             }
         });
-    }
-    
-    @FXML
-    private void togglePasswordVisibility() {
-        if (signup_passwordField.isVisible()) {
-            signup_passwordField.setVisible(false);
-            signup_passwordField.setManaged(false);
-            signup_textField.setVisible(true);
-            signup_textField.setManaged(true);
-            signup_imageIcon.setImage(signup_eyeOpen);
-        } else {
-            signup_textField.setVisible(false);
-            signup_textField.setManaged(false);
-            signup_passwordField.setVisible(true);
-            signup_passwordField.setManaged(true);
-            signup_imageIcon.setImage(signup_eyeClosed);
-        }
-    }
-
-    @FXML
-    private void togglePasswordVisibility1() {
-        if (signup_passwordField1.isVisible()) {
-            signup_passwordField1.setVisible(false);
-            signup_passwordField1.setManaged(false);
-            signup_textField1.setVisible(true);
-            signup_textField1.setManaged(true);
-            signup_imageIcon1.setImage(signup_eyeOpen);
-        } else {
-            signup_textField1.setVisible(false);
-            signup_textField1.setManaged(false);
-            signup_passwordField1.setVisible(true);
-            signup_passwordField1.setManaged(true);
-            signup_imageIcon1.setImage(signup_eyeClosed);
-        }
     }
 
     @FXML
