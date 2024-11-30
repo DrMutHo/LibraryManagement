@@ -21,10 +21,13 @@ import main.Models.BookReview;
 import main.Models.BorrowTransaction;
 import main.Models.Model;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+
+import org.apache.poi.ss.formula.functions.Mode;
 
 public class BorrowTransactionController implements Initializable {
 
@@ -240,6 +243,32 @@ public class BorrowTransactionController implements Initializable {
             }
         } else {
             bookImageView.setImage(null);
+        }
+    }
+
+    @FXML
+    private void exportExcel() {
+        File dir = new File("D:/javaaa/oop/");
+
+        if (!dir.exists()) {
+            boolean created = dir.mkdirs();
+            if (!created) {
+                System.out.println("Failed to create directory: " + dir.getAbsolutePath());
+                return;
+            }
+        }
+
+        if (!dir.canWrite()) {
+            System.out.println("No write permission for the directory: " + dir.getAbsolutePath());
+            return;
+        }
+
+        String filePath = "D:/javaaa/oop/borrow_transactions.xlsx";
+        try {
+            Model.getInstance().exportBorrowTransactionsToExcel(filePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error exporting to Excel: " + e.getMessage());
         }
     }
 
