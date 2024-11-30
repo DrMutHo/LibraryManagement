@@ -233,8 +233,11 @@ public class Model {
     }
 
     public Book getReadingBook() {
-        ResultSet resultSet = databaseDriver.getBookDataByCopyID(Model.getInstance().getClient().getClientId());
+        ResultSet resultSet = databaseDriver.get1BookDataByCopyID(Model.getInstance().getClient().getClientId());
         Book res = new Book();
+        if (resultSet == null) {
+            resultSet = databaseDriver.getHighestRatingBook();
+        }
         try {
             while (resultSet.next()) {
                 int book_id = resultSet.getInt("book_id");

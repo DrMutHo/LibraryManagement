@@ -208,6 +208,22 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    public ResultSet getHighestRatingBook() {
+        ResultSet resultSet = null;
+        String query = "SELECT * FROM Book " +
+                "ORDER BY average_rating DESC " +
+                "LIMIT 1";
+        try {
+            Connection connection = this.dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultSet;
+    }
+
     public ResultSet getHighestRatingBooksByGenre(String genre) {
         ResultSet resultSet = null;
         String query = "SELECT *, " +
@@ -795,5 +811,9 @@ public class DatabaseDriver {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void submitReportBug() {
+
     }
 }
