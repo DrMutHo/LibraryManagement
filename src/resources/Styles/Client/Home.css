@@ -1,0 +1,253 @@
+/* General Styles */
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: #ffffff;
+    /* Nhạt dần xanh và trắng */
+}
+
+/* Header Styles */
+.hbox-header {
+    -fx-padding: 15;
+    -fx-background-color: linear-gradient(to right, #4caf50, #81c784);
+    fx-background-radius: 0 0 30 30;
+    fx-border-radius: 0 0 30 30;
+    -fx-alignment: center;
+}
+
+.label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    /* Chữ trắng trên nền xanh lá */
+}
+
+/* Welcome Label */
+#welcome {
+    -fx-font-size: 14px;
+    -fx-font-style: italic;
+    -fx-text-fill: #ffffff;
+    -fx-pref-width: 200px;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+.header-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+/* Section Titles */
+.label-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #388e3c;
+    /* Xanh đậm hơn */
+    -fx-padding: 10 0 10 0;
+}
+
+/* ScrollPane Styles */
+.scroll-pane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+/* Book Container Styles */
+.hbox-recentlyAdd {
+    -fx-pref-height: 220px;
+    -fx-background-color: #ffffff;
+    -fx-border-width: 0px;
+    /* Xóa border */
+}
+
+.grid-pane-recommend {
+    -fx-hgap: 15;
+    -fx-vgap: 15;
+    -fx-padding: 10;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d9d9d9;
+    -fx-border-radius: 5;
+    -fx-border-color: transparent;
+}
+
+/* Buttons */
+.action-button {
+    -fx-background-color: linear-gradient(to right, #ff8a65, #ff7043);
+    /* Gradient cam nhạt */
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-padding: 10 20;
+    -fx-font-weight: bold;
+}
+
+.action-button:hover {
+    -fx-background-color: #e64a19;
+    /* Cam đậm hơn khi hover */
+    -fx-cursor: hand;
+}
+
+.combo-box {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-size: 14px;
+    -fx-pref-height: 30px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #81c784;
+    /* Màu xanh lá nhạt để hợp tone */
+    -fx-border-radius: 5px;
+    -fx-padding: 5;
+}
+
+.combo-box:hover {
+    -fx-background-color: #f1f8e9;
+    /* Xanh lá rất nhạt khi hover */
+    -fx-border-color: #4caf50;
+    /* Màu xanh lá đậm hơn cho viền */
+}
+
+/* Mũi tên trong ComboBox */
+.combo-box .arrow {
+    -fx-background-color: #81c784;
+    -fx-border-color: #388e3c;
+    -fx-border-radius: 3px;
+    -fx-padding: 5;
+    -fx-shape: "M0 0 L4 4 L8 0 Z";
+}
+
+.combo-box .arrow:hover {
+    -fx-background-color: #66bb6a;
+    /* Xanh lá đậm hơn khi hover */
+}
+
+/* Popup danh sách cuộn */
+.combo-box-popup .list-view {
+    -fx-background-color: #ffffff;
+    -fx-control-inner-background: #ffffff;
+}
+
+.combo-box-popup .list-cell {
+    -fx-text-fill: #333333;
+    /* Màu xám đậm */
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 5 10;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #e6ffee;
+    /* Xanh lá nhạt để hover */
+    -fx-text-fill: #000000;
+    /* Màu đen */
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #4caf50;
+    /* Xanh lá đậm khi được chọn */
+    -fx-text-fill: #ffffff;
+    /* Màu chữ trắng */
+}
+
+/* Book Details Section */
+.detail-panel {
+    -fx-background-color: #fffde7;
+    -fx-padding: 15;
+}
+
+.detail-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6d4c41;
+    /* Nâu nhạt */
+}
+
+.detail-value {
+    -fx-font-size: 14px;
+    -fx-text-fill: #5d4037;
+    /* Nâu đậm */
+}
+
+/* Ratings */
+.rating-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555555;
+}
+
+/* Profile Icon */
+.profile-icon {
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+}
+
+.vbox-container {
+    -fx-spacing: 15;
+    -fx-alignment: center;
+    -fx-padding: 10 0 0 10;
+    /* Padding top 5px, right 0px, bottom 0px, left 5px */
+    -fx-background-color: linear-gradient(to bottom, #f0f8ff, #e6ffee);
+}
+
+.book-cover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 2, 2);
+    /* Hiệu ứng đổ bóng nhẹ cho ảnh */
+    -fx-background-radius: 10px;
+}
+
+/* HBox chứa các thành phần con */
+.hbox-container {
+    -fx-spacing: 10;
+    -fx-alignment: left;
+    -fx-padding: 5;
+}
+
+/* VBox bên trong HBox */
+.vbox-content {
+    -fx-spacing: 10;
+    -fx-alignment: top-left;
+}
+
+/* Label cho tiêu đề sách */
+.book-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #388e3c;
+    /* Màu sắc của tiêu đề */
+}
+
+/* TextArea mô tả sách */
+.text-area {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c6d6c;
+    /* Màu chữ */
+    -fx-background-color: #ffffff;
+    /* Màu nền */
+    -fx-border-color: transparent;
+    /* Viền trong suốt */
+    -fx-scroll-bar-width: 0px;
+    -fx-hbar-policy: never;
+}
+
+
+/* VBox bên ngoài */
+.book-section {
+    -fx-alignment: TOP_LEFT;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    /* Sử dụng background-radius để bo góc nền */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 5, 5);
+    /* Đổ bóng nhẹ */
+}
+
+/* VBox cho phần bên cạnh ảnh bìa */
+.book-detail-box {
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 10;
+    -fx-padding: 20;
+}
+
+/* Label mô tả bên dưới ảnh */
+.book-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c6d6c;
+}

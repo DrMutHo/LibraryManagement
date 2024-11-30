@@ -1,11 +1,19 @@
 package main.Models;
 
 import main.Models.Client;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.sql.Timestamp;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,9 +29,8 @@ public class Model {
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
     private final ObservableList<Book> HighestRatedBooks;
+    private final ObservableList<BorrowTransaction> BorrowTransactions;
     private final ObservableList<Notification> allNotifications;
-    private final ObservableList<Book> recentlyAddBook;
-    private final ObservableList<BookTransaction> bookTransactions;
     private final Client client;
     private final Admin admin;
 
@@ -35,8 +42,8 @@ public class Model {
         this.allBook = FXCollections.observableArrayList();
         this.HighestRatedBooks = FXCollections.observableArrayList();
         this.allNotifications = FXCollections.observableArrayList();
-        this.recentlyAddBook = FXCollections.observableArrayList();
-        this.bookTransactions = FXCollections.observableArrayList();
+        this.BorrowTransactions = FXCollections.observableArrayList();
+
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "", "");
         this.admin = new Admin(0, "", "", "");
     }
@@ -47,7 +54,6 @@ public class Model {
         }
         return model;
     }
-    
 
     public ViewFactory getViewFactory() {
         return viewFactory;
@@ -108,20 +114,24 @@ public class Model {
         }
     }
 
-    public ObservableList<Book> getRecentlyAddBook() {
-        return recentlyAddBook;
-    }
+    public void setHighestRatedBooks(String genre) {
+        HighestRatedBooks.clear();
 
-public void setRecentlyBook() {
-        recentlyAddBook.clear();
-        ResultSet resultSet = databaseDriver.getBookByClientID(Model.getInstance().getClient().getClientId());
+        ResultSet resultSet;
+        if (genre.equalsIgnoreCase("ALL")) {
+            resultSet = databaseDriver.getHighestRatingBooks();
+        } else {
+            resultSet = databaseDriver.getHighestRatingBooksByGenre(genre);
+        }
+
         try {
             while (resultSet.next()) {
+                // Lấy thông tin từ ResultSet
                 int book_id = resultSet.getInt("book_id");
                 String title = resultSet.getString("title");
                 String author = resultSet.getString("author");
                 String isbn = resultSet.getString("isbn");
-                String genre = resultSet.getString("genre");
+                String genreResult = resultSet.getString("genre");
                 String language = resultSet.getString("language");
                 String description = resultSet.getString("description");
                 int publication_year = resultSet.getInt("publication_year");
@@ -129,23 +139,66 @@ public void setRecentlyBook() {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
-                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
+                Book book = new Book(book_id, title, author, isbn, genreResult, language, description, publication_year,
                         image_path, average_rating, review_count);
 
-                recentlyAddBook.add(book);
+                HighestRatedBooks.add(book);
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-    }	
-
-public ObservableList<BookTransaction> getBookTransaction() {
-        return bookTransactions;
     }
 
- public void setBookTransaction() {
-        bookTransactions.clear();
-        ResultSet resultSet = databaseDriver.getTransactionByClientID(this.client.getClientId());
+    public void exportBorrowTransactionsToExcel(String filePath) {
+        try {
+            ResultSet resultSet = databaseDriver.getAllBorrowTransactions();
+
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Transactions");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Transaction ID");
+            headerRow.createCell(1).setCellValue("Client ID");
+            headerRow.createCell(2).setCellValue("Copy ID");
+            headerRow.createCell(3).setCellValue("Borrow Date");
+            headerRow.createCell(4).setCellValue("Return Date");
+            headerRow.createCell(5).setCellValue("Status");
+
+            int rowNum = 1;
+            while (resultSet.next()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(resultSet.getInt("transaction_id"));
+                row.createCell(1).setCellValue(resultSet.getInt("client_id"));
+                row.createCell(2).setCellValue(resultSet.getInt("copy_id"));
+                row.createCell(3).setCellValue(resultSet.getDate("borrow_date").toString());
+                row.createCell(4).setCellValue(
+                        resultSet.getDate("return_date") != null ? resultSet.getDate("return_date").toString() : "");
+                row.createCell(5).setCellValue(resultSet.getString("status"));
+            }
+
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+
+            workbook.close();
+            resultSet.close();
+            System.out.println("Excel file generated successfully: " + filePath);
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setBorrowTransaction() {
+        ResultSet resultSet = databaseDriver.getTransactionByClientID(Model.getInstance().getClient().getClientId());
         try {
             while (resultSet.next()) {
                 int transactionId = resultSet.getInt("transaction_id");
@@ -157,9 +210,10 @@ public ObservableList<BookTransaction> getBookTransaction() {
                         : null;
                 String status = resultSet.getString("status");
 
-                BookTransaction transaction = new BookTransaction(transactionId, title, copyId, borrowDate, returnDate,
+                BorrowTransaction transaction = new BorrowTransaction(transactionId, title, copyId, borrowDate,
+                        returnDate,
                         status);
-                bookTransactions.add(transaction);
+                BorrowTransactions.add(transaction);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -194,6 +248,41 @@ public ObservableList<BookTransaction> getBookTransaction() {
         return res;
     }
 
+    public Book getReadingBook() {
+        ResultSet resultSet = databaseDriver.get1BookDataByCopyID(Model.getInstance().getClient().getClientId());
+        Book res = new Book();
+        if (resultSet == null) {
+            resultSet = databaseDriver.getHighestRatingBook();
+        }
+        try {
+            while (resultSet.next()) {
+                int book_id = resultSet.getInt("book_id");
+                String title = resultSet.getString("title");
+                String author = resultSet.getString("author");
+                String isbn = resultSet.getString("isbn");
+                String genre = resultSet.getString("genre");
+                String language = resultSet.getString("language");
+                String description = resultSet.getString("description");
+                int publication_year = resultSet.getInt("publication_year");
+                String image_path = resultSet.getString("image_path");
+                Double average_rating = resultSet.getDouble("average_rating");
+                int review_count = resultSet.getInt("review_count");
+
+                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
+                        image_path, average_rating, review_count);
+                res = book;
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    public ObservableList<BorrowTransaction> getBorrowTransaction() {
+        return BorrowTransactions;
+    }
+
     public ObservableList<Book> getAllBook() {
         return allBook;
     }
@@ -221,7 +310,7 @@ public ObservableList<BookTransaction> getBookTransaction() {
                 this.adminLoginSuccessFlag = true;
             }
         } catch (SQLException e) {
-            e.printStackTrace(); 
+            e.printStackTrace();
         } finally {
             if (resultSet != null) {
                 try {
@@ -247,7 +336,7 @@ public ObservableList<BookTransaction> getBookTransaction() {
                 this.client.setOutstandingFees(resultSet.getDouble("outstanding_fees"));
                 this.client.setUsername(resultSet.getString("username"));
                 this.client.setPasswordHash(resultSet.getString("password_hash"));
-                //this.client.setAvatarImagePath(resultSet.getString("avatar_image_path"));
+                this.client.setAvatarImagePath(resultSet.getString("avatar_image_path"));
                 this.clientLoginSuccessFlag = true;
             }
         } catch (SQLException e) {
@@ -328,4 +417,7 @@ public ObservableList<BookTransaction> getBookTransaction() {
         return allNotifications;
     }
 
+    public void setClientAvatar(String fileURI) {
+        databaseDriver.setClientAvatar(Model.getInstance().getClient().getClientId(), fileURI);
+    }
 }

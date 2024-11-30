@@ -28,8 +28,8 @@ public class EditProfileController {
     @FXML
     private HBox hbox_0;
     @FXML
-    private HBox  hbox_01;
-    @FXML 
+    private HBox hbox_01;
+    @FXML
     private HBox hbox_02;
     @FXML
     private TextField addressField;
@@ -53,13 +53,13 @@ public class EditProfileController {
     public void username_password_promptext_init() {
         // Set prompt text for the username and password fields
         setPromptText();
-    
+
         // Add focus listeners for each field (addressField, phoneField, emailField)
         addTextFieldFocusListener(addressField, hbox_0);
         addTextFieldFocusListener(emailField, hbox_02);
-        addTextFieldFocusListener(phoneField, hbox_01); 
+        addTextFieldFocusListener(phoneField, hbox_01);
     }
-    
+
     // Helper method to set prompt text
     private void setPromptText() {
         addressField.setPromptText("Enter your new address");
@@ -86,11 +86,13 @@ public class EditProfileController {
         if (email == null || email.trim().isEmpty()) {
             return isValidEmailApi;
         } else {
-            try { 
+            try {
                 @SuppressWarnings("deprecation")
-                URL url = new URL("https://emailvalidation.abstractapi.com/v1/?api_key=fe97d39becd94b14a4a19b97ebcc29a1&email=" + email);
+                URL url = new URL(
+                        "https://emailvalidation.abstractapi.com/v1/?api_key=fe97d39becd94b14a4a19b97ebcc29a1&email="
+                                + email);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET"); 
+                conn.setRequestMethod("GET");
 
                 int responseCode = conn.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -103,7 +105,8 @@ public class EditProfileController {
                     }
                     in.close();
                     Gson gson = new Gson();
-                    Type type = new TypeToken<Map<String, Object>>(){}.getType();
+                    Type type = new TypeToken<Map<String, Object>>() {
+                    }.getType();
                     Map<String, Object> map = gson.fromJson(response.toString(), type);
                     Map<String, Object> isFreeEmail = (Map<String, Object>) map.get("is_free_email");
 
@@ -117,7 +120,7 @@ public class EditProfileController {
             }
         }
         return isValidEmailApi;
-    }   
+    }
 
     // Check if email is valid in database
     private boolean isValidEmailDatabase(String email) {
@@ -196,129 +199,130 @@ public class EditProfileController {
                 showAlert(AlertType.ERROR, "Error", "Failed to update email.");
             }
         } else {
-            showAlert(AlertType.WARNING, "Invalid Email", "Invalid email address or already in use. Please create a valid email.");
+            showAlert(AlertType.WARNING, "Invalid Email",
+                    "Invalid email address or already in use. Please create a valid email.");
         }
     }
 
     private boolean updateAddress(String newAddress, String username) {
         // Câu truy vấn để cập nhật địa chỉ
         String updateQuery = "UPDATE client SET address = ? WHERE username = ?";
-    
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
-    
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+
             // Kiểm tra kết nối
             if (connection == null || connection.isClosed()) {
                 System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
                 return false;
             }
-    
+
             // Cài đặt tham số vào câu truy vấn
-            preparedStatement.setString(1, newAddress);  // Đặt địa chỉ mới
-            preparedStatement.setString(2, username);  // Đặt tên người dùng
-    
+            preparedStatement.setString(1, newAddress); // Đặt địa chỉ mới
+            preparedStatement.setString(2, username); // Đặt tên người dùng
+
             // Thực thi câu lệnh update
             int rowsUpdated = preparedStatement.executeUpdate();
-    
+
             // Nếu có ít nhất một dòng bị ảnh hưởng, tức là địa chỉ đã được cập nhật
             return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;  // Nếu không thành công
+        return false; // Nếu không thành công
     }
-    
-    
 
     private boolean updatePhoneNumber(String newPhoneNumber, String username) {
         // Câu truy vấn để cập nhật số điện thoại
         String updateQuery = "UPDATE client SET phone_number = ? WHERE username = ?";
-    
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
-    
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+
             // Kiểm tra kết nối
             if (connection == null || connection.isClosed()) {
                 System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
                 return false;
             }
-    
+
             // Cài đặt tham số vào câu truy vấn
-            preparedStatement.setString(1, newPhoneNumber);  // Đặt số điện thoại mới
-            preparedStatement.setString(2, username);  // Đặt tên người dùng
-    
+            preparedStatement.setString(1, newPhoneNumber); // Đặt số điện thoại mới
+            preparedStatement.setString(2, username); // Đặt tên người dùng
+
             // Thực thi câu lệnh update
             int rowsUpdated = preparedStatement.executeUpdate();
-    
+
             // Nếu có ít nhất một dòng bị ảnh hưởng, tức là số điện thoại đã được cập nhật
             return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;  // Nếu không thành công
+        return false; // Nếu không thành công
     }
-    
 
     private boolean updateEmail(String newEmail, String username) {
         // Câu truy vấn để cập nhật email
         String updateQuery = "UPDATE client SET email = ? WHERE username = ?";
-    
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
-    
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+
             // Kiểm tra kết nối
             if (connection == null || connection.isClosed()) {
                 System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
                 return false;
             }
-    
+
             // Cài đặt tham số vào câu truy vấn
-            preparedStatement.setString(1, newEmail);  // Đặt email mới
-            preparedStatement.setString(2, username);  // Đặt tên người dùng
-    
+            preparedStatement.setString(1, newEmail); // Đặt email mới
+            preparedStatement.setString(2, username); // Đặt tên người dùng
+
             // Thực thi câu lệnh update
             int rowsUpdated = preparedStatement.executeUpdate();
-    
+
             // Nếu có ít nhất một dòng bị ảnh hưởng, tức là email đã được cập nhật
             return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;  // Nếu không thành công
+        return false; // Nếu không thành công
     }
-    
+
     // Show an alert with a specific type, title, and message
     private void showAlert(AlertType alertType, String title, String message) {
         // Tạo Alert với kiểu bạn cần
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
-        alert.setHeaderText(null);  // Không sử dụng header text
-        alert.setContentText(message);  // Đặt nội dung thông báo
-    
+        alert.setHeaderText(null); // Không sử dụng header text
+        alert.setContentText(message); // Đặt nội dung thông báo
+
         // Chọn hình ảnh cảnh báo phù hợp với AlertType
         ImageView warningIcon = new ImageView();
-        
+
         // Dựa trên loại cảnh báo, thay đổi hình ảnh
         switch (alertType) {
             case INFORMATION:
-                warningIcon.setImage(new Image(getClass().getResource("/resources/Images/success.png").toExternalForm()));
+                warningIcon
+                        .setImage(new Image(getClass().getResource("/resources/Images/success.png").toExternalForm()));
                 break;
             case WARNING:
-                warningIcon.setImage(new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
+                warningIcon.setImage(
+                        new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
                 break;
             default:
-                warningIcon.setImage(new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
+                warningIcon.setImage(
+                        new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
                 break;
         }
-    
+
         // Đặt kích thước cho hình ảnh biểu tượng
-        warningIcon.setFitHeight(30);  // Đặt chiều cao hình ảnh
-        warningIcon.setFitWidth(30);   // Đặt chiều rộng hình ảnh
+        warningIcon.setFitHeight(30); // Đặt chiều cao hình ảnh
+        warningIcon.setFitWidth(30); // Đặt chiều rộng hình ảnh
         alert.setGraphic(warningIcon); // Thêm hình ảnh vào Alert
-    
+
         // Đổi nền của Alert thành màu trắng
-        alert.getDialogPane().setStyle("-fx-background-color: white;");  // Nền trắng
-    
+        alert.getDialogPane().setStyle("-fx-background-color: white;"); // Nền trắng
+
         // Hiển thị Alert
         alert.showAndWait();
     }

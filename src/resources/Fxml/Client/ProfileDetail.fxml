@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="692.0" prefWidth="576.0" stylesheets="@../../Styles/Client/ProfileDetail.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.ProfileDetailController">
+   <center>
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="576.0" spacing="30.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label text="Profile Detail" />
+               </children>
+            </HBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Account Information" />
+                  <HBox alignment="CENTER_LEFT" prefHeight="46.0" prefWidth="600.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="160.0" text="Username" />
+                        <Pane prefHeight="28.0" prefWidth="111.0" />
+                        <TextField fx:id="userName" editable="false" styleClass="textfield" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="46.0" prefWidth="600.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="216.0" text="Library Card Number" />
+                        <Pane prefHeight="28.0" prefWidth="52.0" />
+                        <TextField fx:id="libraryCardNumber" editable="false" styleClass="textfield" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="46.0" prefWidth="600.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="198.0" text="Outstanding Fees" />
+                        <Pane prefHeight="28.0" prefWidth="71.0" />
+                        <TextField fx:id="outstandingFees" editable="false" styleClass="textfield" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="27.0" prefHeight="46.0" prefWidth="600.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="199.0" text="Registration Date" />
+                        <Pane prefHeight="28.0" prefWidth="77.0" />
+                        <TextField fx:id="registrationDate" editable="false" styleClass="textfield" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox alignment="BOTTOM_LEFT" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Contact Information" />
+                  <HBox alignment="CENTER_LEFT" prefHeight="46.0" prefWidth="600.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="179.0" text="PhoneNumber" />
+                        <Pane prefHeight="28.0" prefWidth="96.0" />
+                        <TextField fx:id="phoneNumber" editable="false" styleClass="textfield" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="27.0" prefHeight="46.0" prefWidth="600.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="126.0" text="Email" />
+                        <Pane prefHeight="28.0" prefWidth="143.0" />
+                        <TextField fx:id="Email" editable="false" styleClass="textfield" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="27.0" prefHeight="46.0" prefWidth="600.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="138.0" text="Address" />
+                        <Pane prefHeight="28.0" prefWidth="135.0" />
+                        <TextField fx:id="address" editable="false" styleClass="textfield" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </center>
+</BorderPane>

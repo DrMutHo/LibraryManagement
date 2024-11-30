@@ -11,12 +11,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import main.Models.Book;
 
 public class CardController implements Initializable {
     @FXML
-    private ImageView imageView;
+    private Rectangle imageView;
 
     @FXML
     private Label title;
@@ -25,36 +30,27 @@ public class CardController implements Initializable {
     private Label author;
 
     @FXML
-    private Label rating;
+    private Text rating;
+
+    @FXML
+    public HBox ratingBar;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        ratingBar.setVisible(false);
 
     }
 
     public void setData(Book book) {
-        String image_path = getClass().getResource(book.getImagePath()).toExternalForm();
-        Image bookCoverImage = new Image(image_path, true);
-        imageView.setImage(bookCoverImage);
+        imageView.setArcWidth(20);
+        imageView.setArcHeight(20);
+        ImagePattern pattern = new ImagePattern(
+                new Image(book.getImagePath()));
+        imageView.setFill(pattern);
+        imageView.setStroke(Color.TRANSPARENT);
         title.setText(book.getTitle());
         author.setText("By " + book.getAuthor());
-        // rating.setText(book.getAverage_rating() + " (" + book.getReview_count() +
-        // ")");
+        rating.setText(book.getAverage_rating() + " ★");
 
-        addOpenBookEffect();
-    }
-
-    private void addOpenBookEffect() {
-        ScaleTransition scaleUp = new ScaleTransition(Duration.seconds(0.5), imageView);
-        scaleUp.setToX(1.2);
-        scaleUp.setToY(1.2);
-
-        ScaleTransition scaleDown = new ScaleTransition(Duration.seconds(0.5), imageView);
-        scaleDown.setToX(1.0);
-        scaleDown.setToY(1.0);
-
-        imageView.setOnMouseEntered(event -> scaleUp.playFromStart());
-
-        imageView.setOnMouseExited(event -> scaleDown.playFromStart());
     }
 }

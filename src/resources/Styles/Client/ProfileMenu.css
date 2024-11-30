@@ -1,0 +1,116 @@
+/* General Styles */
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #f9f9f9, #e6f7ff);
+    /* Nhạt dần từ trắng đến xanh nhạt */
+}
+
+/* Header */
+.hbox-header {
+    -fx-padding: 10px;
+    -fx-background-color: linear-gradient(to right, #4caf50, #81c784);
+    -fx-border-radius: 10;
+    -fx-alignment: center;
+}
+
+.header-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+/* Left Column */
+.left {
+    -fx-pref-width: 264px;
+    -fx-pref-height: 692px;
+    -fx-background-color: linear-gradient(to bottom, #f0f8ff, #e6ffee);
+    -fx-spacing: 15px;
+}
+
+.left Label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+    /* Màu chữ */
+    -fx-font-weight: normal;
+    -fx-margin: 5px 0;
+    -fx-padding: 5px;
+    -fx-background-color: transparent;
+}
+
+.left #labelUsername,
+.left #labelLibraryCardNumber,
+.left #labelFee,
+.left #labelRegistrationDate {
+    -fx-font-size: 12px;
+    -fx-text-fill: #ffffff;
+    -fx-margin: 5px 0;
+}
+
+.name-label {
+    -fx-text-fill: #388e3c;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.head-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+/* Profile Image */
+.left #profileImageView {
+    -fx-fit-height: 150px;
+    -fx-fit-width: 150px;
+    -fx-preserve-ratio: true;
+    -fx-pick-on-bounds: true;
+    -fx-border-radius: 75px;
+    -fx-background-radius: 75px;
+    -fx-border-color: #a1e29c;
+    -fx-border-width: 2px;
+}
+
+.button {
+    -fx-background-color: #c7c5c5;
+    -fx-background-radius: 30;
+    -fx-text-fill: #000000;
+}
+
+.button:hover {
+    -fx-background-color: #b1acac;
+    -fx-cursor: hand;
+}
+
+/* Contact and Account Information Sections */
+.left .contact-info .label,
+.left .account-info .label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #000000;
+    -fx-margin: 5px 0;
+}
+
+.left .contact-info .label {
+    -fx-font-weight: bold;
+}
+
+.left .account-info .label {
+    -fx-margin: 5px 0;
+}
+
+.hbox-button {
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+    -fx-font-size: 14px;
+    -fx-cursor: default;
+}
+
+/* Define the hover effect */
+.hbox-button:hover {
+    -fx-background-color: lightblue;
+    -fx-cursor: hand;
+}
+
+.vbox-top {
+    -fx-spacing: 15px;
+    -fx-padding: 15px;
+}

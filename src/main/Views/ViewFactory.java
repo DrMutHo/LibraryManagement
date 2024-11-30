@@ -25,20 +25,22 @@ public class ViewFactory {
     private AccountType loginAccountType;
     // Client Views
     private final ObjectProperty<ClientMenuOptions> clientSelectedMenuItem;
+    private final ObjectProperty<ProfileMenuOptions> profileSelectedMenuItem;
     private BorderPane dashboardView;
     private BorderPane homeView;
     private BorderPane profileView;
     private BorderPane browsingView;
     private BorderPane notiView;
-    private BorderPane booktransactionView;
+    private BorderPane BorrowTransactionView;
+    private BorderPane profileDetailView;
     private AnchorPane changePasswordView;
     private AnchorPane editProfileView;
     private AnchorPane deleteAccountView;
-    
 
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
         this.clientSelectedMenuItem = new SimpleObjectProperty<>();
+        this.profileSelectedMenuItem = new SimpleObjectProperty<>();
     }
 
     public AccountType getLoginAccountType() {
@@ -54,6 +56,10 @@ public class ViewFactory {
      */
     public ObjectProperty<ClientMenuOptions> getClientSelectedMenuItem() {
         return clientSelectedMenuItem;
+    }
+
+    public ObjectProperty<ProfileMenuOptions> getProfileSelectedMenuItem() {
+        return profileSelectedMenuItem;
     }
 
     public BorderPane getDashboardView() {
@@ -100,32 +106,17 @@ public class ViewFactory {
         return browsingView;
     }
 
-    public AnchorPane getChangePasswordView() {
-        if (changePasswordView == null) {
+    public BorderPane getBorrowTransactionView() {
+        if (BorrowTransactionView == null) {
             try {
-                // Tải FXML và lưu vào changePasswordView chỉ một lần
-                changePasswordView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/ChangePassword.fxml")).load();
-            } catch (Exception e) {
-                e.printStackTrace();
-                // Xử lý khi không thể tải tệp FXML
-                return null;  // Hoặc có thể ném ngoại lệ, tùy theo yêu cầu
-            }
-        }
-        return changePasswordView;
-    }
-    
-
-    public BorderPane getBookTransactionView() {
-        if (booktransactionView == null) {
-            try {
-                booktransactionView = new FXMLLoader(
-                        getClass().getResource("/resources/Fxml/Client/BookTransaction.fxml"))
+                BorrowTransactionView = new FXMLLoader(
+                        getClass().getResource("/resources/Fxml/Client/BorrowTransaction.fxml"))
                         .load();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return booktransactionView;
+        return BorrowTransactionView;
     }
 
     public BorderPane getNotiView() {
@@ -139,10 +130,38 @@ public class ViewFactory {
         return notiView;
     }
 
+    public BorderPane getProfileDetailView() {
+        if (profileDetailView == null) {
+            try {
+                profileDetailView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/ProfileDetail.fxml"))
+                        .load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return profileDetailView;
+    }
+
+    public AnchorPane getChangePasswordView() {
+        if (changePasswordView == null) {
+            try {
+                // Tải FXML và lưu vào changePasswordView chỉ một lần
+                changePasswordView = new FXMLLoader(
+                        getClass().getResource("/resources/Fxml/Client/ChangePassword.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Xử lý khi không thể tải tệp FXML
+                return null; // Hoặc có thể ném ngoại lệ, tùy theo yêu cầu
+            }
+        }
+        return changePasswordView;
+    }
+
     public AnchorPane getEditProfileView() {
         if (editProfileView == null) {
             try {
-                editProfileView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/EditProfile.fxml")).load();
+                editProfileView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/EditProfile.fxml"))
+                        .load();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -153,7 +172,8 @@ public class ViewFactory {
     public AnchorPane getDeleteAccountView() {
         if (deleteAccountView == null) {
             try {
-                deleteAccountView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/DeleteAccount.fxml")).load();
+                deleteAccountView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/DeleteAccount.fxml"))
+                        .load();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -188,33 +208,34 @@ public class ViewFactory {
         StackPane loadingOverlay = new StackPane();
         loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
         loadingOverlay.setPrefSize(pane.getWidth(), pane.getHeight());
-    
+
         ProgressIndicator progressIndicator = new ProgressIndicator();
         loadingOverlay.getChildren().add(progressIndicator);
         StackPane.setAlignment(progressIndicator, Pos.CENTER);
-    
+
         // Đảm bảo lớp phủ được thêm vào giao diện
         Platform.runLater(() -> {
             if (!pane.getChildren().contains(loadingOverlay)) {
                 pane.getChildren().add(loadingOverlay);
             }
         });
-    
+
         // Thực hiện công việc chính trong một Thread riêng biệt
         new Thread(() -> {
             long startTime = System.currentTimeMillis(); // Ghi lại thời gian bắt đầu
-    
+
             // Tính thời gian chuẩn bị tài nguyên (chạy trước khi thực hiện task)
             long preparationTime = System.currentTimeMillis() - startTime;
-    
+
             task.run(); // Thực hiện công việc chính
-    
+
             long elapsedTime = System.currentTimeMillis() - startTime; // Tính thời gian đã chạy
-    
-            // Đảm bảo thời gian hiển thị lớp phủ tối thiểu bằng thời gian chuẩn bị tài nguyên
+
+            // Đảm bảo thời gian hiển thị lớp phủ tối thiểu bằng thời gian chuẩn bị tài
+            // nguyên
             long minimumDisplayTime = preparationTime; // Thời gian chuẩn bị tài nguyên
             long remainingTime = minimumDisplayTime - elapsedTime;
-    
+
             if (remainingTime > 0) {
                 try {
                     Thread.sleep(remainingTime); // Chờ thêm nếu cần
@@ -222,14 +243,10 @@ public class ViewFactory {
                     Thread.currentThread().interrupt(); // Khôi phục trạng thái ngắt
                 }
             }
-    
             // Gỡ bỏ lớp phủ loading
             Platform.runLater(() -> pane.getChildren().remove(loadingOverlay));
         }).start();
     }
-    
-    
-
 
     private void createStage(FXMLLoader loader) {
         Scene scene = null;

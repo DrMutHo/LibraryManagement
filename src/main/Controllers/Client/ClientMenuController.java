@@ -3,15 +3,26 @@ package main.Controllers.Client;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
+import javafx.application.Platform;
 import javax.swing.plaf.ButtonUI;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import main.Models.Model;
 import main.Views.ClientMenuOptions;
 import main.Models.Notification;
+import main.Models.Notification;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class ClientMenuController implements Initializable {
@@ -21,15 +32,18 @@ public class ClientMenuController implements Initializable {
     public Button profile_btn;
     public Button browsing_btn;
     public Button noti_btn;
+    public Button transaction_btn;
+    public Button logout_btn;
+    public Button report_btn;
     public ImageView noti_img;
 
     private final Image defaultNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_off.png"));
     private final Image activeNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_on.png"));
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addListeners();
+        checkAndUpdateNotificationButton();
         checkAndUpdateNotificationButton();
     }
 
@@ -39,6 +53,8 @@ public class ClientMenuController implements Initializable {
         profile_btn.setOnAction(event -> onProfile());
         browsing_btn.setOnAction(event -> onBrowsing());
         noti_btn.setOnAction(event -> onNotification());
+        transaction_btn.setOnAction(event -> onTransaction());
+        report_btn.setOnAction(event -> onReport());
 
         Model.getInstance().getAllNotifications()
                 .addListener((javafx.collections.ListChangeListener.Change<? extends Notification> change) -> {
@@ -86,6 +102,31 @@ public class ClientMenuController implements Initializable {
 
     }
 
+    @FXML
+    private void onLogout() {
+        Stage stage = (Stage) dashboard_btn.getScene().getWindow();
+        Model.getInstance().getViewFactory().closeStage(stage);
+        Model.getInstance().getViewFactory().showLoginWindow();
+        Model.getInstance().setClientLoginSuccessFlag(false);
+    }
+
+    @FXML
+    private void onReport() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/resources/FXML/Client/Report.fxml"));
+            VBox bugReportRoot = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Bug Report");
+            stage.setScene(new Scene(bugReportRoot));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void checkAndUpdateNotificationButton() {
         int unreadCount = Model.getInstance().getDatabaseDriver()
                 .countUnreadNotifications(Model.getInstance().getClient().getClientId());
@@ -102,6 +143,6 @@ public class ClientMenuController implements Initializable {
     }
 
     private void onTransaction() {
-        Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.BOOKTRANSACTION);
+        Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.BORROWTRANSACTION);
     }
 }
