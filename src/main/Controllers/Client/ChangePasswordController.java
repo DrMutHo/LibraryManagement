@@ -2,13 +2,11 @@ package main.Controllers.Client;
 
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-import javax.swing.plaf.basic.BasicButtonUI;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -18,14 +16,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.PopupWindow.AnchorLocation;
-import javafx.stage.Stage;
+
 import main.Models.Model;
-import main.Views.ViewFactory;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 
 public class ChangePasswordController implements Initializable {
@@ -71,11 +65,6 @@ public class ChangePasswordController implements Initializable {
     private ImageView warning1;
     @FXML
     private ImageView warning2;
-
-    // Flags to track visibility of each password field
-    private boolean passwordVisible0 = false;
-    private boolean passwordVisible1 = false;
-    private boolean passwordVisible2 = false;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -321,12 +310,5 @@ public class ChangePasswordController implements Initializable {
             e.printStackTrace();
         }
         return false; // Trả về false nếu có lỗi hoặc không có dòng nào bị cập nhật
-    }
-
-    // Giả sử hàm này sẽ trả về ID người dùng hiện tại
-    private int getUserId() {
-        // Bạn có thể lấy ID người dùng từ session hoặc thông qua cơ chế xác thực của
-        // ứng dụng
-        return 1; // Giả sử ID của người dùng là 1
     }
 }
