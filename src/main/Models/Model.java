@@ -39,7 +39,6 @@ public class Model {
     private final ObservableList<BorrowTransaction> BorrowTransactions;
     private final ObservableList<Notification> allNotifications;
     private final ObservableList<Book> recentlyAddBook;
-    private final ObservableList<BookTransaction> bookTransactions;
 
     private final List<ModelListenerClient> listenersClient;
     private final List<ModelListenerAdmin> listenersAdmin;
@@ -59,7 +58,6 @@ public class Model {
         this.listenersClient = FXCollections.observableArrayList();
         this.listenersAdmin = FXCollections.observableArrayList();
         this.recentlyAddBook = FXCollections.observableArrayList();
-        this.bookTransactions = FXCollections.observableArrayList();
         selectedBook = new SimpleObjectProperty<>(null);
         this.BorrowTransactions = FXCollections.observableArrayList();
 
@@ -134,8 +132,9 @@ public class Model {
 
     public void setSelectedBook(Book book) {
         selectedBook.set(book);
-    
-      public Admin getAdmin() {
+    }
+
+    public Admin getAdmin() {
         return admin;
     }
 
@@ -198,7 +197,6 @@ public class Model {
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count, quantity);
 
-
                 HighestRatedBooks.add(book);
             }
         } catch (Exception e) {
@@ -259,6 +257,7 @@ public class Model {
         try {
             while (resultSet.next()) {
                 int transactionId = resultSet.getInt("transaction_id");
+                int clientId = Model.getInstance().getClient().getClientId();
                 String title = resultSet.getString("title");
                 int copyId = resultSet.getInt("copy_id");
                 LocalDate borrowDate = resultSet.getDate("borrow_date").toLocalDate();
@@ -267,7 +266,8 @@ public class Model {
                         : null;
                 String status = resultSet.getString("status");
 
-                BorrowTransaction transaction = new BorrowTransaction(transactionId, title, copyId, borrowDate,
+                BorrowTransaction transaction = new BorrowTransaction(transactionId, clientId, title, copyId,
+                        borrowDate,
                         returnDate,
                         status);
                 BorrowTransactions.add(transaction);
@@ -294,8 +294,10 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
+                int quantity = databaseDriver.countBookCopies(book_id);
+
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
-                        image_path, average_rating, review_count);
+                        image_path, average_rating, review_count, quantity);
                 res = book;
 
             }
@@ -325,8 +327,10 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
+                int quantity = databaseDriver.countBookCopies(book_id);
+
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
-                        image_path, average_rating, review_count);
+                        image_path, average_rating, review_count, quantity);
                 res = book;
 
             }
@@ -509,7 +513,6 @@ public class Model {
     public void notifyBorrowTransactionAdminCreatedEvent() {
         notifyBorrowTransactionAdminCreated();
     }
-
 
     public void setClientAvatar(String fileURI) {
         databaseDriver.setClientAvatar(Model.getInstance().getClient().getClientId(), fileURI);

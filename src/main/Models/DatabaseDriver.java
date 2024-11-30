@@ -226,7 +226,9 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
         return null;
-      
+
+    }
+
     public ResultSet getHighestRatingBooks() {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book " +
@@ -943,11 +945,11 @@ public class DatabaseDriver {
 
             while (rs.next()) {
                 BorrowTransaction transaction = new BorrowTransaction();
-                transaction.setTransaction_id(rs.getInt("transaction_id"));
-                transaction.setClient_id(rs.getInt("client_id"));
-                transaction.setCopy_id(rs.getInt("copy_id"));
-                transaction.setBorrow_date(rs.getDate("borrow_date").toLocalDate());
-                transaction.setReturn_date(null);
+                transaction.setTransactionId(rs.getInt("transaction_id"));
+                transaction.setClientId(rs.getInt("client_id"));
+                transaction.setCopyId(rs.getInt("copy_id"));
+                transaction.setBorrowDate(rs.getDate("borrow_date").toLocalDate());
+                transaction.setReturnDate(null);
                 transaction.setStatus(rs.getString("status"));
                 transactions.add(transaction);
             }
@@ -967,11 +969,11 @@ public class DatabaseDriver {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 BorrowTransaction transaction = new BorrowTransaction();
-                transaction.setTransaction_id(rs.getInt("transaction_id"));
-                transaction.setClient_id(rs.getInt("client_id"));
-                transaction.setCopy_id(rs.getInt("copy_id"));
-                transaction.setBorrow_date(rs.getDate("borrow_date").toLocalDate());
-                transaction.setReturn_date(null);
+                transaction.setTransactionId(rs.getInt("transaction_id"));
+                transaction.setClientId(rs.getInt("client_id"));
+                transaction.setCopyId(rs.getInt("copy_id"));
+                transaction.setBorrowDate(rs.getDate("borrow_date").toLocalDate());
+                transaction.setReturnDate(null);
                 transaction.setStatus(rs.getString("status"));
                 activeTransactions.add(transaction);
             }
@@ -1154,6 +1156,8 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
         return false;
+
+    }
 
     public void setClientAvatar(int clientId, String fileURI) {
         String query = "UPDATE Client SET avatar_image_path = ? WHERE client_id = ?";

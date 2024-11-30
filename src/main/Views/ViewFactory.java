@@ -146,6 +146,7 @@ public class ViewFactory {
             e.printStackTrace();
         }
         return bookDetailsView;
+    }
 
     public BorderPane getProfileDetailView() {
         if (profileDetailView == null) {

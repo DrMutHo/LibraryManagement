@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class BorrowTransaction {
     private int transactionId;
+    private int clientId;
     private String title;
     private int copyId;
     private LocalDate borrowDate;
@@ -13,9 +14,10 @@ public class BorrowTransaction {
     public BorrowTransaction() {
     }
 
-    public BorrowTransaction(int transactionId, String title, int copyId, LocalDate borrowDate,
+    public BorrowTransaction(int transactionId, int clientId, String title, int copyId, LocalDate borrowDate,
             LocalDate returnDate, String status) {
         this.transactionId = transactionId;
+        this.clientId = clientId;
         this.title = title;
         this.copyId = copyId;
         this.borrowDate = borrowDate;
@@ -31,6 +33,14 @@ public class BorrowTransaction {
 
     public void setTransactionId(int transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
     }
 
     public String getTitle() {

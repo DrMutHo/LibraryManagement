@@ -40,7 +40,6 @@ public class ClientMenuController implements Initializable {
     public Button logout_btn;
     public Button report_btn;
     public ImageView noti_img;
-    public Button logout_btn;
 
     private final Image defaultNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_off.png"));
     private final Image activeNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_on.png"));
@@ -102,19 +101,6 @@ public class ClientMenuController implements Initializable {
 
     private void onNotification() {
         Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.NOTIFICATION);
-    }
-
-    private void onTransaction() {
-        Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.BOOKTRANSACTION);
-    }
-
-    private void onLogout() {
-        Model.getInstance().setClientController(null);
-        Stage stage = (Stage) logout_btn.getScene().getWindow();
-        Platform.runLater(() -> {
-            Model.getInstance().getViewFactory().closeStage(stage);
-            Model.getInstance().getViewFactory().showLoginWindow();
-        });
     }
 
     @FXML

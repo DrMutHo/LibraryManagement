@@ -38,14 +38,14 @@ public class NotificationScheduler {
         LocalDate currentDate = LocalDate.now();
 
         for (BorrowTransaction transaction : activeTransactions) {
-            LocalDate borrowDate = transaction.getBorrow_date();
+            LocalDate borrowDate = transaction.getBorrowDate();
 
-            int copyId = transaction.getCopy_id();
+            int copyId = transaction.getCopyId();
             int bookId = Model.getInstance().getDatabaseDriver().getBookIdByCopyId(copyId);
             String bookTitle = Model.getInstance().getDatabaseDriver().getBookTitleById(bookId);
 
             if (borrowDate.plusDays(6).isEqual(currentDate)) {
-                int recipient_id = transaction.getClient_id();
+                int recipient_id = transaction.getClientId();
                 RecipientType recipientType = RecipientType.Client;
                 NotificationType notificationType = NotificationType.ReturnReminder;
                 String message = "Reminder: You need to return the book '" + bookTitle + "' that you borrowed on "
@@ -64,16 +64,16 @@ public class NotificationScheduler {
         LocalDate currentDate = LocalDate.now();
 
         for (BorrowTransaction transaction : activeTransactions) {
-            LocalDate borrowDate = transaction.getBorrow_date();
+            LocalDate borrowDate = transaction.getBorrowDate();
 
-            int copyId = transaction.getCopy_id();
+            int copyId = transaction.getCopyId();
             int bookId = Model.getInstance().getDatabaseDriver().getBookIdByCopyId(copyId);
             String bookTitle = Model.getInstance().getDatabaseDriver().getBookTitleById(bookId);
 
             if (borrowDate.plusDays(7).isBefore(currentDate)) {
                 long overdueDays = Duration.between(borrowDate.plusDays(7).atStartOfDay(), currentDate.atStartOfDay())
                         .toDays();
-                int recipient_id = transaction.getClient_id();
+                int recipient_id = transaction.getClientId();
                 RecipientType recipientType = RecipientType.Client;
                 NotificationType notificationType = NotificationType.OverdueAlert;
 
