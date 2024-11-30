@@ -16,6 +16,9 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.StackPane;
 import javafx.concurrent.Task;
+import main.Controllers.Client.BookDetailWithReviewController;
+import main.Controllers.Client.ClientController;
+import main.Models.Book;
 import main.Controllers.Client.ChangePasswordController;
 import main.Controllers.Client.ClientController;
 import main.Controllers.Client.ProfileController;
@@ -31,6 +34,8 @@ public class ViewFactory {
     private BorderPane profileView;
     private BorderPane browsingView;
     private BorderPane notiView;
+    private BorderPane booktransactionView;
+    private BorderPane bookDetailsView;
     private BorderPane BorrowTransactionView;
     private BorderPane profileDetailView;
     private AnchorPane changePasswordView;
@@ -129,6 +134,18 @@ public class ViewFactory {
         }
         return notiView;
     }
+
+    public BorderPane getBookDetailsView(Book book) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/resources/Fxml/Client/BookDetailWithReview.fxml"));
+            bookDetailsView = loader.load();
+            BookDetailWithReviewController bookDetailController = loader.getController();
+            bookDetailController.setBook(book);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bookDetailsView;
 
     public BorderPane getProfileDetailView() {
         if (profileDetailView == null) {

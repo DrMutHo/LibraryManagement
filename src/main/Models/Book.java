@@ -14,6 +14,7 @@ public class Book {
     private final StringProperty image_path;
     private final DoubleProperty average_rating;
     private final IntegerProperty review_count;
+    private final IntegerProperty quantity;
 
     public Book() {
         this.book_id = new SimpleIntegerProperty();
@@ -27,10 +28,12 @@ public class Book {
         this.image_path = new SimpleStringProperty();
         this.average_rating = new SimpleDoubleProperty();
         this.review_count = new SimpleIntegerProperty();
+        this.quantity = new SimpleIntegerProperty();
     }
 
     public Book(int book_id, String title, String author, String isbn, String genre, String language,
-            String description, int publication_year, String image_path, double average_rating, int review_count) {
+            String description, int publication_year, String image_path, double average_rating, int review_count,
+            int quantity) {
         this.book_id = new SimpleIntegerProperty(book_id);
         this.title = new SimpleStringProperty(title);
         this.author = new SimpleStringProperty(author);
@@ -42,6 +45,7 @@ public class Book {
         this.image_path = new SimpleStringProperty(image_path);
         this.average_rating = new SimpleDoubleProperty(average_rating);
         this.review_count = new SimpleIntegerProperty(review_count);
+        this.quantity = new SimpleIntegerProperty(quantity);
     }
 
     public int getBook_id() {
@@ -174,5 +178,17 @@ public class Book {
 
     public IntegerProperty review_countProperty() {
         return review_count;
+    }
+
+    public int getQuantity() {
+        return quantity.get();
+    }
+
+    public void setQuantity(int value) {
+        quantity.set(value);
+    }
+
+    public IntegerProperty quantityProperty() {
+        return quantity;
     }
 }

@@ -2,6 +2,7 @@ package main.Models;
 
 import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -212,6 +213,20 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    public String getBookTitleById(int bookId) {
+        String query = "SELECT title FROM Book WHERE book_id = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, bookId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("title");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+      
     public ResultSet getHighestRatingBooks() {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book " +
@@ -829,9 +844,316 @@ public class DatabaseDriver {
         double average_rating = rs.getDouble("average_rating");
         int review_count = rs.getInt("review_count");
 
+        int quantity = countBookCopies(book_id);
+
         return new Book(book_id, title, author, isbn, genre, language, description, publication_year, image_path,
-                average_rating, review_count);
+                average_rating, review_count, quantity);
     }
+
+    public BookCopy getAvailableBookCopy(int bookId) {
+        String query = "SELECT * FROM BookCopy WHERE book_id = ? AND is_available = TRUE LIMIT 1";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, bookId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new BookCopy(
+                        rs.getInt("copy_id"),
+                        rs.getInt("book_id"),
+                        rs.getBoolean("is_available"),
+                        rs.getString("book_condition"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public int getBookIdByCopyId(int copyId) {
+        int bookId = -1;
+
+        String query = "SELECT book_id FROM BookCopy WHERE copy_id = ?";
+        try (Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, copyId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    bookId = rs.getInt("book_id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookId;
+    }
+
+    public int countBookCopies(int book_id) {
+        int count = 0;
+        String query = "SELECT COUNT(*) AS count FROM BookCopy WHERE book_id = ? AND is_available = true";
+        try (Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, book_id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt("count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    public boolean createBorrowTransaction(int clientId, int copyId) {
+        String query = "INSERT INTO BorrowTransaction (client_id, copy_id, borrow_date, status) VALUES (?, ?, ?, 'Processing')";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, clientId);
+            stmt.setInt(2, copyId);
+            stmt.setDate(3, Date.valueOf(LocalDate.now()));
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateBookCopyAvailability(int copyId, boolean isAvailable) {
+        String query = "UPDATE BookCopy SET is_available = ? WHERE copy_id = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setBoolean(1, isAvailable);
+            stmt.setInt(2, copyId);
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<BorrowTransaction> getActiveBorrowTransactions(int clientId) {
+        List<BorrowTransaction> transactions = new ArrayList<>();
+        String query = "SELECT * FROM BorrowTransaction WHERE client_id = ? AND status = 'Processing'";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, clientId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                BorrowTransaction transaction = new BorrowTransaction();
+                transaction.setTransaction_id(rs.getInt("transaction_id"));
+                transaction.setClient_id(rs.getInt("client_id"));
+                transaction.setCopy_id(rs.getInt("copy_id"));
+                transaction.setBorrow_date(rs.getDate("borrow_date").toLocalDate());
+                transaction.setReturn_date(null);
+                transaction.setStatus(rs.getString("status"));
+                transactions.add(transaction);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return transactions;
+    }
+
+    public List<BorrowTransaction> getActiveBorrowTransactions() {
+        String query = "SELECT * FROM BorrowTransaction WHERE status = 'Processing'";
+        List<BorrowTransaction> activeTransactions = new ArrayList<>();
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                BorrowTransaction transaction = new BorrowTransaction();
+                transaction.setTransaction_id(rs.getInt("transaction_id"));
+                transaction.setClient_id(rs.getInt("client_id"));
+                transaction.setCopy_id(rs.getInt("copy_id"));
+                transaction.setBorrow_date(rs.getDate("borrow_date").toLocalDate());
+                transaction.setReturn_date(null);
+                transaction.setStatus(rs.getString("status"));
+                activeTransactions.add(transaction);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return activeTransactions;
+    }
+
+    public boolean createNotificationRequest(int clientId, int bookId) {
+        String query = "INSERT INTO NotificationRequest (client_id, book_id, request_date) VALUES (?, ?, ?)";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, clientId);
+            stmt.setInt(2, bookId);
+            stmt.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean hasActiveBorrowForBook(int clientId, int bookId) {
+        String query = "SELECT COUNT(*) AS count FROM BorrowTransaction bt " +
+                "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
+                "WHERE bt.client_id = ? AND bc.book_id = ? AND bt.status = 'Processing'";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, clientId);
+            stmt.setInt(2, bookId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("count") > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public NotificationRequest getNotificationRequest(int clientId, int bookId) {
+        String query = "SELECT * FROM NotificationRequest WHERE client_id = ? AND book_id = ?;";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, clientId);
+            pstmt.setInt(2, bookId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return new NotificationRequest(
+                        rs.getInt("request_id"),
+                        rs.getInt("client_id"),
+                        rs.getInt("book_id"),
+                        rs.getTimestamp("request_date").toLocalDateTime());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<NotificationRequest> getNotificationRequestsForBook(int bookId) {
+        List<NotificationRequest> requests = new ArrayList<>();
+        String query = "SELECT * FROM NotificationRequest WHERE book_id = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, bookId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                NotificationRequest request = new NotificationRequest(
+                        rs.getInt("request_id"),
+                        rs.getInt("client_id"),
+                        rs.getInt("book_id"),
+                        rs.getTimestamp("request_date").toLocalDateTime());
+                requests.add(request);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return requests;
+    }
+
+    public boolean deleteNotificationRequest(int requestId) {
+        String query = "DELETE FROM NotificationRequest WHERE request_id = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, requestId);
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean processBookReturn(int transactionId) {
+        String updateTransaction = "UPDATE BorrowTransaction SET status = 'Returned', return_date = ? WHERE transaction_id = ?";
+        String getCopyIdQuery = "SELECT copy_id, book_id FROM BorrowTransaction WHERE transaction_id = ?";
+
+        try (Connection conn = dataSource.getConnection()) {
+            conn.setAutoCommit(false);
+
+            int copyId = 0;
+            int bookId = 0;
+            try (PreparedStatement stmt = conn.prepareStatement(getCopyIdQuery)) {
+                stmt.setInt(1, transactionId);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    copyId = rs.getInt("copy_id");
+                    bookId = rs.getInt("book_id");
+                } else {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement(updateTransaction)) {
+                stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+                stmt.setInt(2, transactionId);
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            boolean copyUpdated = updateBookCopyAvailability(copyId, true);
+            if (!copyUpdated) {
+                conn.rollback();
+                return false;
+            }
+
+            List<NotificationRequest> requests = getNotificationRequestsForBook(bookId);
+            String bookTitle = getBookTitleById(bookId);
+            for (NotificationRequest request : requests) {
+                int recipientId = request.getClientId();
+                RecipientType recipientType = RecipientType.Client;
+                NotificationType notificationType = NotificationType.BookAvailable;
+                String message = "Một bản sao của cuốn sách" + bookTitle + "bạn đã đăng ký đang có sẵn để mượn.";
+
+                Notification notification = new Notification(recipientId, recipientType, notificationType, message);
+
+                boolean notificationCreated = insertNotification(notification);
+                if (!notificationCreated) {
+                    System.err.println("Không thể tạo thông báo cho client_id: " + request.getClientId());
+                }
+            }
+
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean hasReturnReminder(int transactionId, long dayBorrowed) {
+        String query = "";
+        if (dayBorrowed == 5) {
+            query = "SELECT COUNT(*) FROM Notification WHERE recipient_id = (SELECT client_id FROM BorrowTransaction WHERE transaction_id = ?) AND notification_type = 'ReturnReminder' AND DATE(created_at) = ?";
+        } else if (dayBorrowed == 6) {
+            query = "SELECT COUNT(*) FROM Notification WHERE recipient_id = (SELECT client_id FROM BorrowTransaction WHERE transaction_id = ?) AND notification_type = 'ReturnReminder' AND DATE(created_at) = ?";
+        } else {
+            return false;
+        }
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, transactionId);
+            LocalDate reminderDate = LocalDate.now();
+            stmt.setDate(2, Date.valueOf(reminderDate));
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
 
     public void setClientAvatar(int clientId, String fileURI) {
         String query = "UPDATE Client SET avatar_image_path = ? WHERE client_id = ?";

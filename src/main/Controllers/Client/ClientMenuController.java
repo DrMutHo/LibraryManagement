@@ -3,7 +3,11 @@ package main.Controllers.Client;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
+
+import javafx.collections.ObservableList;
+
 import javafx.application.Platform;
+
 import javax.swing.plaf.ButtonUI;
 
 import javafx.fxml.FXML;
@@ -36,6 +40,7 @@ public class ClientMenuController implements Initializable {
     public Button logout_btn;
     public Button report_btn;
     public ImageView noti_img;
+    public Button logout_btn;
 
     private final Image defaultNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_off.png"));
     private final Image activeNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_on.png"));
@@ -54,27 +59,25 @@ public class ClientMenuController implements Initializable {
         browsing_btn.setOnAction(event -> onBrowsing());
         noti_btn.setOnAction(event -> onNotification());
         transaction_btn.setOnAction(event -> onTransaction());
+        logout_btn.setOnAction(event -> onLogout());
+
+        ObservableList<Notification> notifications = Model.getInstance().getAllNotifications();
         report_btn.setOnAction(event -> onReport());
 
-        Model.getInstance().getAllNotifications()
-                .addListener((javafx.collections.ListChangeListener.Change<? extends Notification> change) -> {
-                    while (change.next()) {
-                        if (change.wasAdded()) {
-                            for (Notification newNoti : change.getAddedSubList()) {
-                                newNoti.isReadProperty().addListener((obs, wasRead, isNowRead) -> {
-                                    Platform.runLater(this::checkAndUpdateNotificationButton);
-                                });
-                            }
-                        }
-                        if (change.wasRemoved()) {
-                        }
-                        if (change.wasUpdated()) {
+        notifications.addListener((javafx.collections.ListChangeListener.Change<? extends Notification> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Notification notification : c.getAddedSubList()) {
+                        notification.isReadProperty().addListener((observable, oldValue, newValue) -> {
                             Platform.runLater(this::checkAndUpdateNotificationButton);
-                        }
+                        });
                     }
-                });
+                }
+                Platform.runLater(this::checkAndUpdateNotificationButton);
+            }
+        });
 
-        for (Notification notification : Model.getInstance().getAllNotifications()) {
+        for (Notification notification : notifications) {
             notification.isReadProperty().addListener((obs, wasRead, isNowRead) -> {
                 Platform.runLater(this::checkAndUpdateNotificationButton);
             });
@@ -99,7 +102,19 @@ public class ClientMenuController implements Initializable {
 
     private void onNotification() {
         Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.NOTIFICATION);
+    }
 
+    private void onTransaction() {
+        Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.BOOKTRANSACTION);
+    }
+
+    private void onLogout() {
+        Model.getInstance().setClientController(null);
+        Stage stage = (Stage) logout_btn.getScene().getWindow();
+        Platform.runLater(() -> {
+            Model.getInstance().getViewFactory().closeStage(stage);
+            Model.getInstance().getViewFactory().showLoginWindow();
+        });
     }
 
     @FXML

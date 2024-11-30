@@ -1,5 +1,8 @@
 package main.Models;
 
+import main.Controllers.Client.ClientController;
+import main.Controllers.Client.ClientMenuController;
+import main.Controllers.Client.NotificationsController;
 import main.Models.Client;
 
 import java.io.FileOutputStream;
@@ -8,8 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.sql.Timestamp;
 
+import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -31,6 +38,13 @@ public class Model {
     private final ObservableList<Book> HighestRatedBooks;
     private final ObservableList<BorrowTransaction> BorrowTransactions;
     private final ObservableList<Notification> allNotifications;
+    private final ObservableList<Book> recentlyAddBook;
+    private final ObservableList<BookTransaction> bookTransactions;
+
+    private final List<ModelListenerClient> listenersClient;
+    private final List<ModelListenerAdmin> listenersAdmin;
+    private ClientController clientController;
+    private ObjectProperty<Book> selectedBook;
     private final Client client;
     private final Admin admin;
 
@@ -42,10 +56,33 @@ public class Model {
         this.allBook = FXCollections.observableArrayList();
         this.HighestRatedBooks = FXCollections.observableArrayList();
         this.allNotifications = FXCollections.observableArrayList();
+        this.listenersClient = FXCollections.observableArrayList();
+        this.listenersAdmin = FXCollections.observableArrayList();
+        this.recentlyAddBook = FXCollections.observableArrayList();
+        this.bookTransactions = FXCollections.observableArrayList();
+        selectedBook = new SimpleObjectProperty<>(null);
         this.BorrowTransactions = FXCollections.observableArrayList();
 
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "", "");
         this.admin = new Admin(0, "", "", "");
+    }
+
+    public interface ModelListenerClient {
+        void onBorrowTransactionClientCreated();
+    }
+
+    public void addListener(ModelListenerClient listener) {
+        listenersClient.add(listener);
+    }
+
+    public void removeListener(ModelListenerClient listener) {
+        listenersClient.remove(listener);
+    }
+
+    public void notifyBorrowTransactionClientCreated() {
+        for (ModelListenerClient listener : listenersClient) {
+            listener.onBorrowTransactionClientCreated();
+        }
     }
 
     public static synchronized Model getInstance() {
@@ -83,7 +120,22 @@ public class Model {
         return client;
     }
 
-    public Admin getAdmin() {
+    public void setClientController(ClientController controller) {
+        this.clientController = controller;
+    }
+
+    public ClientController getClientController() {
+        return clientController;
+    }
+
+    public ObjectProperty<Book> getBookSelectionListener() {
+        return selectedBook;
+    }
+
+    public void setSelectedBook(Book book) {
+        selectedBook.set(book);
+    
+      public Admin getAdmin() {
         return admin;
     }
 
@@ -104,8 +156,10 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
+                int quantity = databaseDriver.countBookCopies(book_id);
+
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
-                        image_path, average_rating, review_count);
+                        image_path, average_rating, review_count, quantity);
 
                 allBook.add(book);
             }
@@ -139,8 +193,11 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
-                Book book = new Book(book_id, title, author, isbn, genreResult, language, description, publication_year,
-                        image_path, average_rating, review_count);
+                int quantity = databaseDriver.countBookCopies(book_id);
+
+                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
+                        image_path, average_rating, review_count, quantity);
+
 
                 HighestRatedBooks.add(book);
             }
@@ -401,6 +458,14 @@ public class Model {
         notification.setRead(true);
     }
 
+    public void insertNotification(Notification notification) {
+        if (databaseDriver.insertNotification(notification)) {
+            Platform.runLater(() -> {
+                allNotifications.add(notification);
+            });
+        }
+    }
+
     public void markAllNotificationsAsRead(int recipientId) {
         databaseDriver.markAllNotificationsAsRead(recipientId);
 
@@ -416,6 +481,35 @@ public class Model {
     public ObservableList<Notification> getAllNotifications() {
         return allNotifications;
     }
+
+    public void notifyBorrowTransactionClientCreatedEvent() {
+        notifyBorrowTransactionClientCreated();
+    }
+
+    // Admin section //
+
+    public interface ModelListenerAdmin {
+        void onBorrowTransactionAdminCreated();
+
+        void onBookReturnProcessed();
+    }
+
+    public void notifyBookReturnProcessed() {
+        for (ModelListenerAdmin listener : listenersAdmin) {
+            listener.onBookReturnProcessed();
+        }
+    }
+
+    public void notifyBorrowTransactionAdminCreated() {
+        for (ModelListenerAdmin listener : listenersAdmin) {
+            listener.onBorrowTransactionAdminCreated();
+        }
+    }
+
+    public void notifyBorrowTransactionAdminCreatedEvent() {
+        notifyBorrowTransactionAdminCreated();
+    }
+
 
     public void setClientAvatar(String fileURI) {
         databaseDriver.setClientAvatar(Model.getInstance().getClient().getClientId(), fileURI);

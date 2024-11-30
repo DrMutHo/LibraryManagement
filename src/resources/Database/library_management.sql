@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS Notification (
     notification_id INT AUTO_INCREMENT PRIMARY KEY,  -- Unique ID for each notification
     recipient_id INT NOT NULL,                       -- ID of the recipient (Admin or Client)
     recipient_type ENUM('Admin', 'Client') NOT NULL, -- Type of recipient (indicates whether recipient_id references Admin or Client)
-    notification_type ENUM('BorrowReceiptIssued', 'ReturnReceiptIssued', 'PurchaseReceiptIssued', 'OverdueAlert', 'BorrowRequestConfirmed', 'ReturnReminder') NOT NULL, -- Type of notification
+    notification_type ENUM('BorrowReceiptIssued', 'BookAvailable', 'BorrowConfirmed', 'ReturnReceiptIssued', 'PurchaseReceiptIssued', 'OverdueAlert', 'BorrowRequestConfirmed', 'ReturnReminder') NOT NULL, -- Type of notification
     message TEXT NOT NULL,                           -- Message content of the notification
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,   -- Date and time when notification was created
     is_read BOOLEAN DEFAULT FALSE                    -- Read status of the notification
