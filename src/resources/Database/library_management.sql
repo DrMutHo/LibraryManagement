@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS Client (
     registration_date DATETIME DEFAULT CURRENT_TIMESTAMP, -- Date of registration
     outstanding_fees DECIMAL(10, 2) DEFAULT 0,        -- Outstanding fees for the client
     username VARCHAR(255) UNIQUE NOT NULL,            -- Username for client login
-    password_hash VARCHAR(255) NOT NULL               -- Password hash for client login
+    password_hash VARCHAR(255) NOT NULL,              -- Password hash for client login
+    avatar_image_path VARCHAR(255) DEFAULT "/resources/Images/Client/defaultProfileImage.png"
 );
 
 -- Table for Admins
@@ -96,7 +97,7 @@ CREATE TABLE IF NOT EXISTS Notification (
     notification_id INT AUTO_INCREMENT PRIMARY KEY,  -- Unique ID for each notification
     recipient_id INT NOT NULL,                       -- ID of the recipient (Admin or Client)
     recipient_type ENUM('Admin', 'Client') NOT NULL, -- Type of recipient (indicates whether recipient_id references Admin or Client)
-    notification_type ENUM('BorrowReceiptIssued', 'ReturnReceiptIssued', 'PurchaseReceiptIssued', 'OverdueAlert', 'BorrowRequestConfirmed', 'ReturnReminder') NOT NULL, -- Type of notification
+    notification_type ENUM('BorrowReceiptIssued', 'BookAvailable', 'BorrowConfirmed', 'ReturnReceiptIssued', 'PurchaseReceiptIssued', 'OverdueAlert', 'BorrowRequestConfirmed', 'ReturnReminder') NOT NULL, -- Type of notification
     message TEXT NOT NULL,                           -- Message content of the notification
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,   -- Date and time when notification was created
     is_read BOOLEAN DEFAULT FALSE                    -- Read status of the notification
@@ -143,8 +144,86 @@ VALUES
 ('Ava Wright', 'LIB00017', 'avawright@hotmail.com', '1234567891', '202 Oak Street, Berk', 'avawright', '$2a$10$EEwjlPV6nCeiXiM7AL5wGuYB3cA1Z..zQNdnSwBHgFEW4lQKaS9Pu', 0.00), -- original password: "avawright"
 ('Logan Walker', 'LIB00018', 'loganwalker@gmail.com', '2345678902', '303 Birch Street, Asgard', 'loganwalker', '$2a$10$JKh4CrjAljQnCH734O3squZ3fCCWTNYbmKSYXNKlBdNMl20H6t54q', 5.75), -- original password: "logan123"
 ('Charlotte Harris', 'LIB00019', 'charlotteh@gmail.com', '3456789013', '404 Maple Street, Wakanda', 'charlotteharris', '$2a$10$C9h.CwA42GOd.WZiyzoMlOwZ6dLmEyDZAbWPYgjwBzGJipGz9CNfm', 8.00), -- original password: "charris2023"
-('Mason Young', 'LIB00020', 'masonyoung@gmail.com', '4567890124', '505 Pine Street, Neverland', 'masonyoung', '$2a$10$m6rrutRFEYoBQmNJpIEV6.qOxYwcajkRTi259WU2YlCDgvuluyVwO', 0.00); -- original password: "masonyoung"
-
+('Henry Scott', 'LIB00021', 'henryscott@gmail.com', '5678901235', '606 Maple Street, Riverton', 'henryscott2023', '$2a$10$rabq8PfsR7ossBkEhaLUFOfucVZLv6MVJ0MYWUYeuCVkCde.hxZ0K', 12.50), -- original password: "henry1234"
+('Sophia Miller', 'LIB00022', 'sophiamiller@gmail.com', '6789012346', '707 Oak Street, Pleasantville', 'sophiamiller2023', '$2a$10$U.NTQUPMVsav9QPSoBXkGOuIXw933cIU2SyyLCbSGVTf4N8FfVtB.', 0.00), -- original password: "sophiamill"
+('Lucas Taylor', 'LIB00023', 'lucastaylor@gmail.com', '7890123457', '808 Pine Street, Wonderland', 'lucastaylor2023', '$2a$10$ENy9L5iV9o6Bqame44nsc.ZYXLZtQvuhdLU76ouVKFdZnhTgO244e', 5.00), -- original password: "lucas2023"
+('Chloe Anderson', 'LIB00024', 'chloeanderson@gmail.com', '8901234568', '909 Birch Street, Utopia', 'chloeanderson2023', '$2a$10$jj04/KL/ix3J/qvk714EEuX1gJUoumNPiuclrdVyHPeQLRA00Blbm', 2.00), -- original password: "chloe2023"
+('Mason Harris', 'LIB00025', 'masonharris@gmail.com', '9012345679', '101 Cedar Street, Starfall', 'masonharris2023', '$2a$10$P41cclU2lL2jDrrVZloPvOBfSuRlk82eu1eKqdZL4TUt13Mtlp7Yq', 0.00), -- original password: "masons2023"
+('Grace Carter', 'LIB00026', 'gracecarter@gmail.com', '1234567897', '202 Oak Street, Dragonville', 'gracecarter2023', '$2a$10$2coFCW/bL04hbRgY6/I6BOYnTXCwGzBew.mkzZ0LnPxPFM4GNrhWC', 0.00), -- original password: "grace1234"
+('Leo Evans', 'LIB00027', 'leoevans@gmail.com', '2345678903', '303 Cedar Street, Nightfall', 'leoevans2023', '$2a$10$eeYg05LuMkKVUHAs5jZHqOrilnGKX.boUIlbI3HBVUFUM7WHB4RhS', 8.00), -- original password: "leoevans123"
+('Charlotte Gray', 'LIB00028', 'charlottegray@gmail.com', '3456789014', '404 Maple Street, Crestwood', 'charlottegray2023', '$2a$10$8DZGzcgBlVpamkWfFXwU/eyP96nfbkcQI4X1dTHfvpgtqXuyJQ5iS', 0.00), -- original password: "charlotte2023"
+('Evan Walker', 'LIB00029', 'evanwalker@gmail.com', '4567890125', '505 Oak Street, Emerald Grove', 'evanwalker2023', '$2a$10$.rzViflfc/kH5sk2NOYan.RDGteoHhrTxe0V08WYbvBYFBi0.xk6a', 4.50), -- original password: "evanwalker"
+('Amelia Turner', 'LIB00030', 'amelia.turner@gmail.com', '5678901236', '606 Birch Street, Greendale', 'amelia.turner2023', '$2a$10$PYYHsY9mC4SbGDnOETWz4u.g9sa1vKNUmcaZJd5Z1umtKcrgHCqBW', 6.75), -- original password: "amelia2023"
+('Oliver Moore', 'LIB00031', 'olivermoore@gmail.com', '6789012347', '707 Birch Street, Redwood', 'olivermoore', '$2a$10$RaTCfNrXi.v88uR30or0kO.Z6hlUPr.skH/r5xoQ69yAhDfb5KWpe', 0.00), -- original password: "oliver2023"
+('Lily Adams', 'LIB00032', 'lilyadams@gmail.com', '7890123458', '808 Oak Street, Harmony', 'lilyadams', '$2a$10$yNCZA3S.lCxQCumbtX2eLuHzVVu85vlZqOsa5PESfGG/SjrmbUPdC', 5.00), -- original password: "lily2023"
+('Matthew Harris', 'LIB00033', 'matthewharris@gmail.com', '8901234569', '909 Pine Street, Valleyview', 'matthewharris', '$2a$10$jZRW54joUpDpJKnz8HkmLeZuBtuFsAUZtJ4Qu76ogvnh7lPMIclyK', 0.00), -- original password: "matt2023"
+('Charlotte King', 'LIB00034', 'charlottek@gmail.com', '9012345670', '101 Birch Street, Oakwood', 'charlottek', '$2a$10$eZ2k6GIcIOvGQwtDSwfz.eN4ng3miRXY9jpqtf4dTTg1R7xyQwwUy', 3.00), -- original password: "charlotte123"
+('Ethan Brown', 'LIB00035', 'ethanbrown@gmail.com', '1123456780', '202 Cedar Street, Willow Creek', 'ethanbrown', '$2a$10$8dj5hunO2rbBqX7C0l8NPO0ja/.ZXr3xt77e0vU62WjqrOwVtfOwy', 10.00), -- original password: "ethanb2023"
+('Lucas Green', 'LIB00036', 'lucasgreen@gmail.com', '2234567891', '303 Oak Street, Sunset Blvd', 'lucasgreen', '$2a$10$Hf4ZqvzczfTC2nYB6bP.huN1fS2BshdKtJcMxr4Z4KYmVwhdvuZXm', 2.00), -- original password: "lucas2023"
+('Isabella Miller', 'LIB00037', 'isabellamiller@gmail.com', '3345678902', '404 Pine Street, Cliffside', 'isabellamiller', '$2a$10$ry6tNmLAoNwl/cFxk.FIPevfjSuhmmQ1Cxl2fEtq0ezrS0/Pm6q7u', 0.00), -- original password: "isabella2023"
+('Alexander Wilson', 'LIB00038', 'alexanderw@gmail.com', '4456789013', '505 Cedar Street, Brighton', 'alexanderw', '$2a$10$QcP66LaDy/O9Yep/pfv2K.obyljNxWyKAMMVZMJVIop/3ktX.jmgG', 7.00), -- original password: "alexanderW123"
+('Madeline Clark', 'LIB00039', 'madelineclark@gmail.com', '5567890124', '606 Birch Street, Mapleton', 'madelineclark', '$2a$10$G5Llx1gYWvbrHoxAMMfeROBT7Y7g23SqYrHifZiHOH0D6fn3HOpWa', 0.00), -- original password: "madeline2023"
+('Benjamin Harris', 'LIB00040', 'benjaminharris@gmail.com', '6678901235', '707 Pine Street, Riverton', 'benjaminharris', '$2a$10$z5q1/S2uTiiPn9ahFSsnDuGZsucgV1hrd.yQIOOzcx99U55PkOqEu', 9.50), -- original password: "benjamin123"
+('Kathy Anderson', 'LIB00041', 'kathy.anderson@gmail.com', '1234567890', '101 Apple St, Sunshine', 'kathy_anderson', '$2a$10$K/GF.56kP3CVsHuTjvfqvuASTmxp7BRx1rmMwErNVaoj0m0djNimq', 4.50), -- original password: "kathy2023"
+('Liam Thomas', 'LIB00042', 'liam.thomas@yahoo.com', '2345678901', '202 Lemon Rd, Clearwater', 'liam_thomas', '$2a$10$EfA5SShVfbzq.d9UYholreQxaJAdlTKp8GoHnY84Thg5KnZ6ADmLS', 3.25), -- original password: "liamthomas"
+('Monica Lee', 'LIB00043', 'monica.lee@hotmail.com', '3456789012', '303 Cherry Blvd, Hillside', 'monica_lee', '$2a$10$Fe5J3UnErszFdr1lUxiJvujC/WqBfkqyJvKGwT0soRY74IdD/L/fG', 6.00), -- original password: "monica2023"
+('Nathan White', 'LIB00044', 'nathan.white@gmail.com', '4567890123', '404 Banana St, Greenfield', 'nathan_white', '$2a$10$uQ2ax6OE8nN414DKxflg8e9KvZ7/w.o8LvtyaT0h//XGR75FAf3D2', 7.50), -- original password: "nathan2023"
+('Olivia Martin', 'LIB00045', 'olivia.martin@yahoo.com', '5678901234', '505 Grape Rd, Redwood', 'olivia_martin', '$2a$10$nGxfXkNQkq0UO3fuNiMWmOwFdJqJoaA7LqBcRejdlraqAD/zRgnvq', 0.00), -- original password: "olivia123"
+('Paul Taylor', 'LIB00046', 'paul.taylor@hotmail.com', '6789012345', '606 Peach St, Willowbrook', 'paul_taylor', '$2a$10$uuUKSbkZSMssE4rHaZHM6.DqZ5SrcDbx8A367LIo6PuJXD8rV8Hmy', 8.25), -- original password: "paul2023"
+('Quincy Jackson', 'LIB00047', 'quincy.jackson@gmail.com', '7890123456', '707 Mango Rd, Westwood', 'quincy_jackson', '$2a$10$yW1baKKp2/jPORd0N95x7ujSD0SdRiLAlDaHYIPDlS09itjWqttQG', 2.75), -- original password: "quincy2023"
+('Rita Wilson', 'LIB00048', 'rita.wilson@yahoo.com', '8901234567', '808 Pineapple St, Palm Grove', 'rita_wilson', '$2a$10$0.ddvekUJtK0LdDVHREXP.AbbkYSFvgFOP0PIbslTzW1vEtxUrZwO', 3.00), -- original password: "rita123"
+('Sam Harris', 'LIB00049', 'sam.harris@hotmail.com', '9012345678', '909 Apricot Rd, Riverside', 'sam_harris', '$2a$10$O06ArymsW8UN8aDGLyvcL.WH6X5vteeOPxWqz1PbqHLQ4M3wtxG.y', 1.50), -- original password: "sam2023"
+('Tina Brown', 'LIB00050', 'tina.brown@gmail.com', '0123456789', '101 Coconut Blvd, Sunshine', 'tina_brown', '$2a$10$CsuWqoAkbtJvZlwpLc.x1.Jd4ea1Qr/EviBb6bke3TRvBM6hC8VAy', 9.00), -- original password: "tina2023"
+('Uma Patel', 'LIB00051', 'uma.patel@gmail.com', '2345678901', '111 Orchid St, Bluewater', 'uma_patel', '$2a$10$rgViZ2AYbVA2c.3HvDis7Ob2mJPE11noilTKv8rjPt6VP3rX4u656', 5.00), -- original password: "uma123"
+('Vera Robinson', 'LIB00052', 'vera.robinson@yahoo.com', '3456789012', '222 Rose Ave, Springhill', 'vera_robinson', '$2a$10$h3Dd1y1B0hCNCsyL3soSt.hK3bGvsB/uA0wx4c/xCNKfiBY/VS1pG', 2.25), -- original password: "vera2023"
+('William Scott', 'LIB00053', 'william.scott@gmail.com', '4567890123', '333 Sunflower Rd, Oceanview', 'william_scott', '$2a$10$Hj7VWrhWfVe0jeexi0NJhOqEIXrfzH..CPKaiIpAM48frV.1B1D6O', 0.00), -- original password: "william123"
+('Xander Davis', 'LIB00054', 'xander.davis@hotmail.com', '5678901234', '444 Violet St, Greenlake', 'xander_davis', '$2a$10$PBT2s3sdMKMsUZLFgGCBdeENBJ6he6bKKySuzr50txvzcLmgQcIyW', 3.75), -- original password: "xander2023"
+('Yvonne Evans', 'LIB00055', 'yvonne.evans@gmail.com', '6789012345', '555 Poppy Rd, Amberfield', 'yvonne_evans', '$2a$10$k39f2iP4ubAHW0B4zAD/OuDV5DRpRzqaM0NGGj0gJflzxhIpgCdjO', 7.25), -- original password: "yvonne123"
+('Zane Carter', 'LIB00056', 'zane.carter@yahoo.com', '7890123456', '666 Maple St, Windy Hill', 'zane_carter', '$2a$10$11S0YRPTcUNZ2G.wUuXciO.V3HuK4YM.eSnyINvST81dL1vHesvui', 9.00), -- original password: "zane2023"
+('Ava Mitchell', 'LIB00057', 'ava.mitchell@hotmail.com', '8901234567', '777 Ivy Rd, Sunridge', 'ava_mitchell', '$2a$10$t1EIX6WFUaDWTauF40sLpu2Pw3bqLrkX3PPJoFJ1ANRvY.u3Ip7J.', 4.50), -- original password: "ava2023"
+('Blake Morris', 'LIB00058', 'blake.morris@gmail.com', '9012345678', '888 Cedar Blvd, Hilltop', 'blake_morris', '$2a$10$tJdB0D3lpFMWfDLFwIg0v.bQR31ay3v.O3ofAy7RsdirGbkXgGN3u', 0.00), -- original password: "blake123"
+('Charlotte Green', 'LIB00059', 'charlotte.green@yahoo.com', '0123456789', '999 Oak St, Riverbank', 'charlotte_green', '$2a$10$6uaGKmJms2L7yKJ/Ru.C4epu2/Ox/jD2BZ1LgudizfCMiy9.3ZBF6', 6.25), -- original password: "charlotte2023"
+('Daniel Clark', 'LIB00060', 'daniel.clark@gmail.com', '1234567890', '1010 Birch Rd, Northwood', 'daniel_clark', '$2a$10$q3IdAo660IM/2IgOTO640emyZMGOW4n2xHKVSwscODDN9oveYeOfq', 1.00), -- original password: "daniel123"
+('Eva Jackson', 'LIB00061', 'eva.jackson@gmail.com', '2345678901', '1011 Elm St, Lakeside', 'eva_jackson', '$2a$10$.XgzFhVOaAIexP9O3Y3BIOr.m3tZVf4xpp9T9GDM0kcFlo1Fas2p.', 8.50), -- original password: "eva123"
+('Felix Harris', 'LIB00062', 'felix.harris@yahoo.com', '3456789012', '1022 Pine Rd, Stonehill', 'felix_harris', '$2a$10$4hiz9G9wenFJWG5iIAth3OEcIIz4/tXt/v3.NSuizfyMBc0CLWZTq', 0.00), -- original password: "felix2023"
+('Grace Walker', 'LIB00063', 'grace.walker@gmail.com', '4567890123', '1033 Maple Ave, Brookstone', 'grace_walker', '$2a$10$6Cc3wR.8PJg626aup/ZubuBxu1Q.VrC4jn4LFOsXAPdbioGgKT/Zq', 2.75), -- original password: "grace123"
+('Harrison Lee', 'LIB00064', 'harrison.lee@hotmail.com', '5678901234', '1044 Oak Blvd, Northgate', 'harrison_lee', '$2a$10$xuiry2zLLXtKNxzzBK7Qx.Jq8xEni52GHonFGo2Bh1KWj4dLzL.HG', 6.00), -- original password: "harrison2023"
+('Isabella King', 'LIB00065', 'isabella.king@gmail.com', '6789012345', '1055 Birch St, Pinehill', 'isabella_king', '$2a$10$Lbl2hKaY3F/YelTdx4wzAuuN/CP1pPH6u.ANgYbCasDQBGiCBLm9C', 1.50), -- original password: "isabella123"
+('Jack Morris', 'LIB00066', 'jack.morris@yahoo.com', '7890123456', '1066 Cedar Ave, Riverton', 'jack_morris', '$2a$10$E1PzzgKwcaxDtcpnmYOVnun9hDc33Oe4/7d3nQjNrQ2ELrkFhW/SO', 7.00), -- original password: "jack2023"
+('Kaitlyn Robinson', 'LIB00067', 'kaitlyn.robinson@gmail.com', '8901234567', '1077 Redwood St, Greenridge', 'kaitlyn_robinson', '$2a$10$iZaw25IpDEgVlUIVR.KTAOU2iql1/oi6oG9y7cPULMe1XSStEtgOa', 4.25), -- original password: "kaitlyn123"
+('Liam Harris', 'LIB00068', 'liam.harris@hotmail.com', '9012345678', '1088 Oak Rd, Brookvale', 'liam_harris', '$2a$10$v/Sp.HLCOvHuIyQfDEi5COhBKoY2WQcowbdmYX8onxw0n/MDM.Axa', 9.50), -- original password: "liam2023"
+('Mia Evans', 'LIB00069', 'mia.evans@gmail.com', '0123456789', '1099 Pine Rd, Hillcrest', 'mia_evans', '$2a$10$Ff1mNXDEPqh.CzT82Zpwx.e0gnan.jdUcQuYGeCyeREboDuzgVQEG', 3.00), -- original password: "mia123"
+('Noah White', 'LIB00070', 'noah.white@yahoo.com', '1234567890', '1100 Cedar St, Westfield', 'noah_white', '$2a$10$TwH6IMTNZxoZxwGaVxN1cuhi9EagIWzK7kxBMvTX3lZi0gFMD6JIm', 5.00), -- original password: "noah2023"
+('Olivia Adams', 'LIB00071', 'olivia.adams@gmail.com', '2345678901', '1111 Maple St, Hillview', 'olivia_adams', '$2a$10$I/XakvIhiuSKZ9GlzCiAXetmFyS3D6YfSVkHimjaCOewon4iH9qni', 6.75), -- original password: "olivia123"
+('Paul Baker', 'LIB00072', 'paul.baker@yahoo.com', '3456789012', '1122 Birch Rd, Cedarhill', 'paul_baker', '$2a$10$UMapsCBVXDiEquTw93nMheMwR.bZK/XiZWpHo91364X4TuhVDUZBu', 8.25), -- original password: "paul2023"
+('Quinn Clark', 'LIB00073', 'quinn.clark@gmail.com', '4567890123', '1133 Elm Ave, Springdale', 'quinn_clark', '$2a$10$IbpdKsLXAMhwfhfWa.vwueGUAhEUubgb15yHL8GXl1331vRyn0l4u', 2.50), -- original password: "quinn123"
+('Riley Davis', 'LIB00074', 'riley.davis@hotmail.com', '5678901234', '1144 Cedar Rd, Lakeshore', 'riley_davis', '$2a$10$y77btJnfWeigylUig/riAOtJx1Xk.xuZfWT/bsv2DU9brVKa2datS', 4.75), -- original password: "riley2023"
+('Sophie Evans', 'LIB00075', 'sophie.evans@gmail.com', '6789012345', '1155 Oak Blvd, Redwood', 'sophie_evans', '$2a$10$3mWj377gsxy2p.XL2OXboeIwGqAPpwzzVh4VCNS523vI1XYw.m5EK', 3.25), -- original password: "sophie123"
+('Theo Foster', 'LIB00076', 'theo.foster@yahoo.com', '7890123456', '1166 Pine St, Sunridge', 'theo_foster', '$2a$10$UtGPlTR3UdMxa4XK6BFI2eS7axajc3TxaTrqq/ug9VU8qmz8CC5uq', 9.00), -- original password: "theo2023"
+('Uma Griffin', 'LIB00077', 'uma.griffin@gmail.com', '8901234567', '1177 Birch St, Crestview', 'uma_griffin', '$2a$10$q0ewPwYJ3jMzwAeSopoJP.l4O90did17WVGNp44gPEPj0/sU6n5R6', 5.50), -- original password: "uma123"
+('Vince Hall', 'LIB00078', 'vince.hall@hotmail.com', '9012345678', '1188 Cedar Ave, Silverwood', 'vince_hall', '$2a$10$mKnZnDHfIS8a/DE5ejnvkekAVE3FxjiPb8x3L3vn6785Ed/jWPEGS', 7.25), -- original password: "vince2023"
+('Wendy Irving', 'LIB00079', 'wendy.irving@gmail.com', '0123456789', '1199 Pine Blvd, Blackstone', 'wendy_irving', '$2a$10$.x5ddJ6LBkneEsSqx08p3ORrL/8/aS9CxRgJcY5gw7jBhBsVgLw/u', 10.00), -- original password: "wendy123"
+('Xander Jenkins', 'LIB00080', 'xander.jenkins@yahoo.com', '1234567890', '1200 Birch Rd, Highland', 'xander_jenkins', '$2a$10$BGOWqvBpGuufT0jFLALXHuInH3LoN1wkIcXyRE/7LODoK2Rn.kG1u', 4.00), -- original password: "xander2023"
+('Yara King', 'LIB00081', 'yara.king@gmail.com', '2345678901', '1211 Maple St, Greenfield', 'yara_king', '$2a$10$Ilx9I8mQxMeSxQUt3kk4/uYd4XwpTt/GF0QL97HD8iBID5ZuqsDWC', 2.00), -- original password: "yara2023"
+('Zane Lee', 'LIB00082', 'zane.lee@hotmail.com', '3456789012', '1222 Oak Blvd, Parkview', 'zane_lee', '$2a$10$pH/fF1JDn5oiD.ZlIFqkBuyYF6raV.ZOnra9pg4Yi0LIHWQd252hu', 6.50), -- original password: "zane123"
+('Ava Miller', 'LIB00083', 'ava.miller@yahoo.com', '4567890123', '1233 Pine Rd, Clearwater', 'ava_miller', '$2a$10$JiWfanCfXZHGmSe05EKKKO0Wlp4eApjv5Cucy1TmSrbI8dI5K5bvO', 8.00), -- original password: "ava2023"
+('Brayden Nelson', 'LIB00084', 'brayden.nelson@gmail.com', '5678901234', '1244 Birch St, Meadowbrook', 'brayden_nelson', '$2a$10$jlodC99KDvaorFjvBHsAYeeGnvxwtvJz8p3fNnvnD7owq1yWEMwAi', 3.25), -- original password: "brayden123"
+('Charlotte Owen', 'LIB00085', 'charlotte.owen@yahoo.com', '6789012345', '1255 Cedar Ave, Windmill', 'charlotte_owen', '$2a$10$e5.r4XCIRaEMdIGuPe4Lye3vGfSY5V5U0TicgPSRgaOz4NZz2PSmK', 5.75), -- original password: "charlotte2023"
+('Dylan Park', 'LIB00086', 'dylan.park@hotmail.com', '7890123456', '1266 Oak St, Lakeside', 'dylan_park', '$2a$10$H4BX.9T2o./dwoWTKAf.j.6pr6/xdIRBFmMdP6y3DYp0T60wA0/oG', 1.50), -- original password: "dylan123"
+('Ella Quinn', 'LIB00087', 'ella.quinn@gmail.com', '8901234567', '1277 Pine Blvd, Greenfield', 'ella_quinn', '$2a$10$qhar.2pk3fFa68MUtsHNq.L62U0R47ZgmwQuZ1Pe9WNUs8HSFRd46', 4.25), -- original password: "ella2023"
+('Finn Roberts', 'LIB00088', 'finn.roberts@yahoo.com', '9012345678', '1288 Cedar Rd, Maplewood', 'finn_roberts', '$2a$10$ffYNn62iROXf5JJJarxgHe066x/C9yIwnAeeweMww3lLl7PYbRvxW', 7.00), -- original password: "finn123"
+('Grace Stone', 'LIB00089', 'grace.stone@hotmail.com', '0123456789', '1299 Birch Blvd, Willowdale', 'grace_stone', '$2a$10$DTeUQ0c5EbS8zJEH9Z9W8.Rn0rgzmcuY6A7FweZKjRb8q.3NeKkWq', 10.50), -- original password: "grace123"
+('Henry Turner', 'LIB00090', 'henry.turner@gmail.com', '1234567890', '1300 Oak Blvd, Riverdale', 'henry_turner', '$2a$10$a4cXSXbpleYmFy3Vs4YDEedQnuNajQZWxGLrVVZdh1Bx8lm704N66', 3.75), -- original password: "henry2023"
+('Isla Underwood', 'LIB00091', 'isla.underwood@gmail.com', '2345678910', '1311 Maple St, Greenfield', 'isla_underwood', '$2a$10$tdWXKYVnF27LGTPXwoh3vOd1h5nIUebRCOqa9VwaZVrmVfEiO7TU.', 4.00), -- original password: "isla123"
+('Jack Vaughn', 'LIB00092', 'jack.vaughn@hotmail.com', '3456789021', '1322 Oak Rd, Pinehill', 'jack_vaughn', '$2a$10$SyRDvjwkd1txARFYJqoroOkXT7tY6LhKgpIiqXLhlgC1IbMh7GFUW', 5.50), -- original password: "jack2023"
+('Kara Walsh', 'LIB00093', 'kara.walsh@yahoo.com', '4567890132', '1333 Pine St, Lakeside', 'kara_walsh', '$2a$10$mXKy0/mK9ux7ehmk1okuNOeW53Alq4KCdZx7HSSauhgrCAcBHB9sG', 6.25), -- original password: "kara123"
+('Liam Xander', 'LIB00094', 'liam.xander@gmail.com', '5678901243', '1344 Birch Blvd, Riverside', 'liam_xander', '$2a$10$zkrd3yH7sBa7dylQQPueaushIqw2948tRGjZ3x9sPL08sChdhQs2G', 3.00), -- original password: "liam2023"
+('Maya Young', 'LIB00095', 'maya.young@hotmail.com', '6789012354', '1355 Cedar Ave, Springhill', 'maya_young', '$2a$10$npxXWYR/9XcSVfeP3VDoA.u2HzuwnLzOYhj6ROxANdg4Oi87Tzqgi', 2.75), -- original password: "maya123"
+('Noah Zell', 'LIB00096', 'noah.zell@gmail.com', '7890123465', '1366 Oak Rd, Fairview', 'noah_zell', '$2a$10$uzcQ23QPQ7J9gfVwZyggA.plW5GH7DEr.RJfsvwQzb4Pr8.9q2aqS', 7.50), -- original password: "noah2023"
+('Olivia Avery', 'LIB00097', 'olivia.avery@yahoo.com', '8901234576', '1377 Birch St, Hilltop', 'olivia_avery', '$2a$10$yNn9ic5purMpPl6hc3zGNOoR0ovqHiW08JEOtWknwVDpomsNd2wK2', 1.25), -- original password: "olivia123"
+('Peyton Banks', 'LIB00098', 'peyton.banks@hotmail.com', '9012345687', '1388 Cedar Rd, Millbrook', 'peyton_banks', '$2a$10$30PQdjdMB1aVejshLuMM4uwx3vc5uCLm4Q4ZXU9IjScYTXeTi4RAa', 4.00), -- original password: "peyton2023"
+('Quinn Callahan', 'LIB00099', 'quinn.callahan@gmail.com', '0123456798', '1399 Oak Blvd, Riverwood', 'quinn_callahan', '$2a$10$4hYQr7SRHS476gRVBm.oK.hnqAC0w.lxrvtR0At5TQJN3c8MbzGkO', 8.50), -- original password: "quinn123"
+('Riley Douglas', 'LIB00100', 'riley.douglas@yahoo.com', '1234567809', '1400 Pine Blvd, Westfield', 'riley_douglas', '$2a$10$94yStCn/RsoazJ8TxndVxetaODImjSxhTk4Wweab5.HSgUdv0S/CC', 3.00); -- original password: "riley2023"
 
 -- Insert sample data into Admin with hashed passwords
 INSERT INTO Admin (username, password_hash, email)

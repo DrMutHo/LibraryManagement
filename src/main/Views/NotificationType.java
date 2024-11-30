@@ -7,6 +7,8 @@ public enum NotificationType {
     ReturnReminder,
     BorrowReceiptIssued,
     PurchaseReceiptIssued,
+    BookAvailable,
+    BorrowConfirmed,
     UNKNOWN;
 
     public static NotificationType fromString(String type) {

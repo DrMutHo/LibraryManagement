@@ -41,6 +41,17 @@ public class NotificationsController implements Initializable {
         notifications_listview.setCellFactory(e -> new NotificationCellFactory());
 
         notifications.addListener((javafx.collections.ListChangeListener.Change<? extends Notification> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Notification notification : c.getAddedSubList()) {
+                        notification.isReadProperty().addListener((observable, oldValue, newValue) -> {
+                            Platform.runLater(() -> {
+                                updateUnreadCount(recipientId);
+                            });
+                        });
+                    }
+                }
+            }
             Platform.runLater(() -> {
                 updateUnreadCount(recipientId);
             });
@@ -60,9 +71,7 @@ public class NotificationsController implements Initializable {
     }
 
     private void initAllNotificationsList() {
-        if (Model.getInstance().getAllNotifications().isEmpty()) {
-            Model.getInstance().setAllNotifications();
-        }
+        Model.getInstance().setAllNotifications();
     }
 
     private void updateUnreadCount(int recipientId) {

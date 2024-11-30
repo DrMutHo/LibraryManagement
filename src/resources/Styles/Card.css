@@ -1,43 +1,82 @@
-/* card.css */
+/* CSS cho Card.fxml */
 
-/* Định kiểu cho toàn bộ VBox */
-.vbox-card {
+/* Toàn bộ thẻ sách */
+.book-card {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+    -fx-min-width: 120px;
     -fx-alignment: center;
-    -fx-pref-height: 204px;
-    -fx-pref-width: 160px;
-    -fx-background-color: #f0f0f0;
-    /* Màu nền cho VBox */
-    -fx-margin: 5px;
-    /* Khoảng cách trong cho VBox */
-    -fx-background-radius: 10;
-    /* Bo góc cho VBox */
-    -fx-border-color: #cccccc;
-    -fx-border-width: 1px;
-    -fx-border-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 2, 2);
 }
 
-/* Định kiểu cho Label title */
-.vbox-card .label-title {
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333333;
-    /* Padding cho khoảng cách trong */
-}
-
-/* Định kiểu cho Label author */
-.vbox-card .label-author {
+/* Rating bar */
+.ratingBar {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-padding: 5;
     -fx-font-size: 14px;
-    -fx-text-fill: #666666;
-    /* Màu chữ nhạt hơn */
+    -fx-text-fill: white;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-opacity: 0;
+    -fx-transition: opacity 0.3s ease;
+    -fx-alignment: center;
+    -fx-min-width: 100%;
+    /* Đảm bảo rating bar chiếm toàn bộ chiều rộng */
+    -fx-max-height: 30px;
 }
 
-/* Hiệu ứng động cho phần card với shadow và xoay */
-.card-cover {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.5, 5, 5);
-    -fx-rotate: 0deg;
-    -fx-transition: -fx-rotate 0.6s ease, -fx-translate-x 0.6s ease;
+/* Khi hover vào card, hiển thị rating bar */
+.book-card:hover .ratingBar {
+    -fx-opacity: 1;
 }
 
-.vbox-card:hover {
+.book-card:hover {
     -fx-cursor: hand;
+}
+
+/* Tiêu đề sách */
+.title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #388e3c;
+    -fx-text-alignment: center;
+    -fx-padding: 5;
+    -fx-wrap-text: true;
+    /* Đảm bảo tiêu đề có thể xuống dòng nếu dài */
+}
+
+/* Tác giả sách */
+.author {
+    -fx-font-size: 10px;
+    -fx-text-fill: #555555;
+    -fx-text-alignment: center;
+    -fx-padding: 5;
+    -fx-wrap-text: true;
+    /* Đảm bảo tên tác giả có thể xuống dòng */
+}
+
+/* Đánh giá sách */
+.rating {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #888888;
+    /* Màu xám */
+}
+
+/* CSS cho Card.fxml */
+
+/* TextFlow chứa rating */
+.ratingTextFlow {
+    -fx-pref-width: 140px;
+    -fx-text-alignment: center;
+    -fx-background-color: #464343;
+    /* Màu xám nền cho TextFlow */
+    -fx-padding: 5;
+    /* Padding để tạo khoảng cách giữa text và viền */
+}
+
+/* Text bên trong TextFlow */
+.ratingTextFlow .text {
+    -fx-fill: white;
+    /* Màu chữ là trắng */
 }

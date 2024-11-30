@@ -55,7 +55,7 @@ public class ChangePasswordController implements Initializable {
     private ImageView imageView1;
     @FXML
     private ImageView imageView2;
-    @FXML 
+    @FXML
     private Image eyeOpen;
     @FXML
     private Image eyeClosed;
@@ -72,42 +72,40 @@ public class ChangePasswordController implements Initializable {
     @FXML
     private ImageView warning2;
 
-
-
     // Flags to track visibility of each password field
     private boolean passwordVisible0 = false;
     private boolean passwordVisible1 = false;
     private boolean passwordVisible2 = false;
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         passwordField_init();
     }
+
     public void passwordField_init() {
         // Set prompt text for the password fields
         setPromptText();
-    
+
         // Initialize password fields and text fields
         initializePasswordAndTextFields(passwordField0, textField0, hBox0);
         initializePasswordAndTextFields(passwordField1, textField1, hBox1);
         initializePasswordAndTextFields(passwordField2, textField2, hBox2);
-    
+
         // Load eye icon images for showing/hiding passwords
         eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
         eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
-    
+
         // Set initial icon state
         imageView0.setImage(eyeClosed);
         imageView1.setImage(eyeClosed);
         imageView2.setImage(eyeClosed);
-    
+
         // Set toggle button actions
         toggleButton0.setOnAction(event -> togglePasswordVisibility(passwordField0, textField0, imageView0));
         toggleButton1.setOnAction(event -> togglePasswordVisibility(passwordField1, textField1, imageView1));
         toggleButton2.setOnAction(event -> togglePasswordVisibility(passwordField2, textField2, imageView2));
     }
-    
+
     // Helper method to set prompt text for all password fields
     private void setPromptText() {
         passwordField0.setPromptText("Enter your current password");
@@ -117,7 +115,7 @@ public class ChangePasswordController implements Initializable {
         textField1.setPromptText("Your new password must be over 6 letters");
         textField2.setPromptText("Retype your new password");
     }
-    
+
     // Helper method to initialize password fields and text fields
     private void initializePasswordAndTextFields(PasswordField passwordField, TextField textField, HBox hBox) {
         passwordField.setVisible(true);
@@ -125,12 +123,12 @@ public class ChangePasswordController implements Initializable {
         textField.setVisible(false);
         textField.setManaged(false);
         textField.textProperty().bindBidirectional(passwordField.textProperty());
-    
+
         // Add focus listeners
         addPasswordFieldFocusListener(passwordField, hBox);
         addTextFieldListener(textField, hBox);
     }
-    
+
     // Focus listener for password fields
     private void addPasswordFieldFocusListener(PasswordField passwordField, HBox hbox) {
         passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
@@ -141,7 +139,7 @@ public class ChangePasswordController implements Initializable {
             }
         });
     }
-    
+
     // Focus listener for text fields
     private void addTextFieldListener(TextField textField, HBox hbox) {
         textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
@@ -152,7 +150,7 @@ public class ChangePasswordController implements Initializable {
             }
         });
     }
-    
+
     // Toggle password visibility for each field
     private void togglePasswordVisibility(PasswordField passwordField, TextField textField, ImageView imageView) {
         if (passwordField.isVisible()) {
@@ -179,7 +177,7 @@ public class ChangePasswordController implements Initializable {
         String newPassword = passwordField1.getText();
         String confirmPassword = passwordField2.getText();
         boolean canUpdate = true;
-    
+
         // Kiểm tra các điều kiện đầu vào và highlight các trường hợp lỗi
         if (!isValidCurrentPassword(currentPassword)) {
             highlightField(hBox0, warning0);
@@ -187,27 +185,27 @@ public class ChangePasswordController implements Initializable {
         } else {
             resetField(hBox0, warning0);
         }
-    
+
         if (!isValidNewPassword(newPassword)) {
             highlightField(hBox1, warning1);
             canUpdate = false;
         } else {
             resetField(hBox1, warning1);
         }
-    
+
         if (!isValidConfirmPassword(confirmPassword)) {
             highlightField(hBox2, warning2);
             canUpdate = false;
         } else {
             resetField(hBox2, warning2);
         }
-    
+
         // Kiểm tra mật khẩu hiện tại từ cơ sở dữ liệu
         if (!checkCurrentPassword(Model.getInstance().getClient().getUsername(), currentPassword)) {
             highlightField(hBox0, warning0);
             canUpdate = false;
         }
-    
+
         // Kiểm tra nếu tất cả các điều kiện đều hợp lệ
         if (canUpdate) {
             // Cập nhật mật khẩu mới vào cơ sở dữ liệu
@@ -220,46 +218,47 @@ public class ChangePasswordController implements Initializable {
             showAlert("Please correct the highlighted errors.", Alert.AlertType.ERROR);
         }
     }
-    
+
     // Phương thức kiểm tra mật khẩu hiện tại
     private boolean isValidCurrentPassword(String currentPassword) {
         return !currentPassword.isEmpty();
     }
-    
+
     // Phương thức kiểm tra mật khẩu mới
     private boolean isValidNewPassword(String newPassword) {
         return !newPassword.isEmpty() && newPassword.length() >= 6;
     }
-    
+
     // Phương thức kiểm tra mật khẩu xác nhận
     private boolean isValidConfirmPassword(String confirmPassword) {
         return !confirmPassword.isEmpty() && confirmPassword.length() >= 6;
     }
-    
+
     // Phương thức highlight các trường có lỗi
     private void highlightField(HBox hbox, ImageView icon) {
         hbox.getStyleClass().add("hbox_set-error");
         icon.setImage(new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
     }
-    
+
     // Phương thức reset lại các trường hợp không có lỗi
     private void resetField(HBox hbox, ImageView icon) {
         hbox.getStyleClass().remove("hbox_set-error");
         icon.setImage(null);
     }
+
     private void showAlert(String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle("Notification");
-        alert.setHeaderText(null);  // Có thể bỏ trống hoặc thiết lập header nếu cần
+        alert.setHeaderText(null); // Có thể bỏ trống hoặc thiết lập header nếu cần
         alert.setContentText(message);
-        alert.showAndWait();  // Chờ người dùng đóng thông báo trước khi tiếp tục
+        alert.showAndWait(); // Chờ người dùng đóng thông báo trước khi tiếp tục
     }
 
     private boolean checkCurrentPassword(String username, String password) {
         // Truy vấn cơ sở dữ liệu để lấy mật khẩu hash của người dùng
         String query = "SELECT * FROM client WHERE username = ?";
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             // Kiểm tra kết nối
             if (connection == null || connection.isClosed()) {
@@ -275,7 +274,7 @@ public class ChangePasswordController implements Initializable {
 
             // Nếu tìm thấy người dùng, so sánh mật khẩu
             if (resultSet.next()) {
-                String storedPasswordHash = resultSet.getString("password_hash");  // Mật khẩu đã được hash trong DB
+                String storedPasswordHash = resultSet.getString("password_hash"); // Mật khẩu đã được hash trong DB
 
                 // Kiểm tra mật khẩu đầu vào với mật khẩu đã lưu (bằng cách xác minh hash)
                 return verifyPassword(password, storedPasswordHash);
@@ -283,7 +282,7 @@ public class ChangePasswordController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;  // Nếu không tìm thấy người dùng hoặc có lỗi, trả về false
+        return false; // Nếu không tìm thấy người dùng hoặc có lỗi, trả về false
     }
 
     // Hàm kiểm tra mật khẩu bằng cách so sánh với hash
@@ -298,10 +297,10 @@ public class ChangePasswordController implements Initializable {
         String updateQuery = "UPDATE client SET password_hash = ? WHERE username = ?";
 
         // Mã hóa mật khẩu mới (nếu bạn sử dụng BCrypt, ví dụ)
-        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());  // Mã hóa mật khẩu mới
+        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt()); // Mã hóa mật khẩu mới
 
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
 
             // Kiểm tra kết nối
             if (connection == null || connection.isClosed()) {
@@ -310,8 +309,8 @@ public class ChangePasswordController implements Initializable {
             }
 
             // Cài đặt tham số vào câu truy vấn
-            preparedStatement.setString(1, hashedPassword);  // Đặt mật khẩu đã mã hóa
-            preparedStatement.setString(2, username);  // Đặt tên người dùng
+            preparedStatement.setString(1, hashedPassword); // Đặt mật khẩu đã mã hóa
+            preparedStatement.setString(2, username); // Đặt tên người dùng
 
             // Thực thi câu lệnh update
             int rowsUpdated = preparedStatement.executeUpdate();
@@ -321,12 +320,13 @@ public class ChangePasswordController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;  // Trả về false nếu có lỗi hoặc không có dòng nào bị cập nhật
+        return false; // Trả về false nếu có lỗi hoặc không có dòng nào bị cập nhật
     }
 
     // Giả sử hàm này sẽ trả về ID người dùng hiện tại
     private int getUserId() {
-        // Bạn có thể lấy ID người dùng từ session hoặc thông qua cơ chế xác thực của ứng dụng
-        return 1;  // Giả sử ID của người dùng là 1
+        // Bạn có thể lấy ID người dùng từ session hoặc thông qua cơ chế xác thực của
+        // ứng dụng
+        return 1; // Giả sử ID của người dùng là 1
     }
 }

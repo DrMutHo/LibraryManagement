@@ -25,7 +25,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import javafx.scene.text.Text;
 
-public class DashboardController implements Initializable {
+public class DashboardController implements Initializable, Model.ModelListenerClient {
 
     @FXML
     private Label headerSubtitle;
@@ -65,6 +65,28 @@ public class DashboardController implements Initializable {
 
         headerSubtitle.setText("Welcome, " + client.getName() + "!");
 
+        // loadRecentActivities();
+
+        refreshBorrowedBooksInfo();
+
+        loadTopBooks();
+
+        loadBorrowingTrends();
+
+        loadGenreTrends();
+
+        Model.getInstance().addListener(this);
+    }
+
+    @Override
+    public void onBorrowTransactionClientCreated() {
+        refreshBorrowedBooksInfo();
+        loadBorrowingTrends();
+        loadGenreTrends();
+        loadTopBooks();
+    }
+
+    private void refreshBorrowedBooksInfo() {
         int borrowedBooksCount = Model.getInstance().getDatabaseDriver().getNumberOfBorrowedBooks(client.getClientId());
         borrowedBooks.setText(String.valueOf(borrowedBooksCount));
 
@@ -79,14 +101,6 @@ public class DashboardController implements Initializable {
         favGenre.setText(favouriteGenre != null ? favouriteGenre : "N/A");
 
         fee.setText(String.format("$%.2f", client.getOutstandingFees()));
-
-        // loadRecentActivities();
-
-        loadTopBooks();
-
-        loadBorrowingTrends();
-
-        loadGenreTrends();
     }
 
     private void loadTopBooks() {

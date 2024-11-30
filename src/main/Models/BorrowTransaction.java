@@ -2,21 +2,22 @@ package main.Models;
 
 import java.time.LocalDate;
 
-public class BookTransaction {
-    private int transactionId; // Unique ID cho mỗi giao dịch
-    private String title; // ID của khách hàng mượn sách (tham chiếu đến Client)
-    private int copyId; // ID của bản sao sách (tham chiếu đến BookCopy)
-    private LocalDate borrowDate; // Ngày mượn sách
-    private LocalDate returnDate; // Ngày trả sách
-    private String status; // Trạng thái của giao dịch ("Processing" hoặc "Done")
+public class BorrowTransaction {
+    private int transactionId;
+    private int clientId;
+    private String title;
+    private int copyId;
+    private LocalDate borrowDate;
+    private LocalDate returnDate;
+    private String status;
 
-    public BookTransaction() {
+    public BorrowTransaction() {
     }
 
-    // Constructor đầy đủ
-    public BookTransaction(int transactionId, String title, int copyId, LocalDate borrowDate,
+    public BorrowTransaction(int transactionId, int clientId, String title, int copyId, LocalDate borrowDate,
             LocalDate returnDate, String status) {
         this.transactionId = transactionId;
+        this.clientId = clientId;
         this.title = title;
         this.copyId = copyId;
         this.borrowDate = borrowDate;
@@ -32,6 +33,14 @@ public class BookTransaction {
 
     public void setTransactionId(int transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
     }
 
     public String getTitle() {

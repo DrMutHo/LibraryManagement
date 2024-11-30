@@ -5,7 +5,7 @@
 
 .main-panel {
     -fx-padding: 15;
-    -fx-background-color: #ffffff;
+    -fx-background-color: #d9f7d3;
     -fx-border-color: #d9d9d9;
     -fx-border-width: 2;
     -fx-border-radius: 10;
@@ -133,65 +133,56 @@
     -fx-text-fill: #333333;
 }
 
-.book-table {
-    -fx-background-color: #ffffff;
-    -fx-border-color: transparent;
-    -fx-border-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
-    -fx-padding: 8;
+.table-view {
+    -fx-border-color: #53a75c;
+    /* Viền ngoài của bảng */
+    -fx-border-width: 2px;
+    /* Độ dày viền */
+    -fx-border-radius: 10px;
+    /* Bo góc viền */
+    -fx-background-color: #F2F1EB;
+    /* Màu nền bảng */
+    -fx-background-radius: 10px;
+    /* Bo góc nền */
+    -fx-padding: 10px;
+    /* Khoảng cách bên trong */
 }
 
-.book-table .column-header {
-    -fx-background-color: linear-gradient(to bottom, #388e3c, #2e7d32);
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-alignment: CENTER;
-    -fx-border-color: transparent;
-    -fx-padding: 10 6;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
-}
-
-.book-table .cell {
-    -fx-background-color: #ffffff, #f1f8e9;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-text-fill: #37474f;
-    -fx-font-size: 13px;
-    -fx-padding: 8 6;
-}
-
-.book-table .cell:hover {
-    -fx-background-color: #e8f5e9;
-    -fx-text-fill: #2e7d32;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 5, 0, 0, 2);
-}
-
-.book-table .cell:focused {
-    -fx-border-color: #66bb6a;
-    -fx-border-width: 2;
-    -fx-border-radius: 5;
-}
-
-.book-table .row-cell:selected {
-    -fx-background-color: linear-gradient(to right, #66bb6a, #43a047);
-    -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 8, 0, 0, 3);
-}
-
-.book-table .scroll-bar {
+/* Hàng trong TableView */
+.table-row-cell {
     -fx-background-color: transparent;
+    /* Nền mặc định */
+    -fx-border-width: 0 0 1px 0;
+    /* Viền dưới */
+    -fx-border-color: #CCC;
+    /* Màu viền dưới */
 }
 
-.book-table .scroll-bar .thumb {
-    -fx-background-color: #a5d6a7;
-    -fx-background-insets: 2;
-    -fx-background-radius: 5;
+/* Hàng khi hover */
+.table-row-cell:hover {
+    -fx-background-color: #f5fe93;
+    /* Nền khi hover */
 }
 
-.book-table .scroll-bar .thumb:hover {
-    -fx-background-color: #43a047;
+/* Hàng được chọn */
+.table-row-cell:selected {
+    -fx-background-color: #fcca05;
+    /* Nền hàng được chọn */
+    -fx-text-fill: rgb(0, 0, 0);
+    /* Màu chữ hàng được chọn */
 }
 
-.book-table .corner {
-    -fx-background-color: #2e7d32;
+/* Căn giữa các cột */
+.table-cell {
+    -fx-alignment: CENTER;
+    /* Căn giữa nội dung */
+    -fx-padding: 5px;
+    /* Khoảng cách bên trong ô */
+    -fx-font-size: 14px;
+    /* Kích thước chữ */
+}
+
+/* Căn trái nếu cần */
+.table-cell.text-left {
+    -fx-alignment: CENTER-LEFT;
 }
