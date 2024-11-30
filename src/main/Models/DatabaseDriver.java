@@ -77,6 +77,26 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    public ResultSet get1BookDataByCopyID(int copy_id) {
+        ResultSet resultSet = null;
+        String query = "SELECT Book.* FROM Book " +
+                "JOIN BookCopy ON Book.book_id = BookCopy.book_id " +
+                "JOIN BorrowTransaction ON BookCopy.copy_id = BorrowTransaction.copy_id " +
+                "WHERE BorrowTransaction.copy_id = ? " +
+                "LIMIT 1";
+
+        try {
+            Connection connection = this.dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, copy_id);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultSet;
+    }
+
     public ResultSet getTransactionByClientID(int client_id) {
         ResultSet resultSet = null;
         String query = "SELECT " +

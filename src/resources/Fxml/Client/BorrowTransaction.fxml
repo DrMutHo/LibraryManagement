@@ -24,7 +24,7 @@
             <HBox prefHeight="632.0" prefWidth="817.0" spacing="15" styleClass="content-panel">
                 
                 <VBox prefHeight="562.0" prefWidth="587.0" spacing="10" styleClass="book-list-panel">
-                    <Label styleClass="section-title" text="📋 Book List" />
+                    <Label styleClass="section-title" text="📋 Transaction List" />
                     <TableView fx:id="bookTable" onMouseClicked="#onTransactionSelect" prefHeight="355.0" prefWidth="494.0" styleClass="book-table">
                         <columns>
                             <TableColumn fx:id="transactionIdColumn" prefWidth="140.0" text="Transaction ID" />
