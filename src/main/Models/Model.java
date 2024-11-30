@@ -23,18 +23,21 @@ import main.Views.ViewFactory;
 
 public class Model {
     private static Model model;
-    private ViewFactory viewFactory;
+    private final ViewFactory viewFactory;
     private boolean clientLoginSuccessFlag;
+    private boolean adminLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
     private final ObservableList<Book> HighestRatedBooks;
     private final ObservableList<BorrowTransaction> BorrowTransactions;
     private final ObservableList<Notification> allNotifications;
     private final Client client;
+    private final Admin admin;
 
     private Model() {
         this.viewFactory = new ViewFactory();
         this.clientLoginSuccessFlag = false;
+        this.adminLoginSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
         this.HighestRatedBooks = FXCollections.observableArrayList();
@@ -42,6 +45,7 @@ public class Model {
         this.BorrowTransactions = FXCollections.observableArrayList();
 
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "", "");
+        this.admin = new Admin(0, "", "", "");
     }
 
     public static synchronized Model getInstance() {
@@ -59,7 +63,15 @@ public class Model {
         return this.clientLoginSuccessFlag;
     }
 
-    public void setclientLoginSuccessFlag(boolean flag) {
+    public void setClientLoginSuccessFlag(boolean flag) {
+        this.clientLoginSuccessFlag = flag;
+    }
+
+    public boolean getAdminLoginSuccessFlag() {
+        return this.clientLoginSuccessFlag;
+    }
+
+    public void setAdminLoginSuccessFlag(boolean flag) {
         this.clientLoginSuccessFlag = flag;
     }
 
@@ -69,6 +81,10 @@ public class Model {
 
     public Client getClient() {
         return client;
+    }
+
+    public Admin getAdmin() {
+        return admin;
     }
 
     public void setAllBook() {
@@ -283,6 +299,29 @@ public class Model {
         return null;
     }
 
+    public void evaluateAdminCred(String username) {
+        ResultSet resultSet = databaseDriver.getAdminData(username);
+        try {
+            if (resultSet != null && resultSet.next()) {
+                this.admin.setadmin_id(resultSet.getInt("admin_id"));
+                this.admin.setUsername(resultSet.getString("username"));
+                this.admin.setPassword_hash(resultSet.getString("password_hash"));
+                this.admin.setEmail(resultSet.getString("email"));
+                this.adminLoginSuccessFlag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public void evaluateClientCred(String username) {
         ResultSet resultSet = databaseDriver.getClientData(username);
         try {
@@ -381,5 +420,4 @@ public class Model {
     public void setClientAvatar(String fileURI) {
         databaseDriver.setClientAvatar(Model.getInstance().getClient().getClientId(), fileURI);
     }
-
 }

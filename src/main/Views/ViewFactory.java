@@ -16,7 +16,10 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.StackPane;
 import javafx.concurrent.Task;
+import main.Controllers.Client.ChangePasswordController;
 import main.Controllers.Client.ClientController;
+import main.Controllers.Client.ProfileController;
+import javafx.scene.layout.AnchorPane;
 
 public class ViewFactory {
     private AccountType loginAccountType;
@@ -240,7 +243,6 @@ public class ViewFactory {
                     Thread.currentThread().interrupt(); // Khôi phục trạng thái ngắt
                 }
             }
-
             // Gỡ bỏ lớp phủ loading
             Platform.runLater(() -> pane.getChildren().remove(loadingOverlay));
         }).start();

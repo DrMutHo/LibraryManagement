@@ -3,6 +3,7 @@ package main.Controllers.Client;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
+import javafx.application.Platform;
 import javax.swing.plaf.ButtonUI;
 
 import javafx.fxml.FXML;
@@ -18,6 +19,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.Models.Model;
 import main.Views.ClientMenuOptions;
+import main.Models.Notification;
 import main.Models.Notification;
 
 import java.io.IOException;
@@ -41,6 +43,7 @@ public class ClientMenuController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addListeners();
+        checkAndUpdateNotificationButton();
         checkAndUpdateNotificationButton();
     }
 
@@ -104,7 +107,7 @@ public class ClientMenuController implements Initializable {
         Stage stage = (Stage) dashboard_btn.getScene().getWindow();
         Model.getInstance().getViewFactory().closeStage(stage);
         Model.getInstance().getViewFactory().showLoginWindow();
-        Model.getInstance().setclientLoginSuccessFlag(false);
+        Model.getInstance().setClientLoginSuccessFlag(false);
     }
 
     @FXML

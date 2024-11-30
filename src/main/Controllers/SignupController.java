@@ -103,181 +103,161 @@ public class SignupController implements Initializable {
     private AnchorPane signup_anchorpane;
     @FXML
     private Stage stage;
+    @FXML
+    private AnchorPane successNotification;
+    @FXML
+    private Button returnToLoginButton;
 
-    @Override 
+        @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         signup_prompt_init();
-        try { 
+        try {
             passwordField_init();
         } catch (Exception e) {
-            e.getStackTrace();
+            e.printStackTrace(); // Better to log or handle the exception
         }
-        signup_createNewAccountButton.setOnAction(event -> onCreateNewAccount());
+        setButtonActions();
     }
+
+    private void setButtonActions() {
+        signup_createNewAccountButton.setOnAction(event -> onCreateNewAccount());
+        signup_exitButton.setOnAction(event -> onExit());
+    }
+
     public void passwordField_init() {
-        signup_passwordField.setVisible(true);
-        signup_passwordField.setManaged(true);
-        signup_textField.setVisible(false);
-        signup_textField.setManaged(false);
-        signup_passwordField1.setVisible(true);
-        signup_passwordField1.setManaged(true);
-        signup_textField1.setVisible(false);
-        signup_textField1.setManaged(false);
-        signup_textField.textProperty().bindBidirectional(signup_passwordField.textProperty());
-        signup_textField1.textProperty().bindBidirectional(signup_passwordField1.textProperty());
+        initializePasswordFields(signup_passwordField, signup_textField);
+        initializePasswordFields(signup_passwordField1, signup_textField1);
+
+        // Set initial eye icons for password visibility
+        initializeEyeIcons();
+
+        // Set actions for toggle buttons
+        setPasswordToggleActions();
+    }
+
+    private void initializePasswordFields(PasswordField passwordField, TextField textField) {
+        passwordField.setVisible(true);
+        passwordField.setManaged(true);
+        textField.setVisible(false);
+        textField.setManaged(false);
+        textField.textProperty().bindBidirectional(passwordField.textProperty());
+    }
+
+    private void initializeEyeIcons() {
         signup_eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
         signup_eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
         signup_imageIcon.setImage(signup_eyeClosed);
         signup_imageIcon1.setImage(signup_eyeClosed);
-        signup_toggleButton1.setOnAction(event -> togglePasswordVisibility1());
-        signup_toggleButton.setOnAction(even -> togglePasswordVisibility());
-        
+    }
+
+    private void setPasswordToggleActions() {
+        signup_toggleButton.setOnAction(event -> togglePasswordVisibility(signup_passwordField, signup_textField, signup_imageIcon, signup_eyeOpen, signup_eyeClosed));
+        signup_toggleButton1.setOnAction(event -> togglePasswordVisibility(signup_passwordField1, signup_textField1, signup_imageIcon1, signup_eyeOpen, signup_eyeClosed));
+    }
+
+    private void togglePasswordVisibility(PasswordField passwordField, TextField textField, ImageView imageIcon, Image eyeOpen, Image eyeClosed) {
+        if (passwordField.isVisible()) {
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+            textField.setVisible(true);
+            textField.setManaged(true);
+            imageIcon.setImage(eyeOpen);
+        } else {
+            textField.setVisible(false);
+            textField.setManaged(false);
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+            imageIcon.setImage(eyeClosed);
+        }
     }
 
     public void signup_prompt_init() {
+        setPromptText();
+        addFocusListeners();
+    }
+
+    private void setPromptText() {
         signup_usernameField.setPromptText("Enter your username");
         signup_passwordField.setPromptText("Password must be 6+ characters");
         signup_textField.setPromptText("Password must be 6+ characters");
         signup_passwordField1.setPromptText("Confirmed password");
         signup_textField1.setPromptText("Confirmed password");
-        signup_emailField.setPromptText("Enter your email"); 
+        signup_emailField.setPromptText("Enter your email");
         signup_addressField.setPromptText("Enter your home address");
-        signup_phoneNumField.setPromptText("Enter your phone number");   
+        signup_phoneNumField.setPromptText("Enter your phone number");
         signup_name.setPromptText("Enter your fullname");
+    }
 
-        signup_passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+    private void addFocusListeners() {
+        addFocusListener(signup_passwordField, signup_hbox1);
+        addFocusListener(signup_textField, signup_hbox1);
+        addFocusListener(signup_passwordField1, signup_hbox2);
+        addFocusListener(signup_textField1, signup_hbox2);
+        addFocusListener(signup_usernameField, signup_hbox0);
+        addFocusListener(signup_emailField, signup_hbox3);
+        addFocusListener(signup_phoneNumField, signup_hbox4);
+        addFocusListener(signup_name, signup_hbox6);
+        addFocusListener(signup_addressField, signup_hbox5);
+    }
+
+    private void addFocusListener(TextField field, HBox hbox) {
+        field.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
-                signup_hbox1.getStyleClass().add("signup_hbox_set-focused");
+                hbox.getStyleClass().add("signup_hbox_set-focused");
             } else {
-                signup_hbox1.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_usernameField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox0.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox0.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox1.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox1.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_passwordField1.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox2.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox2.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_textField1.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox2.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox2.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_emailField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox3.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox3.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_phoneNumField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox4.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox4.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_name.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox6.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox6.getStyleClass().remove("signup_hbox_set-focused");
-            }
-        });
-        signup_addressField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                signup_hbox5.getStyleClass().add("signup_hbox_set-focused");
-            } else {
-                signup_hbox5.getStyleClass().remove("signup_hbox_set-focused");
+                hbox.getStyleClass().remove("signup_hbox_set-focused");
             }
         });
     }
-    @FXML
-    private void togglePasswordVisibility() {
-        if (signup_passwordField.isVisible()) {
-            signup_passwordField.setVisible(false);
-            signup_passwordField.setManaged(false);
-            signup_textField.setVisible(true);
-            signup_textField.setManaged(true);
-            signup_imageIcon.setImage(signup_eyeOpen);
-        } else {
-            signup_textField.setVisible(false);
-            signup_textField.setManaged(false);
-            signup_passwordField.setVisible(true);
-            signup_passwordField.setManaged(true);
-            signup_imageIcon.setImage(signup_eyeClosed);
-        }
+
+    private void addFocusListener(PasswordField field, HBox hbox) {
+        field.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                hbox.getStyleClass().add("signup_hbox_set-focused");
+            } else {
+                hbox.getStyleClass().remove("signup_hbox_set-focused");
+            }
+        });
     }
 
     @FXML
-    private void togglePasswordVisibility1() {
-        if (signup_passwordField1.isVisible()) {
-            signup_passwordField1.setVisible(false);
-            signup_passwordField1.setManaged(false);
-            signup_textField1.setVisible(true);
-            signup_textField1.setManaged(true);
-            signup_imageIcon1.setImage(signup_eyeOpen);
-        } else {
-            signup_textField1.setVisible(false);
-            signup_textField1.setManaged(false);
-            signup_passwordField1.setVisible(true);
-            signup_passwordField1.setManaged(true);
-            signup_imageIcon1.setImage(signup_eyeClosed);
-        }
-    }
-    public void showLoadingAndCloseSignUpWindow() {
-        StackPane loadingOverlay = new StackPane();
-        loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);"); 
-        loadingOverlay.setPrefSize(signup_anchorpane.getWidth(), signup_anchorpane.getHeight()); 
-    
-        ProgressIndicator progressIndicator = new ProgressIndicator();
-        loadingOverlay.getChildren().add(progressIndicator);
-    
-        StackPane.setAlignment(progressIndicator, Pos.CENTER);
-    
-        signup_anchorpane.getChildren().add(loadingOverlay);
-    
-        Task<Void> loadingTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                // Giả lập một tác vụ dài
-                for (int i = 0; i <= 1; i++) {
-                    Thread.sleep(500); 
-                }
-                return null;
+    private void onExit() {
+        stage = (Stage) signup_exitButton.getScene().getWindow();
+        Model.getInstance().getViewFactory().showLoading(() -> {
+            // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
+            try {
+                Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-        };
-        loadingTask.setOnSucceeded(event -> {
-            signup_anchorpane.getChildren().remove(loadingOverlay);
+            
+            // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
             Platform.runLater(() -> {
                 Model.getInstance().getViewFactory().showLoginWindow();
                 Model.getInstance().getViewFactory().closeStage(stage);
             });
-        });
-        new Thread(loadingTask).start();
+        }, signup_anchorpane);
     }
+
     @FXML
-    private void onExit() {
-        stage = (Stage) signup_exitButton.getScene().getWindow();
-        showLoadingAndCloseSignUpWindow();
+    private void onReturnToLogin() {
+        stage = (Stage) returnToLoginButton.getScene().getWindow();
+        Model.getInstance().getViewFactory().showLoading(() -> {
+            // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
+            try {
+                Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            
+            // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
+            Platform.runLater(() -> {
+                Model.getInstance().getViewFactory().showLoginWindow();
+                Model.getInstance().getViewFactory().closeStage(stage);
+            });
+        }, signup_anchorpane);
     }
+    
 
     @FXML
     private void onCreateNewAccount() {
@@ -291,16 +271,8 @@ public class SignupController implements Initializable {
         String hashedPassword = BCrypt.hashpw(password1, BCrypt.gensalt());
         if (isValidSignUp(email, phoneNum, username, password, password1, address, name)) {
             Model.getInstance().getDatabaseDriver().createClient(email, phoneNum, address, username, hashedPassword, name);
-            signup_showAlert("Thông báo!", "Đăng ký thành công");
+            successNotification.setVisible(true);
         } 
-    }
-
-    private void signup_showAlert(String title, String message) {
-    Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.setTitle(title);
-    alert.setHeaderText(null);
-    alert.setContentText(message);
-    alert.showAndWait();
     }
 
     private boolean isValidSignUp(String email, String phoneNum,

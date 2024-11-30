@@ -285,6 +285,18 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    public ResultSet getAdminData(String username) {
+        Statement statement;
+        ResultSet resultSet = null;
+        try {
+            statement = this.dataSource.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM admin WHERE username='" + username + "';");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resultSet;
+    }
+
     public void createClient(String email, String phone_number, String address, String username, String password_hash,
             String name) {
         String newLibraryCardNum = null;
@@ -833,7 +845,4 @@ public class DatabaseDriver {
         }
     }
 
-    public void submitReportBug() {
-
-    }
 }
