@@ -72,18 +72,17 @@ public class LoginController implements Initializable {
     private Image eyeClosed;
     @FXML
     private ImageView imageIcon;
-    @FXML 
+    @FXML
     private Button alert_button;
     @FXML
     private AnchorPane notificationPane;
-    @FXML ImageView lib_image;
+    @FXML
+    ImageView lib_image;
     private Stage stage;
     @FXML
     private AnchorPane inner_pane;
 
-    
-    
-        @Override
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         acc_selector_init();
         username_password_promptext_init();
@@ -173,7 +172,7 @@ public class LoginController implements Initializable {
         imageIcon.setImage(isPasswordVisible ? eyeOpen : eyeClosed);
     }
 
-    @FXML 
+    @FXML
     private void onResetPassword() {
         stage = (Stage) forgotaccountButton.getScene().getWindow();
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
@@ -184,21 +183,23 @@ public class LoginController implements Initializable {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                
+
                 // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
                 Platform.runLater(() -> {
-                    Model.getInstance().getViewFactory().ShowResetPasswordWindow();;
+                    Model.getInstance().getViewFactory().ShowResetPasswordWindow();
+                    ;
                     Model.getInstance().getViewFactory().closeStage(stage);
                 });
             }, outer_pane);
         }
     }
+
     @FXML
     private void onLogin() {
         stage = (Stage) loginButton.getScene().getWindow();
         String username = usernameField.getText();
         String password = passwordField.getText();
-        
+
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
             if (isValidClientCredentials(username, password)) {
                 Model.getInstance().evaluateClientCred(username);
@@ -217,7 +218,7 @@ public class LoginController implements Initializable {
                 lib_image.setVisible(false);
                 notificationPane.setVisible(true);
                 disableAllComponents(inner_pane);
-                passwordField.clear(); 
+                passwordField.clear();
             }
         } else {
             if (isValidAdminCredentials(username, password)) {
@@ -229,7 +230,7 @@ public class LoginController implements Initializable {
                         Thread.currentThread().interrupt();
                     }
                     Platform.runLater(() -> {
-                        Model.getInstance().getViewFactory().showClientWindow();
+                        Model.getInstance().getViewFactory().showAdminWindow();
                         Model.getInstance().getViewFactory().closeStage(stage);
                     });
                 }, outer_pane);
@@ -237,7 +238,7 @@ public class LoginController implements Initializable {
                 lib_image.setVisible(false);
                 notificationPane.setVisible(true);
                 disableAllComponents(inner_pane);
-                passwordField.clear(); 
+                passwordField.clear();
             }
 
         }
@@ -250,16 +251,20 @@ public class LoginController implements Initializable {
         enableAllComponents(inner_pane);
 
     }
+
     private void disableAllComponents(AnchorPane root) {
         for (javafx.scene.Node node : root.getChildren()) {
-            // Kiểm tra nếu node không phải là notificationPane và không phải con của notificationPane
-            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null && ((AnchorPane) node).getId().equals("notificationPane"))) {
+            // Kiểm tra nếu node không phải là notificationPane và không phải con của
+            // notificationPane
+            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null
+                    && ((AnchorPane) node).getId().equals("notificationPane"))) {
                 node.setDisable(true);
             } else if (node instanceof AnchorPane && ((AnchorPane) node).getId().equals("notificationPane")) {
                 // Nếu node là notificationPane, duyệt qua các con của notificationPane
                 AnchorPane notificationPane = (AnchorPane) node;
                 for (javafx.scene.Node notificationChild : notificationPane.getChildren()) {
-                    notificationChild.setDisable(false);  // Đảm bảo các thành phần trong notificationPane không bị disable
+                    notificationChild.setDisable(false); // Đảm bảo các thành phần trong notificationPane không bị
+                                                         // disable
                 }
             }
         }
@@ -267,19 +272,21 @@ public class LoginController implements Initializable {
 
     private void enableAllComponents(AnchorPane root) {
         for (javafx.scene.Node node : root.getChildren()) {
-            // Kiểm tra nếu node không phải là notificationPane và không phải con của notificationPane
-            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null && ((AnchorPane) node).getId().equals("notificationPane"))) {
+            // Kiểm tra nếu node không phải là notificationPane và không phải con của
+            // notificationPane
+            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null
+                    && ((AnchorPane) node).getId().equals("notificationPane"))) {
                 node.setDisable(false);
             } else if (node instanceof AnchorPane && ((AnchorPane) node).getId().equals("notificationPane")) {
                 // Nếu node là notificationPane, duyệt qua các con của notificationPane
                 AnchorPane notificationPane = (AnchorPane) node;
                 for (javafx.scene.Node notificationChild : notificationPane.getChildren()) {
-                    notificationChild.setDisable(false);  // Đảm bảo các thành phần trong notificationPane không bị disable
+                    notificationChild.setDisable(false); // Đảm bảo các thành phần trong notificationPane không bị
+                                                         // disable
                 }
             }
         }
     }
-
 
     private void onsignUp() {
         stage = (Stage) createnewaccountButton.getScene().getWindow();
@@ -291,7 +298,7 @@ public class LoginController implements Initializable {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                
+
                 // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
                 Platform.runLater(() -> {
                     Model.getInstance().getViewFactory().showSignUpWindow();
@@ -303,8 +310,8 @@ public class LoginController implements Initializable {
 
     private boolean isValidAdminCredentials(String username, String password) {
         String query = "SELECT * FROM admin WHERE username = ?";
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             if (connection == null || connection.isClosed()) {
                 System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
                 return false;
@@ -320,10 +327,11 @@ public class LoginController implements Initializable {
         }
         return false;
     }
+
     private boolean isValidClientCredentials(String username, String password) {
         String query = "SELECT * FROM Client WHERE username = ?";
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             if (connection == null || connection.isClosed()) {
                 System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
                 return false;
@@ -339,7 +347,7 @@ public class LoginController implements Initializable {
         }
         return false;
     }
-    
+
     private boolean verifyPassword(String password, String storedPasswordHash) {
         return BCrypt.checkpw(password, storedPasswordHash);
     }

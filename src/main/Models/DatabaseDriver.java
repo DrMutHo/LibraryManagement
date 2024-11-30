@@ -400,6 +400,7 @@ public class DatabaseDriver {
 
     public ResultSet getNotifications(int recipientId, String AccountType, int limit) {
         String query = "SELECT * FROM Notification WHERE recipient_id = ? And recipient_type = ? ORDER BY is_read ASC, created_at DESC";
+
         if (limit > 0) {
             query += " LIMIT ?";
         }
@@ -883,6 +884,7 @@ public class DatabaseDriver {
                         rs.getInt("book_id"),
                         rs.getBoolean("is_available"),
                         rs.getString("book_condition"));
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -1190,4 +1192,300 @@ public class DatabaseDriver {
         }
     }
 
+    public int getTotalNumberOfEmployees() {
+        int totalEmployees = 0;
+        String query = "SELECT COUNT(*) AS total FROM Admin";
+
+        try (Connection connection = this.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                totalEmployees = resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalEmployees;
+    }
+
+    public int getTotalNumberOfBooks() {
+        int totalClients = 0;
+        String query = "SELECT COUNT(*) AS total FROM Book";
+
+        try (Connection connection = this.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                totalClients = resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalClients;
+    }
+
+    public int getTotalNumberOfClients() {
+        int totalClients = 0;
+        String query = "SELECT COUNT(*) AS total FROM Client";
+
+        try (Connection connection = this.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                totalClients = resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalClients;
+    }
+
+    public int getTotalNumberOfCurrentlyBorrowedBooks() {
+        int totalCurrentlyBorrowedBooks = 0;
+        String query = "SELECT COUNT(*) AS total FROM BorrowTransaction WHERE status = 'Processing'";
+
+        try (Connection connection = this.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                totalCurrentlyBorrowedBooks = resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalCurrentlyBorrowedBooks;
+    }
+
+    public Map<String, Integer> getMonthlyBorrowingTrendsForAllUsers() {
+        Map<String, Integer> trends = new LinkedHashMap<>();
+
+        // Query to get monthly borrowing trends across all users
+        String query = "SELECT MONTH(borrow_date) AS month, COUNT(*) AS borrow_count " +
+                "FROM BorrowTransaction " +
+                "WHERE YEAR(borrow_date) = YEAR(CURRENT_DATE) " + // Filter by the current year
+                "GROUP BY MONTH(borrow_date)";
+
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String month = resultSet.getString("month");
+                int count = resultSet.getInt("borrow_count");
+                trends.put(month, count);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return trends;
+    }
+
+    public Map<String, Integer> getBorrowingTrendsByCategoryForAllUsers() {
+        Map<String, Integer> trends = new LinkedHashMap<>();
+
+        // Query to get the number of books borrowed per genre for all users
+        String query = "SELECT genre, COUNT(*) AS borrow_count " +
+                "FROM BorrowTransaction bt " +
+                "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
+                "JOIN Book b ON bc.book_id = b.book_id " +
+                "GROUP BY genre";
+
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String genre = resultSet.getString("genre");
+                int count = resultSet.getInt("borrow_count");
+                trends.put(genre, count);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return trends;
+    }
+
+    public Map<String, Double> getTotalFeesOverTimeForAllClients() {
+        Map<String, Double> feesOverTime = new HashMap<>();
+
+        String query = "SELECT DATE_FORMAT(registration_date, '%Y-%m') AS month, " +
+                "SUM(outstanding_fees) AS total_fees FROM Client GROUP BY month ORDER BY month";
+
+        try (Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String month = rs.getString("month");
+                double totalFees = rs.getDouble("total_fees");
+                feesOverTime.put(month, totalFees);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return feesOverTime;
+    }
+
+    public void updateStatus(int copyID) {
+        String query = "UPDATE BorrowTransaction SET status = 'Done' WHERE copy_id = ? AND status = 'Processing'";
+        try (Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, copyID);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateBook(Book book) {
+        String query = "UPDATE Book SET title = ?, author = ?, isbn = ?, genre = ?, language = ?, description = ?, publication_year = ?, image_path = ? WHERE book_id = ?;";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            // Only set the parameter if the field is not null
+            if (book.getTitle() != null) {
+                pstmt.setString(1, book.getTitle());
+            } else {
+                pstmt.setNull(1, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getAuthor() != null) {
+                pstmt.setString(2, book.getAuthor());
+            } else {
+                pstmt.setNull(2, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getIsbn() != null) {
+                pstmt.setString(3, book.getIsbn());
+            } else {
+                pstmt.setNull(3, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getGenre() != null) {
+                pstmt.setString(4, book.getGenre());
+            } else {
+                pstmt.setNull(4, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getLanguage() != null) {
+                pstmt.setString(5, book.getLanguage());
+            } else {
+                pstmt.setNull(5, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getDescription() != null) {
+                pstmt.setString(6, book.getDescription());
+            } else {
+                pstmt.setNull(6, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getPublication_year() != 0) {
+                pstmt.setInt(7, book.getPublication_year());
+            } else {
+                pstmt.setNull(7, java.sql.Types.INTEGER);
+            }
+
+            if (book.getImagePath() != null) {
+                pstmt.setString(8, book.getImagePath());
+            } else {
+                pstmt.setNull(8, java.sql.Types.VARCHAR);
+            }
+
+            // Set book_id at the end
+            pstmt.setInt(9, book.getBook_id());
+
+            // Execute the update query and check the number of affected rows
+            int rowsUpdated = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int addBook2(Book book) {
+        String checkQuery = "SELECT book_id FROM Book WHERE title = ?";
+        String query = "INSERT INTO Book (title, author, isbn, genre, language, description, publication_year, image_path, average_rating, review_count) "
+                +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        // Check if book with the same title already exists
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt2 = conn.prepareStatement(checkQuery)) {
+
+            // Set the title parameter
+            stmt2.setString(1, book.getTitle());
+
+            try (ResultSet rs = stmt2.executeQuery()) {
+                if (rs.next()) {
+                    // Book already exists, return the existing book_id
+                    int existingBookId = rs.getInt("book_id");
+                    return existingBookId;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Insert the new book into the database if not found
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+            // Set the parameters based on the book object
+            stmt.setString(1, book.getTitle());
+            stmt.setString(2, book.getAuthor());
+            stmt.setString(3, book.getIsbn());
+            stmt.setString(4, book.getGenre());
+            stmt.setString(5, book.getLanguage());
+            stmt.setString(6, book.getDescription());
+            stmt.setInt(7, book.getPublication_year());
+            stmt.setString(8, book.getImagePath());
+            stmt.setBigDecimal(9, BigDecimal.ZERO); // Use BigDecimal for ratings
+            stmt.setInt(10, 0); // Set review count to 0
+
+            // Execute the INSERT statement
+            int rowsAffected = stmt.executeUpdate();
+
+            // If insertion was successful, retrieve the generated book_id
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int bookId = generatedKeys.getInt(1);
+                        return bookId;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1; // Return -1 if the book insertion fails
+    }
+
+    public void addBookCopy(int bookId, boolean isAvailable, String condition) {
+        String query = "INSERT INTO BookCopy (book_id, is_available, book_condition) VALUES (?, ?, ?)";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setInt(1, bookId); // Set the book_id
+            stmt.setBoolean(2, isAvailable); // Set the availability status
+            stmt.setString(3, condition); // Set the condition (New, Good, Fair, Poor)
+
+            // Execute the INSERT statement
+            int rowsAffected = stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
