@@ -322,11 +322,4 @@ public class ChangePasswordController implements Initializable {
         }
         return false; // Trả về false nếu có lỗi hoặc không có dòng nào bị cập nhật
     }
-
-    // Giả sử hàm này sẽ trả về ID người dùng hiện tại
-    private int getUserId() {
-        // Bạn có thể lấy ID người dùng từ session hoặc thông qua cơ chế xác thực của
-        // ứng dụng
-        return 1; // Giả sử ID của người dùng là 1
-    }
 }

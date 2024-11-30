@@ -59,6 +59,22 @@ public class DatabaseDriver {
         }
     }
 
+    public ResultSet getAllAdminIDs() {
+        ResultSet resultSet = null;
+        String query = "SELECT admin_id FROM Admin";
+        try {
+            Connection connection = this.dataSource.getConnection();
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultSet;
+    }
+
     public ResultSet getBookDataByCopyID(int copy_id) {
         ResultSet resultSet = null;
         String query = "SELECT Book.* FROM Book " +
@@ -382,8 +398,8 @@ public class DatabaseDriver {
         return null;
     }
 
-    public ResultSet getNotifications(int recipientId, int limit) {
-        String query = "SELECT * FROM Notification WHERE recipient_id = ? ORDER BY is_read ASC, created_at DESC";
+    public ResultSet getNotifications(int recipientId, String AccountType, int limit) {
+        String query = "SELECT * FROM Notification WHERE recipient_id = ? And recipient_type = ? ORDER BY is_read ASC, created_at DESC";
         if (limit > 0) {
             query += " LIMIT ?";
         }
@@ -391,6 +407,7 @@ public class DatabaseDriver {
             Connection conn = dataSource.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setInt(1, recipientId);
+            pstmt.setString(2, AccountType);
             if (limit > 0) {
                 pstmt.setInt(2, limit);
             }
@@ -471,11 +488,12 @@ public class DatabaseDriver {
         return null;
     }
 
-    public int countUnreadNotifications(int recipientId) {
-        String query = "SELECT COUNT(*) AS unread_count FROM Notification WHERE recipient_id = ? AND is_read = false;";
+    public int countUnreadNotifications(int recipientId, String AccountType) {
+        String query = "SELECT COUNT(*) AS unread_count FROM Notification WHERE recipient_id = ? AND recipient_type = ? AND is_read = false;";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, recipientId);
+            pstmt.setString(2, AccountType);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt("unread_count");
@@ -486,11 +504,12 @@ public class DatabaseDriver {
         return 0;
     }
 
-    public void markAllNotificationsAsRead(int recipientId) {
-        String query = "UPDATE notification SET is_read = 1 WHERE recipient_id = ?";
+    public void markAllNotificationsAsRead(int recipientId, String AccountType) {
+        String query = "UPDATE notification SET is_read = 1 WHERE recipient_id = ? AND recipient_type = ?";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, recipientId);
+            stmt.setString(2, AccountType);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Cell;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import main.Views.AccountType;
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 import main.Views.ViewFactory;
@@ -414,7 +415,9 @@ public class Model {
     }
 
     private void prepareNotifications(ObservableList<Notification> notifications, int limit) {
-        ResultSet resultSet = databaseDriver.getNotifications(this.client.getClientId(), limit);
+        ResultSet resultSet = (viewFactory.getLoginAccountType().equals(AccountType.CLIENT))
+                ? databaseDriver.getNotifications(this.client.getClientId(), "Client", limit)
+                : databaseDriver.getNotifications(this.client.getClientId(), "Admin", limit);
         try {
             while (resultSet != null && resultSet.next()) {
                 int notificationId = resultSet.getInt("notification_id");
@@ -470,9 +473,15 @@ public class Model {
         }
     }
 
-    public void markAllNotificationsAsRead(int recipientId) {
-        databaseDriver.markAllNotificationsAsRead(recipientId);
+    public void sendNotification(Notification notification) {
+        databaseDriver.insertNotification(notification);
+    }
 
+    public void markAllNotificationsAsRead(int recipientId) {
+        if (viewFactory.getLoginAccountType().equals(AccountType.CLIENT))
+            databaseDriver.markAllNotificationsAsRead(recipientId, "Client");
+        else
+            databaseDriver.markAllNotificationsAsRead(recipientId, "Admin");
         for (Notification notification : allNotifications) {
             notification.setRead(true);
         }
