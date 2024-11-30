@@ -145,7 +145,7 @@ VALUES
 -- Insert sample data into Admin with hashed passwords
 INSERT INTO Admin (username, password_hash, email)
 VALUES 
-('admin1', '$2a$10$Ei3D2hj3KSZKmQeQx8tShu1Q/tfiN/FzXzPTpRC.vhh1AqPnLGmHG', 'admin1@library.com'),  -- password123
+('admin1', '$2a$10$60/lFatFhuWE/4h0kChDWe7b8pUkvfcd0mwYX6eWZXPH4cI4OPB12', 'admin1@library.com'),  -- password123
 ('admin2', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.O.IJhhJIGtvn8u8FVbONZXxrZqPB8Pe', 'admin2@library.com');  -- mypassword456
 
 -- Insert sample data into the Book table

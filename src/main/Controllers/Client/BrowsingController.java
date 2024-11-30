@@ -78,5 +78,76 @@ public class BrowsingController {
         } else {
             bookImageView.setImage(null);
         }
+
+        updateRatingStarsBasedOnUserReview(book);
+    }
+
+    @FXML
+    private void openDetailWindow() {
+        if (selectedBook == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Chưa Chọn Sách");
+            alert.setHeaderText(null);
+            alert.setContentText("Vui lòng chọn một cuốn sách để xem chi tiết.");
+            alert.showAndWait();
+            return;
+        }   
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/resources/Fxml/Client/BookDetailWithReview.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Chi Tiết Sách");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(loader.load()));
+
+            BookDetailWithReviewController controller = loader.getController();
+            controller.setBook(selectedBook);
+
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Lỗi");
+            alert.setHeaderText(null);
+            alert.setContentText("Không thể mở cửa sổ chi tiết sách.");
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
+    private void openReviewWindow() {
+        if (selectedBook == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Chưa Chọn Sách");
+            alert.setHeaderText(null);
+            alert.setContentText("Vui lòng chọn một cuốn sách để viết đánh giá.");
+            alert.showAndWait();
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/resources/Fxml/Client/BookDetailWithReview.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Viết Đánh Giá");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(loader.load()));
+
+            BookDetailWithReviewController controller = loader.getController();
+            controller.setBook(selectedBook);
+
+            stage.showAndWait();
+
+            Model.getInstance().setAllBook();
+            displayBookDetails(selectedBook);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Lỗi");
+            alert.setHeaderText(null);
+            alert.setContentText("Không thể mở cửa sổ viết đánh giá.");
+            alert.showAndWait();
+        }
     }
 }

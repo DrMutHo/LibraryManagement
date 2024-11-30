@@ -174,12 +174,72 @@ public class LoginController implements Initializable {
                 Model.getInstance().getViewFactory().showClientWindow();
                 Model.getInstance().getViewFactory().closeStage(stage);
             } else {
-                // Đăng nhập thất bại
-                showAlert("Đăng nhập thất bại", "Tài khoản hoặc mật khẩu của bạn bị lỗi");
-                passwordField.clear(); // Xóa mật khẩu
+                lib_image.setVisible(false);
+                notificationPane.setVisible(true);
+                disableAllComponents(inner_pane);
+                passwordField.clear(); 
+            }
+        } else {
+            if (isValidAdminCredentials(username, password)) {
+                Model.getInstance().evaluateAdminCred(username);
+                Model.getInstance().getViewFactory().showLoading(() -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    Platform.runLater(() -> {
+                        Model.getInstance().getViewFactory().showAdminWindow();
+                        Model.getInstance().getViewFactory().closeStage(stage);
+                    });
+                }, outer_pane);
+            }
+            else {
+                lib_image.setVisible(false);
+                notificationPane.setVisible(true);
+                disableAllComponents(inner_pane);
+                passwordField.clear(); 
             }
         }
     }
+
+    @FXML
+    public void handleOkButtonAction() {
+        notificationPane.setVisible(false);
+        lib_image.setVisible(true);
+        enableAllComponents(inner_pane);
+
+    }
+    private void disableAllComponents(AnchorPane root) {
+        for (javafx.scene.Node node : root.getChildren()) {
+            // Kiểm tra nếu node không phải là notificationPane và không phải con của notificationPane
+            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null && ((AnchorPane) node).getId().equals("notificationPane"))) {
+                node.setDisable(true);
+            } else if (node instanceof AnchorPane && ((AnchorPane) node).getId().equals("notificationPane")) {
+                // Nếu node là notificationPane, duyệt qua các con của notificationPane
+                AnchorPane notificationPane = (AnchorPane) node;
+                for (javafx.scene.Node notificationChild : notificationPane.getChildren()) {
+                    notificationChild.setDisable(false);  // Đảm bảo các thành phần trong notificationPane không bị disable
+                }
+            }
+        }
+    }
+
+    private void enableAllComponents(AnchorPane root) {
+        for (javafx.scene.Node node : root.getChildren()) {
+            // Kiểm tra nếu node không phải là notificationPane và không phải con của notificationPane
+            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null && ((AnchorPane) node).getId().equals("notificationPane"))) {
+                node.setDisable(false);
+            } else if (node instanceof AnchorPane && ((AnchorPane) node).getId().equals("notificationPane")) {
+                // Nếu node là notificationPane, duyệt qua các con của notificationPane
+                AnchorPane notificationPane = (AnchorPane) node;
+                for (javafx.scene.Node notificationChild : notificationPane.getChildren()) {
+                    notificationChild.setDisable(false);  // Đảm bảo các thành phần trong notificationPane không bị disable
+                }
+            }
+        }
+    }
+
 
     private void onsignUp() {
         stage = (Stage) loginButton.getScene().getWindow();

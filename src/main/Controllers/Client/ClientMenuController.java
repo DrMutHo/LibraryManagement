@@ -49,4 +49,23 @@ public class ClientMenuController implements Initializable {
     private void onNotification() {
         Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.NOTIFICATION);
     }
+
+    private void checkAndUpdateNotificationButton() {
+        int unreadCount = Model.getInstance().getDatabaseDriver()
+                .countUnreadNotifications(Model.getInstance().getClient().getClientId());
+
+        if (unreadCount > 0) {
+            noti_img.setImage(activeNotiIcon);
+            noti_btn.setStyle("-fx-background-color: #FFCCCC;");
+            noti_btn.setText("Notification");
+        } else {
+            noti_img.setImage(defaultNotiIcon);
+            noti_btn.setStyle("");
+            noti_btn.setText("Notification");
+        }
+    }
+
+    private void onTransaction() {
+        Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.BOOKTRANSACTION);
+    }
 }
