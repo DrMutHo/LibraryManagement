@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="204.0" prefWidth="160.0" styleClass="vbox-card" stylesheets="@../../Styles/Card.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.CardController">
+<VBox maxHeight="200.0" maxWidth="140.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="140.0" styleClass="book-card" stylesheets="@../../Styles/Card.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.CardController">
    <children>
-      <ImageView fx:id="imageView" fitHeight="130.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true" styleClass="card-cover">
-         <VBox.margin>
-            <Insets bottom="6.0" />
-         </VBox.margin>
-      </ImageView>
-      <Label fx:id="title" styleClass="label-title">
-      </Label>
-      <Label fx:id="author" styleClass="label-author" />
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <StackPane alignment="TOP_CENTER" prefHeight="130.0" prefWidth="140.0">
          <children>
-            <Label text="★" />
-            <Label fx:id="ratingText" />
+            <Rectangle fx:id="imageView" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="140.0" stroke="BLACK" strokeType="INSIDE" width="100.0" />
+            <HBox fx:id="ratingBar" alignment="BOTTOM_CENTER" maxHeight="-Infinity" prefHeight="30.0" prefWidth="140.0" styleClass="ratingBar" StackPane.alignment="BOTTOM_CENTER">
+               <children>
+                  <TextFlow prefWidth="140.0" styleClass="ratingTextFlow" textAlignment="CENTER">
+                     <children>
+                        <Text fx:id="rating" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" />
+                     </children>
+                  </TextFlow>
+               </children>
+            </HBox>
          </children>
-      </HBox>
+      </StackPane>
+      <Label fx:id="title" styleClass="title" />
+      <Label fx:id="author" styleClass="author" />
    </children>
 </VBox>

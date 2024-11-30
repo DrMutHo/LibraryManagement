@@ -6,5 +6,5 @@ public enum ClientMenuOptions {
     PROFILE,
     BROWSING,
     NOTIFICATION,
-    BOOKTRANSACTION
+    BORROWTRANSACTION
 }

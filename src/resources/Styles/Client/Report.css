@@ -1,0 +1,126 @@
+.vbox-container {
+    -fx-background-color: linear-gradient(to bottom, #f0f8ff, #e6ffee);
+    -fx-spacing: 15px;
+    -fx-padding: 15px;
+}
+
+.label-header {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.vbox-headerr {
+    -fx-spacing: 5px;
+    /* Khoảng cách giữa các phần tử trong VBox */
+}
+
+.vbox-desciption {
+    -fx-spacing: 5px;
+}
+
+.vbox-desciption Label {
+    -fx-font-size: 14px;
+}
+
+.label-a {
+    -fx-text-fill: #b4acac;
+}
+
+.button-submit {
+    -fx-background-color: #000000;
+    -fx-text-fill: white;
+}
+
+.button-submit:hover {
+    -fx-background-color: #1d1c1c;
+    -fx-cursor: hand;
+}
+
+.combo-box {
+    -fx-background-color: #ffffff;
+    /* Màu nền sáng */
+    -fx-border-color: #dcdcdc;
+    /* Màu viền xám nhạt */
+    -fx-border-radius: 5px;
+    /* Bo góc */
+    -fx-font-size: 14px;
+    /* Kích thước font */
+    -fx-text-fill: #333;
+    /* Màu chữ tối */
+}
+
+.text-field {
+    -fx-background-color: #ffffff;
+    /* Nền popup */
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 5px;
+}
+
+.text-field:focused {
+    -fx-border-color: #000000;
+}
+
+.text-area:focused {
+    -fx-border-color: #000000;
+}
+
+
+.text-area {
+    -fx-background-color: #ffffff;
+    /* Nền popup */
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1;
+}
+
+.combo-box .combo-box-popup {
+    -fx-background-color: #ffffff;
+    /* Nền popup */
+    -fx-border-color: #dcdcdc;
+    /* Viền popup */
+    -fx-border-radius: 5px;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: #ffffff;
+    /* Màu nút dropdown */
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+    -fx-font-size: 12px;
+}
+
+.combo-box .combo-box-text {
+    -fx-text-fill: #333;
+    /* Màu chữ cho text trong combo */
+}
+
+.combo-box:focused {
+    -fx-border-color: #000000;
+}
+
+.combo-box:hover {
+    -fx-background-color: #e0e0e0;
+    /* Nền thay đổi khi hover */
+}
+
+.combo-box .arrow-button:hover {
+    -fx-background-color: #d0d0d0;
+    /* Thay đổi màu nút dropdown khi hover */
+}
+
+.combo-box-popup .list-cell {
+    -fx-text-fill: #333333;
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 5 10;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #e6ffee;
+    -fx-text-fill: #000000;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #d0d0d0;
+    -fx-text-fill: #000000;
+}

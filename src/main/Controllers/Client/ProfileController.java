@@ -1,31 +1,35 @@
 package main.Controllers.Client;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.util.Duration;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import main.Models.Model;
 
 public class ProfileController implements Initializable {
-    @FXML
-    private Label timeLabel;
+
+    public BorderPane client_parent;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
-
-        Timeline clock = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            LocalDateTime now = LocalDateTime.now();
-            timeLabel.setText(now.format(formatter));
-        }));
-
-        clock.setCycleCount(Timeline.INDEFINITE);
-        clock.play();
+        Model.getInstance().getViewFactory().getProfileSelectedMenuItem()
+                .addListener((observableValue, oldVal, newVal) -> {
+                    switch (newVal) {
+                        case PROFILEDETAIL ->
+                            client_parent.setCenter(Model.getInstance().getViewFactory().getProfileDetailView());
+                        case EDITPROFILE ->
+                            client_parent.setCenter(Model.getInstance().getViewFactory().getEditProfileView());
+                        case CHANGEPASSWORD ->
+                            client_parent.setCenter(Model.getInstance().getViewFactory().getChangePasswordView());
+                        case DELETEACCOUNT ->
+                            client_parent.setCenter(Model.getInstance().getViewFactory().getDeleteAccountView());
+                        default -> client_parent.setCenter(Model.getInstance().getViewFactory().getProfileDetailView());
+                    }
+                });
     }
+
 }

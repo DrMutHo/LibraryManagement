@@ -3,65 +3,66 @@ package main.Models;
 import java.time.LocalDate;
 
 public class BorrowTransaction {
-    private int transaction_id;
-    private int client_id;
-    private int copy_id;
-    private LocalDate borrow_date;
-    private LocalDate return_date;
+    private int transactionId;
+    private String title;
+    private int copyId;
+    private LocalDate borrowDate;
+    private LocalDate returnDate;
     private String status;
 
     public BorrowTransaction() {
-
     }
 
-    public BorrowTransaction(int transaction_id, int client_id, int copy_id, LocalDate borrow_date,
-            LocalDate return_date, String status) {
-        this.transaction_id = transaction_id;
-        this.client_id = client_id;
-        this.copy_id = copy_id;
-        this.borrow_date = borrow_date;
-        this.return_date = return_date;
+    public BorrowTransaction(int transactionId, String title, int copyId, LocalDate borrowDate,
+            LocalDate returnDate, String status) {
+        this.transactionId = transactionId;
+        this.title = title;
+        this.copyId = copyId;
+        this.borrowDate = borrowDate;
+        this.returnDate = returnDate;
         this.status = status;
     }
 
-    public int getTransaction_id() {
-        return transaction_id;
+    // Getters và Setters cho tất cả các thuộc tính
+
+    public int getTransactionId() {
+        return transactionId;
     }
 
-    public void setTransaction_id(int transaction_id) {
-        this.transaction_id = transaction_id;
+    public void setTransactionId(int transactionId) {
+        this.transactionId = transactionId;
     }
 
-    public int getClient_id() {
-        return client_id;
+    public String getTitle() {
+        return title;
     }
 
-    public void setClient_id(int client_id) {
-        this.client_id = client_id;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public int getCopy_id() {
-        return copy_id;
+    public int getCopyId() {
+        return copyId;
     }
 
-    public void setCopy_id(int copy_id) {
-        this.copy_id = copy_id;
+    public void setCopyId(int copyId) {
+        this.copyId = copyId;
     }
 
-    public LocalDate getBorrow_date() {
-        return borrow_date;
+    public LocalDate getBorrowDate() {
+        return borrowDate;
     }
 
-    public void setBorrow_date(LocalDate borrow_date) {
-        this.borrow_date = borrow_date;
+    public void setBorrowDate(LocalDate borrowDate) {
+        this.borrowDate = borrowDate;
     }
 
-    public LocalDate getReturn_date() {
-        return return_date;
+    public LocalDate getReturnDate() {
+        return returnDate;
     }
 
-    public void setReturn_date(LocalDate return_date) {
-        this.return_date = return_date;
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
 
     public String getStatus() {

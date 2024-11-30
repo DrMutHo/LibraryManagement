@@ -4,6 +4,9 @@ import main.Controllers.Client.ClientController;
 import main.Controllers.Client.ClientMenuController;
 import main.Controllers.Client.NotificationsController;
 import main.Models.Client;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -14,6 +17,11 @@ import java.sql.Timestamp;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.Views.NotificationType;
@@ -22,10 +30,13 @@ import main.Views.ViewFactory;
 
 public class Model {
     private static Model model;
-    private ViewFactory viewFactory;
+    private final ViewFactory viewFactory;
     private boolean clientLoginSuccessFlag;
+    private boolean adminLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
     private final ObservableList<Book> allBook;
+    private final ObservableList<Book> HighestRatedBooks;
+    private final ObservableList<BorrowTransaction> BorrowTransactions;
     private final ObservableList<Notification> allNotifications;
     private final ObservableList<Book> recentlyAddBook;
     private final ObservableList<BookTransaction> bookTransactions;
@@ -35,20 +46,25 @@ public class Model {
     private ClientController clientController;
     private ObjectProperty<Book> selectedBook;
     private final Client client;
+    private final Admin admin;
 
     private Model() {
         this.viewFactory = new ViewFactory();
         this.clientLoginSuccessFlag = false;
+        this.adminLoginSuccessFlag = false;
         this.databaseDriver = new DatabaseDriver();
         this.allBook = FXCollections.observableArrayList();
+        this.HighestRatedBooks = FXCollections.observableArrayList();
         this.allNotifications = FXCollections.observableArrayList();
         this.listenersClient = FXCollections.observableArrayList();
         this.listenersAdmin = FXCollections.observableArrayList();
         this.recentlyAddBook = FXCollections.observableArrayList();
         this.bookTransactions = FXCollections.observableArrayList();
         selectedBook = new SimpleObjectProperty<>(null);
+        this.BorrowTransactions = FXCollections.observableArrayList();
 
-        this.client = new Client(0, "", "", "", "", "", null, 0, "", "");
+        this.client = new Client(0, "", "", "", "", "", null, 0, "", "", "");
+        this.admin = new Admin(0, "", "", "");
     }
 
     public interface ModelListenerClient {
@@ -84,7 +100,15 @@ public class Model {
         return this.clientLoginSuccessFlag;
     }
 
-    public void setclientLoginSuccessFlag(boolean flag) {
+    public void setClientLoginSuccessFlag(boolean flag) {
+        this.clientLoginSuccessFlag = flag;
+    }
+
+    public boolean getAdminLoginSuccessFlag() {
+        return this.clientLoginSuccessFlag;
+    }
+
+    public void setAdminLoginSuccessFlag(boolean flag) {
         this.clientLoginSuccessFlag = flag;
     }
 
@@ -110,6 +134,9 @@ public class Model {
 
     public void setSelectedBook(Book book) {
         selectedBook.set(book);
+    
+      public Admin getAdmin() {
+        return admin;
     }
 
     public void setAllBook() {
@@ -141,8 +168,118 @@ public class Model {
         }
     }
 
-    public void setRecentlyBook() {
-        ResultSet resultSet = databaseDriver.getBookByClientID(Model.getInstance().getClient().getClientId());
+    public void setHighestRatedBooks(String genre) {
+        HighestRatedBooks.clear();
+
+        ResultSet resultSet;
+        if (genre.equalsIgnoreCase("ALL")) {
+            resultSet = databaseDriver.getHighestRatingBooks();
+        } else {
+            resultSet = databaseDriver.getHighestRatingBooksByGenre(genre);
+        }
+
+        try {
+            while (resultSet.next()) {
+                // Lấy thông tin từ ResultSet
+                int book_id = resultSet.getInt("book_id");
+                String title = resultSet.getString("title");
+                String author = resultSet.getString("author");
+                String isbn = resultSet.getString("isbn");
+                String genreResult = resultSet.getString("genre");
+                String language = resultSet.getString("language");
+                String description = resultSet.getString("description");
+                int publication_year = resultSet.getInt("publication_year");
+                String image_path = resultSet.getString("image_path");
+                Double average_rating = resultSet.getDouble("average_rating");
+                int review_count = resultSet.getInt("review_count");
+
+                int quantity = databaseDriver.countBookCopies(book_id);
+
+                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
+                        image_path, average_rating, review_count, quantity);
+
+
+                HighestRatedBooks.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void exportBorrowTransactionsToExcel(String filePath) {
+        try {
+            ResultSet resultSet = databaseDriver.getAllBorrowTransactions();
+
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Transactions");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Transaction ID");
+            headerRow.createCell(1).setCellValue("Client ID");
+            headerRow.createCell(2).setCellValue("Copy ID");
+            headerRow.createCell(3).setCellValue("Borrow Date");
+            headerRow.createCell(4).setCellValue("Return Date");
+            headerRow.createCell(5).setCellValue("Status");
+
+            int rowNum = 1;
+            while (resultSet.next()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(resultSet.getInt("transaction_id"));
+                row.createCell(1).setCellValue(resultSet.getInt("client_id"));
+                row.createCell(2).setCellValue(resultSet.getInt("copy_id"));
+                row.createCell(3).setCellValue(resultSet.getDate("borrow_date").toString());
+                row.createCell(4).setCellValue(
+                        resultSet.getDate("return_date") != null ? resultSet.getDate("return_date").toString() : "");
+                row.createCell(5).setCellValue(resultSet.getString("status"));
+            }
+
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+
+            workbook.close();
+            resultSet.close();
+            System.out.println("Excel file generated successfully: " + filePath);
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setBorrowTransaction() {
+        ResultSet resultSet = databaseDriver.getTransactionByClientID(Model.getInstance().getClient().getClientId());
+        try {
+            while (resultSet.next()) {
+                int transactionId = resultSet.getInt("transaction_id");
+                String title = resultSet.getString("title");
+                int copyId = resultSet.getInt("copy_id");
+                LocalDate borrowDate = resultSet.getDate("borrow_date").toLocalDate();
+                LocalDate returnDate = resultSet.getDate("return_date") != null
+                        ? resultSet.getDate("return_date").toLocalDate()
+                        : null;
+                String status = resultSet.getString("status");
+
+                BorrowTransaction transaction = new BorrowTransaction(transactionId, title, copyId, borrowDate,
+                        returnDate,
+                        status);
+                BorrowTransactions.add(transaction);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Book getBookDataByCopyID(int copy_id) {
+        ResultSet resultSet = databaseDriver.getBookDataByCopyID(copy_id);
+        Book res = new Book();
         try {
             while (resultSet.next()) {
                 int book_id = resultSet.getInt("book_id");
@@ -157,50 +294,58 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
-                int quantity = databaseDriver.countBookCopies(book_id);
-
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
-                        image_path, average_rating, review_count, quantity);
+                        image_path, average_rating, review_count);
+                res = book;
 
-                recentlyAddBook.add(book);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return res;
     }
 
-    public void setBookTransaction() {
-        ResultSet resultSet = databaseDriver.getTransactionByClientID(Model.getInstance().getClient().getClientId());
+    public Book getReadingBook() {
+        ResultSet resultSet = databaseDriver.get1BookDataByCopyID(Model.getInstance().getClient().getClientId());
+        Book res = new Book();
+        if (resultSet == null) {
+            resultSet = databaseDriver.getHighestRatingBook();
+        }
         try {
             while (resultSet.next()) {
-                int transactionId = resultSet.getInt("transaction_id");
+                int book_id = resultSet.getInt("book_id");
                 String title = resultSet.getString("title");
-                int copyId = resultSet.getInt("copy_id");
-                LocalDate borrowDate = resultSet.getDate("borrow_date").toLocalDate();
-                LocalDate returnDate = resultSet.getDate("return_date") != null
-                        ? resultSet.getDate("return_date").toLocalDate()
-                        : null;
-                String status = resultSet.getString("status");
+                String author = resultSet.getString("author");
+                String isbn = resultSet.getString("isbn");
+                String genre = resultSet.getString("genre");
+                String language = resultSet.getString("language");
+                String description = resultSet.getString("description");
+                int publication_year = resultSet.getInt("publication_year");
+                String image_path = resultSet.getString("image_path");
+                Double average_rating = resultSet.getDouble("average_rating");
+                int review_count = resultSet.getInt("review_count");
 
-                BookTransaction transaction = new BookTransaction(transactionId, title, copyId, borrowDate, returnDate,
-                        status);
-                bookTransactions.add(transaction);
+                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
+                        image_path, average_rating, review_count);
+                res = book;
+
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return res;
     }
 
-    public ObservableList<BookTransaction> getBookTransaction() {
-        return bookTransactions;
+    public ObservableList<BorrowTransaction> getBorrowTransaction() {
+        return BorrowTransactions;
     }
 
     public ObservableList<Book> getAllBook() {
         return allBook;
     }
 
-    public ObservableList<Book> getRecentlyAddBook() {
-        return recentlyAddBook;
+    public ObservableList<Book> getHighestRatedBook() {
+        return HighestRatedBooks;
     }
 
     public Book findBookByISBN(String ISBN) {
@@ -209,6 +354,29 @@ public class Model {
                 return book;
         }
         return null;
+    }
+
+    public void evaluateAdminCred(String username) {
+        ResultSet resultSet = databaseDriver.getAdminData(username);
+        try {
+            if (resultSet != null && resultSet.next()) {
+                this.admin.setadmin_id(resultSet.getInt("admin_id"));
+                this.admin.setUsername(resultSet.getString("username"));
+                this.admin.setPassword_hash(resultSet.getString("password_hash"));
+                this.admin.setEmail(resultSet.getString("email"));
+                this.adminLoginSuccessFlag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void evaluateClientCred(String username) {
@@ -225,6 +393,7 @@ public class Model {
                 this.client.setOutstandingFees(resultSet.getDouble("outstanding_fees"));
                 this.client.setUsername(resultSet.getString("username"));
                 this.client.setPasswordHash(resultSet.getString("password_hash"));
+                this.client.setAvatarImagePath(resultSet.getString("avatar_image_path"));
                 this.clientLoginSuccessFlag = true;
             }
         } catch (SQLException e) {
@@ -341,4 +510,8 @@ public class Model {
         notifyBorrowTransactionAdminCreated();
     }
 
+
+    public void setClientAvatar(String fileURI) {
+        databaseDriver.setClientAvatar(Model.getInstance().getClient().getClientId(), fileURI);
+    }
 }
