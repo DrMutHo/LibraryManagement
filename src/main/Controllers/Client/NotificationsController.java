@@ -3,6 +3,7 @@ package main.Controllers.Client;
 import main.Models.DatabaseDriver;
 import main.Models.Model;
 import main.Models.Notification;
+import main.Views.AccountType;
 import main.Views.NotificationCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -75,7 +76,11 @@ public class NotificationsController implements Initializable {
     }
 
     private void updateUnreadCount(int recipientId) {
-        int unreadCount = Model.getInstance().getDatabaseDriver().countUnreadNotifications(recipientId);
+        int unreadCount = (Model.getInstance().getViewFactory().getLoginAccountType().equals(AccountType.CLIENT))
+                ? Model.getInstance().getDatabaseDriver()
+                        .countUnreadNotifications(Model.getInstance().getClient().getClientId(), "Client")
+                : Model.getInstance().getDatabaseDriver()
+                        .countUnreadNotifications(Model.getInstance().getClient().getClientId(), "Admin");
         unread_count_lbl.setText("Unread Notifications: " + unreadCount);
     }
 

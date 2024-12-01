@@ -22,9 +22,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.Models.Model;
+import main.Views.AccountType;
 import main.Views.ClientMenuOptions;
 import main.Models.Notification;
-import main.Models.Notification;
+import main.Controllers.Client.ReportController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -116,6 +117,8 @@ public class ClientMenuController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/resources/FXML/Client/Report.fxml"));
+            ReportController reportController = new ReportController();
+            loader.setController(reportController);
             VBox bugReportRoot = loader.load();
 
             Stage stage = new Stage();
@@ -129,8 +132,11 @@ public class ClientMenuController implements Initializable {
     }
 
     private void checkAndUpdateNotificationButton() {
-        int unreadCount = Model.getInstance().getDatabaseDriver()
-                .countUnreadNotifications(Model.getInstance().getClient().getClientId());
+        int unreadCount = (Model.getInstance().getViewFactory().getLoginAccountType().equals(AccountType.CLIENT))
+                ? Model.getInstance().getDatabaseDriver()
+                        .countUnreadNotifications(Model.getInstance().getClient().getClientId(), "Client")
+                : Model.getInstance().getDatabaseDriver()
+                        .countUnreadNotifications(Model.getInstance().getClient().getClientId(), "Admin");
 
         if (unreadCount > 0) {
             noti_img.setImage(activeNotiIcon);

@@ -9,6 +9,7 @@ public enum NotificationType {
     PurchaseReceiptIssued,
     BookAvailable,
     BorrowConfirmed,
+    ReportBug,
     UNKNOWN;
 
     public static NotificationType fromString(String type) {
