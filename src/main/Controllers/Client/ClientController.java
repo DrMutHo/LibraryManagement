@@ -63,4 +63,14 @@ public class ClientController implements Initializable {
         isInBookDetails = false;
         client_parent.setCenter(Model.getInstance().getViewFactory().getBrowsingView());
     }
+
+    public void goBackToTransaction() {
+        isInBookDetails = false;
+        client_parent.setCenter(Model.getInstance().getViewFactory().getBorrowTransactionView());
+    }
+
+    public void goBackToHome() {
+        isInBookDetails = false;
+        client_parent.setCenter(Model.getInstance().getViewFactory().getHomeView());
+    }
 }

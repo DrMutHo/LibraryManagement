@@ -22,6 +22,14 @@ import main.Views.RecipientType;
 public class DatabaseDriver {
     private HikariDataSource dataSource;
 
+    public HikariDataSource getDataSource() {
+        return this.dataSource;
+    }
+
+    public void setDataSource(HikariDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     public DatabaseDriver() {
         try {
             // Tải biến môi trường
