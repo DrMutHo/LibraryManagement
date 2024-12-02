@@ -27,23 +27,9 @@ import main.Models.Model;
 
 public class DeleteAccountController implements Initializable {
     @FXML
-    private HBox hBox0;
-    @FXML
     private PasswordField passwordField0;
     @FXML
-    private TextField textField0;
-    @FXML
     private Button deleteButton;
-    @FXML
-    private Button toggleButton0;
-    @FXML
-    private Image eyeOpen;
-    @FXML
-    private Image eyeClosed;
-    @FXML
-    private ImageView imageView0;
-    @FXML
-    private AnchorPane anchorPane;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -51,63 +37,14 @@ public class DeleteAccountController implements Initializable {
     }
 
     public void passwordField_init() {
-        // Set prompt text for the password fields
         setPromptText();
 
-        // Initialize password fields and text fields
-        initializePasswordAndTextFields(passwordField0, textField0, hBox0);
-
-        // Load eye icon images for showing/hiding passwords
-        eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
-        eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
-
-        // Set initial icon state
-        imageView0.setImage(eyeClosed);
-
-        // Set toggle button actions
-        toggleButton0.setOnAction(event -> togglePasswordVisibility());
         deleteButton.setOnAction(event -> handleDeleteButton());
     }
 
     // Helper method to set prompt text for all password fields
     private void setPromptText() {
         passwordField0.setPromptText("Enter your current password");
-        textField0.setPromptText("Enter your current password");
-    }
-
-    // Helper method to initialize password fields and text fields
-    private void initializePasswordAndTextFields(PasswordField passwordField, TextField textField, HBox hBox) {
-        passwordField.setVisible(true);
-        passwordField.setManaged(true);
-        textField.setVisible(false);
-        textField.setManaged(false);
-        textField.textProperty().bindBidirectional(passwordField.textProperty());
-
-        // Add focus listeners
-        addPasswordFieldFocusListener(passwordField, hBox);
-        addTextFieldListener(textField, hBox);
-    }
-
-    // Focus listener for password fields
-    private void addPasswordFieldFocusListener(PasswordField passwordField, HBox hbox) {
-        passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                hbox.getStyleClass().add("hbox_set-focused");
-            } else {
-                hbox.getStyleClass().remove("hbox_set-focused");
-            }
-        });
-    }
-
-    // Focus listener for text fields
-    private void addTextFieldListener(TextField textField, HBox hbox) {
-        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                hbox.getStyleClass().add("hbox_set-focused");
-            } else {
-                hbox.getStyleClass().remove("hbox_set-focused");
-            }
-        });
     }
 
     // Method to check current password
@@ -145,17 +82,6 @@ public class DeleteAccountController implements Initializable {
     // Verify password with stored hash
     private boolean verifyPassword(String password, String storedPasswordHash) {
         return BCrypt.checkpw(password, storedPasswordHash);
-    }
-
-    // Toggle password visibility
-    @FXML
-    private void togglePasswordVisibility() {
-        boolean isPasswordVisible = passwordField0.isVisible();
-        passwordField0.setVisible(!isPasswordVisible);
-        passwordField0.setManaged(!isPasswordVisible);
-        textField0.setVisible(isPasswordVisible);
-        textField0.setManaged(isPasswordVisible);
-        imageView0.setImage(isPasswordVisible ? eyeOpen : eyeClosed);
     }
 
     // Action when the delete button is pressed

@@ -43,8 +43,8 @@ public class DatabaseDriver {
             config.setJdbcUrl(url);
             config.setUsername(username);
             config.setPassword(password);
-            config.setMaximumPoolSize(10); // Số lượng kết nối tối đa trong pool
-            config.setConnectionTimeout(30000); // Thời gian chờ kết nối (30 giây)
+            config.setMaximumPoolSize(20); // Số lượng kết nối tối đa trong pool
+            config.setConnectionTimeout(60000); // Thời gian chờ kết nối (30 giây)
             config.setIdleTimeout(600000); // Thời gian chờ kết nối không sử dụng (10 phút)
             config.setMaxLifetime(1800000); // Thời gian sống tối đa của kết nối (30 phút)
 
