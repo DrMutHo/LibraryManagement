@@ -38,6 +38,7 @@ public class CardController implements Initializable {
 
     /**
      * Initializes the controller, hiding the rating bar by default.
+     * This method is called after the FXML is loaded to set up initial state.
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -46,36 +47,68 @@ public class CardController implements Initializable {
 
     /**
      * Populates the book card with data from the given {@link Book}.
-     *
-     * @param book The {@code Book} to display.
+     * This includes setting the image, title, author, and rating for the book card.
+     * 
+     * @param book The {@code Book} to display on the card.
      */
     public void setData(Book book) {
+        // Set the image with rounded corners
         imageView.setArcWidth(20);
         imageView.setArcHeight(20);
-        imageView.setFill(new ImagePattern(new Image(book.getImagePath())));
+        imageView.setFill(new ImagePattern(new Image(book.getImage_path())));
         imageView.setStroke(Color.TRANSPARENT);
+
+        // Set the title and author labels
         title.setText(book.getTitle());
         author.setText("By " + book.getAuthor());
+
+        // Set the rating text
         rating.setText(book.getAverage_rating() + " ★");
     }
 
-    // Getter methods
+    // Getter methods for the view components
+
+    /**
+     * Gets the image view for the book card.
+     * 
+     * @return the Rectangle that holds the book image.
+     */
     public Rectangle getImageView() {
         return imageView;
     }
 
+    /**
+     * Gets the title label for the book card.
+     * 
+     * @return the Label that displays the book title.
+     */
     public Label getTitle() {
         return title;
     }
 
+    /**
+     * Gets the author label for the book card.
+     * 
+     * @return the Label that displays the book author.
+     */
     public Label getAuthor() {
         return author;
     }
 
+    /**
+     * Gets the rating text for the book card.
+     * 
+     * @return the Text element that displays the book's rating.
+     */
     public Text getRating() {
         return rating;
     }
 
+    /**
+     * Gets the HBox containing the rating bar.
+     * 
+     * @return the HBox that holds the book's rating bar.
+     */
     public HBox getRatingBar() {
         return ratingBar;
     }
