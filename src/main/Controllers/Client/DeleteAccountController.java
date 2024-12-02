@@ -115,7 +115,7 @@ public class DeleteAccountController implements Initializable {
         // Query database to get user's hashed password
         String query = "SELECT * FROM client WHERE username = ?";
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             // Check connection validity
             if (connection == null || connection.isClosed()) {
@@ -161,65 +161,67 @@ public class DeleteAccountController implements Initializable {
     // Action when the delete button is pressed
     @FXML
     private void handleDeleteButton() {
-    String username = Model.getInstance().getClient().getUsername();  // Replace with actual current username logic
-    String password = passwordField0.getText();
+        String username = Model.getInstance().getClient().getUsername(); // Replace with actual current username logic
+        String password = passwordField0.getText();
 
-    // Verify password
-    if (checkCurrentPassword(username, password)) {
-        // Show confirmation dialog with Yes, No, and Cancel options
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Deletion");
-        alert.setHeaderText("Are you sure you want to delete your account?");
-        alert.setContentText("This action cannot be undone.");
+        // Verify password
+        if (checkCurrentPassword(username, password)) {
+            // Show confirmation dialog with Yes, No, and Cancel options
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirm Deletion");
+            alert.setHeaderText("Are you sure you want to delete your account?");
+            alert.setContentText("This action cannot be undone.");
 
-        // Add Yes, No, and Cancel buttons
-        alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            // Add Yes, No, and Cancel buttons
+            alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 
-        // Wait for the user's response
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                // Delete account from database
-                deleteAccount(username);
+            // Wait for the user's response
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.YES) {
+                    // Delete account from database
+                    deleteAccount(username);
+                    Model.getInstance().getViewFactory().resetAllPanes();
+                    // Navigate to login screen
+                    Stage stage = (Stage) deleteButton.getScene().getWindow();
+                    Model.getInstance().getViewFactory().showLoading(() -> {
+                        // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
+                        try {
+                            Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
 
-                // Navigate to login screen
-                Stage stage = (Stage) deleteButton.getScene().getWindow();
-                Model.getInstance().getViewFactory().showLoading(() -> {
-            // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
-            try {
-                Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            
-            // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
-            Platform.runLater(() -> {
-                Model.getInstance().getViewFactory().showLoginWindow();
-                Model.getInstance().getViewFactory().closeStage(stage);
+                        // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
+                        Platform.runLater(() -> {
+                            Model.getInstance().getViewFactory().showLoginWindow();
+                            Model.getInstance().getViewFactory().closeStage(stage);
+                        });
+                    }, Model.getInstance().getViewFactory().getDeleteAccountView());
+                } else if (response == ButtonType.CANCEL) {
+                    // Do nothing, simply close the alert
+                    alert.close();
+                }
             });
-        }, Model.getInstance().getViewFactory().getDeleteAccountView());
-            } else if (response == ButtonType.CANCEL) {
-                // Do nothing, simply close the alert
-                alert.close();
-            }
-        });
-    } else {
-        // Show error if password is incorrect
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText("Incorrect password");
-        alert.setContentText("The entered password is incorrect.");
-        alert.showAndWait();
+        } else {
+            // Show error if password is incorrect
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Incorrect password");
+            alert.setContentText("The entered password is incorrect.");
+            alert.showAndWait();
+        }
     }
-    }
+
     private void deleteAccount(String username) {
         String deleteTransactionsQuery = "DELETE FROM borrowtransaction WHERE client_id = (SELECT client_id FROM client WHERE username = ?)";
         String deleteNotificationRequestsQuery = "DELETE FROM notificationrequest WHERE client_id = (SELECT client_id FROM client WHERE username = ?)";
         String deleteAccountQuery = "DELETE FROM client WHERE username = ?";
 
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-            PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsQuery);
-            PreparedStatement deleteNotificationRequestsStatement = connection.prepareStatement(deleteNotificationRequestsQuery);
-            PreparedStatement deleteAccountStatement = connection.prepareStatement(deleteAccountQuery)) {
+                PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsQuery);
+                PreparedStatement deleteNotificationRequestsStatement = connection
+                        .prepareStatement(deleteNotificationRequestsQuery);
+                PreparedStatement deleteAccountStatement = connection.prepareStatement(deleteAccountQuery)) {
 
             // Check connection validity
             if (connection == null || connection.isClosed()) {

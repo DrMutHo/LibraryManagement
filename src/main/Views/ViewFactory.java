@@ -42,6 +42,21 @@ public class ViewFactory {
     private AnchorPane editProfileView;
     private AnchorPane deleteAccountView;
 
+    public void resetAllPanes() {
+        dashboardView = null;
+        homeView = null;
+        profileView = null;
+        browsingView = null;
+        notiView = null;
+        booktransactionView = null;
+        bookDetailsView = null;
+        BorrowTransactionView = null;
+        profileDetailView = null;
+        changePasswordView = null;
+        editProfileView = null;
+        deleteAccountView = null;
+    }
+
     public ViewFactory() {
         this.loginAccountType = AccountType.CLIENT;
         this.clientSelectedMenuItem = new SimpleObjectProperty<>();
