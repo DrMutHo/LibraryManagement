@@ -27,83 +27,87 @@ import main.Views.ViewFactory;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.Parent;
 
 public class ChangePasswordController implements Initializable {
     @FXML
-    private PasswordField passwordField0; // Current password
+    private PasswordField passwordField0;
     @FXML
-    private PasswordField passwordField1; // New password
+    private PasswordField passwordField1;
     @FXML
-    private PasswordField passwordField2; // Retype new password
-    @FXML
-    private TextField textField0;
-    @FXML
-    private TextField textField1;
-    @FXML
-    private TextField textField2;
-    @FXML
-    private Button toggleButton0; // Button to toggle visibility for passwordField0
-    @FXML
-    private Button toggleButton1; // Button to toggle visibility for passwordField1
-    @FXML
-    private Button toggleButton2; // Button to toggle visibility for passwordField2
+    private PasswordField passwordField2;
     @FXML
     private Button saveChangesButton;
     @FXML
-    private ImageView imageView0;
+    private ImageView eyeIcon0;
     @FXML
-    private ImageView imageView1;
+    private ImageView eyeIcon1;
     @FXML
-    private ImageView imageView2;
-    @FXML
-    private Image eyeOpen;
-    @FXML
-    private Image eyeClosed;
-    @FXML
-    private HBox hBox0;
-    @FXML
-    private HBox hBox1;
-    @FXML
-    private HBox hBox2;
-    @FXML
-    private ImageView warning0;
-    @FXML
-    private ImageView warning1;
-    @FXML
-    private ImageView warning2;
+    private ImageView eyeIcon2;
 
-    // Flags to track visibility of each password field
-    private boolean passwordVisible0 = false;
-    private boolean passwordVisible1 = false;
-    private boolean passwordVisible2 = false;
+    @FXML
+    private Label currentPasswordLabel;
+    @FXML
+    private Label newPasswordLabel;
+    @FXML
+    private Label confirmPasswordLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         passwordField_init();
+        eyeIcon0.setOnMouseClicked(event -> togglePasswordVisibility(passwordField0, eyeIcon0));
+        eyeIcon1.setOnMouseClicked(event -> togglePasswordVisibility(passwordField1, eyeIcon1));
+        eyeIcon2.setOnMouseClicked(event -> togglePasswordVisibility(passwordField2, eyeIcon2));
     }
 
     public void passwordField_init() {
-        // Set prompt text for the password fields
         setPromptText();
+    }
 
-        // Initialize password fields and text fields
-        initializePasswordAndTextFields(passwordField0, textField0, hBox0);
-        initializePasswordAndTextFields(passwordField1, textField1, hBox1);
-        initializePasswordAndTextFields(passwordField2, textField2, hBox2);
+    private void togglePasswordVisibility(PasswordField passwordField, ImageView eyeIcon) {
+        // First, get the parent of the passwordField and cast it to HBox (or any
+        // appropriate layout type)
+        Parent parent = passwordField.getParent();
 
-        // Load eye icon images for showing/hiding passwords
-        eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
-        eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
+        // Ensure that the parent is a container (HBox, VBox, etc.)
+        if (parent instanceof HBox) {
+            HBox parentHBox = (HBox) parent; // Cast to HBox
 
-        // Set initial icon state
-        imageView0.setImage(eyeClosed);
-        imageView1.setImage(eyeClosed);
-        imageView2.setImage(eyeClosed);
+            // If the password field is currently visible, hide it and add a TextField
+            if (passwordField.isVisible()) {
+                passwordField.setVisible(false); // Hide the PasswordField
 
-        // Set toggle button actions
-        toggleButton0.setOnAction(event -> togglePasswordVisibility(passwordField0, textField0, imageView0));
-        toggleButton1.setOnAction(event -> togglePasswordVisibility(passwordField1, textField1, imageView1));
-        toggleButton2.setOnAction(event -> togglePasswordVisibility(passwordField2, textField2, imageView2));
+                // Create a new TextField to show the password
+                TextField textField = new TextField(passwordField.getText());
+                textField.setVisible(true); // Make TextField visible
+
+                // Add the new TextField to the HBox
+                parentHBox.getChildren().add(textField);
+            } else {
+                passwordField.setVisible(true); // Show the PasswordField
+
+                // Find the TextField inside the HBox and remove it
+                for (int i = 0; i < parentHBox.getChildren().size(); i++) {
+                    if (parentHBox.getChildren().get(i) instanceof TextField) {
+                        TextField textField = (TextField) parentHBox.getChildren().get(i);
+                        parentHBox.getChildren().remove(textField); // Remove the TextField
+                        break;
+                    }
+                }
+            }
+
+            // Change the eye icon based on visibility
+            if (eyeIcon.getImage().getUrl().contains("hide-password.png")) {
+                eyeIcon.setImage(
+                        new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm()));
+            } else {
+                eyeIcon.setImage(
+                        new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm()));
+            }
+        } else {
+            System.err.println("Parent is not an HBox! Unable to toggle visibility.");
+        }
     }
 
     // Helper method to set prompt text for all password fields
@@ -111,63 +115,12 @@ public class ChangePasswordController implements Initializable {
         passwordField0.setPromptText("Enter your current password");
         passwordField1.setPromptText("Your new password must be over 6 letters");
         passwordField2.setPromptText("Retype your new password");
-        textField0.setPromptText("Enter your current password");
-        textField1.setPromptText("Your new password must be over 6 letters");
-        textField2.setPromptText("Retype your new password");
     }
 
-    // Helper method to initialize password fields and text fields
-    private void initializePasswordAndTextFields(PasswordField passwordField, TextField textField, HBox hBox) {
-        passwordField.setVisible(true);
-        passwordField.setManaged(true);
-        textField.setVisible(false);
-        textField.setManaged(false);
-        textField.textProperty().bindBidirectional(passwordField.textProperty());
-
-        // Add focus listeners
-        addPasswordFieldFocusListener(passwordField, hBox);
-        addTextFieldListener(textField, hBox);
-    }
-
-    // Focus listener for password fields
-    private void addPasswordFieldFocusListener(PasswordField passwordField, HBox hbox) {
-        passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                hbox.getStyleClass().add("hbox_set-focused");
-            } else {
-                hbox.getStyleClass().remove("hbox_set-focused");
-            }
-        });
-    }
-
-    // Focus listener for text fields
-    private void addTextFieldListener(TextField textField, HBox hbox) {
-        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                hbox.getStyleClass().add("hbox_set-focused");
-            } else {
-                hbox.getStyleClass().remove("hbox_set-focused");
-            }
-        });
-    }
-
-    // Toggle password visibility for each field
-    private void togglePasswordVisibility(PasswordField passwordField, TextField textField, ImageView imageView) {
-        if (passwordField.isVisible()) {
-            // Hide PasswordField, show TextField
-            passwordField.setVisible(false);
-            passwordField.setManaged(false);
-            textField.setVisible(true);
-            textField.setManaged(true);
-            imageView.setImage(eyeOpen); // Set the eye-open icon
-        } else {
-            // Hide TextField, show PasswordField
-            textField.setVisible(false);
-            textField.setManaged(false);
-            passwordField.setVisible(true);
-            passwordField.setManaged(true);
-            imageView.setImage(eyeClosed); // Set the eye-closed icon
-        }
+    private void resetText() {
+        passwordField0.clear();
+        passwordField1.clear();
+        passwordField2.clear();
     }
 
     @FXML
@@ -177,46 +130,54 @@ public class ChangePasswordController implements Initializable {
         String newPassword = passwordField1.getText();
         String confirmPassword = passwordField2.getText();
         boolean canUpdate = true;
+        String errorMessage = "";
 
         // Kiểm tra các điều kiện đầu vào và highlight các trường hợp lỗi
         if (!isValidCurrentPassword(currentPassword)) {
-            highlightField(hBox0, warning0);
+            errorMessage += "Current password is required.\n";
             canUpdate = false;
-        } else {
-            resetField(hBox0, warning0);
         }
 
         if (!isValidNewPassword(newPassword)) {
-            highlightField(hBox1, warning1);
+            errorMessage += "New password must be at least 6 characters.\n";
             canUpdate = false;
-        } else {
-            resetField(hBox1, warning1);
         }
 
         if (!isValidConfirmPassword(confirmPassword)) {
-            highlightField(hBox2, warning2);
+            errorMessage += "Confirmation password is required and should match new password.\n";
             canUpdate = false;
-        } else {
-            resetField(hBox2, warning2);
         }
 
         // Kiểm tra mật khẩu hiện tại từ cơ sở dữ liệu
         if (!checkCurrentPassword(Model.getInstance().getClient().getUsername(), currentPassword)) {
-            highlightField(hBox0, warning0);
+            errorMessage += "Current password is incorrect.\n";
             canUpdate = false;
         }
 
         // Kiểm tra nếu tất cả các điều kiện đều hợp lệ
         if (canUpdate) {
-            // Cập nhật mật khẩu mới vào cơ sở dữ liệu
-            if (updatePassword(Model.getInstance().getClient().getUsername(), newPassword)) {
-                showAlert("Password changed successfully!", Alert.AlertType.INFORMATION);
-            } else {
-                showAlert("Error updating password.", Alert.AlertType.ERROR);
+            // Kiểm tra nếu mật khẩu xác nhận trùng khớp
+            if (!newPassword.equals(confirmPassword)) {
+                errorMessage += "New password and confirmation do not match.\n";
+                canUpdate = false;
             }
-        } else {
-            showAlert("Please correct the highlighted errors.", Alert.AlertType.ERROR);
+
+            // Cập nhật mật khẩu mới vào cơ sở dữ liệu
+            if (canUpdate) {
+                if (updatePassword(Model.getInstance().getClient().getUsername(), newPassword)) {
+                    showAlert("Password changed successfully!", Alert.AlertType.INFORMATION);
+                } else {
+                    showAlert("Error updating password. Please try again.", Alert.AlertType.ERROR);
+                }
+            }
         }
+
+        // Nếu có lỗi, hiển thị thông báo lỗi
+        if (!canUpdate) {
+            showAlert("Please correct the following errors:\n" + errorMessage, Alert.AlertType.ERROR);
+        }
+
+        resetText();
     }
 
     // Phương thức kiểm tra mật khẩu hiện tại

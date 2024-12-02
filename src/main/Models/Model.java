@@ -66,6 +66,19 @@ public class Model {
         this.admin = new Admin(0, "", "", "");
     }
 
+    public void reset() {
+        this.clientLoginSuccessFlag = false;
+        this.adminLoginSuccessFlag = false;
+        this.allBook.clear();
+        this.HighestRatedBooks.clear();
+        this.BorrowTransactions.clear();
+        this.allNotifications.clear();
+        this.recentlyAddBook.clear();
+        this.listenersClient.clear();
+        this.listenersAdmin.clear();
+        this.selectedBook.set(null);
+    }
+
     public interface ModelListenerClient {
         void onBorrowTransactionClientCreated();
     }
