@@ -1,0 +1,67 @@
+/* Nền của Card với Gradient vàng nhạt và border nổi bật */
+#card {
+    -fx-padding: 15px 20px;
+    /* Padding vào toàn bộ card */
+    -fx-background-color: linear-gradient(to bottom, #FFF9C4, #FFECB3);
+    /* Gradient vàng nhạt hơn */
+    -fx-border-radius: 10px;
+    /* Viền bo góc */
+    -fx-border-color: #FFCA28;
+    /* Màu vàng đậm hơn cho viền */
+    -fx-border-width: 2px;
+    /* Độ rộng viền */
+    -fx-spacing: 15px;
+    /* Khoảng cách giữa các phần tử con */
+    -fx-alignment: CENTER_LEFT;
+    /* Canh lề phần tử con bên trái */
+}
+
+/* Định dạng cho hình ảnh sách */
+#bookImage {
+    -fx-preserve-ratio: true;
+    -fx-fit-height: 83px;
+    -fx-fit-width: 72px;
+    -fx-padding: 5px;
+    /* Thêm padding vào hình ảnh */
+}
+
+/* Định dạng cho VBox chứa ISBN và Title */
+#vBoxIsbnAndTitle {
+    -fx-spacing: 5px;
+    -fx-alignment: TOP_LEFT;
+    -fx-pref-width: 150px;
+    -fx-padding: 5px 10px;
+    /* Thêm padding vào VBox */
+}
+
+/* Định dạng cho Quantity và Add Book VBox */
+#vBoxQuantityAndButton {
+    -fx-spacing: 10px;
+    -fx-alignment: CENTER_RIGHT;
+    /* Căn phải các phần tử trong VBox */
+    -fx-padding: 5px 10px;
+    /* Thêm padding vào VBox */
+}
+
+/* Định dạng cho các nút và trường nhập */
+#Quantity,
+#AddBook {
+    -fx-padding: 10px 15px;
+    /* Thêm padding vào nút và trường nhập */
+    -fx-font-size: 14px;
+    -fx-background-color: #FFEB3B;
+    /* Màu vàng sáng cho nền nút */
+    -fx-background-radius: 5px;
+    /* Bo góc nút */
+    -fx-text-fill: #000000;
+    /* Màu chữ đen */
+}
+
+/* Định dạng cho Label ISBN và Title */
+#isbnLabel,
+#titleLabel {
+    -fx-font-size: 14px;
+    -fx-text-fill: #212121;
+    /* Màu chữ tối */
+    -fx-wrap-text: true;
+}
