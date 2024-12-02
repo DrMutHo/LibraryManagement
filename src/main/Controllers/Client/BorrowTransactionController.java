@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.Models.Book;
@@ -248,27 +249,25 @@ public class BorrowTransactionController implements Initializable {
 
     @FXML
     private void exportExcel() {
-        File dir = new File("D:/javaaa/oop/");
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Chọn Thư Mục Lưu Tệp");
 
-        if (!dir.exists()) {
-            boolean created = dir.mkdirs();
-            if (!created) {
-                System.out.println("Failed to create directory: " + dir.getAbsolutePath());
-                return;
+        // Mở cửa sổ chọn thư mục và lấy thư mục người dùng chọn
+        File selectedDirectory = directoryChooser.showDialog(null);
+
+        if (selectedDirectory != null) {
+            try {
+                // Tạo đường dẫn tệp (tên tệp có thể cố định hoặc lấy từ dữ liệu)
+                String filePath = selectedDirectory.getAbsolutePath() + "/borrow_transactions.xlsx";
+
+                // Gọi hàm export dữ liệu vào file đã chọn
+                Model.getInstance().exportClientBorrowTransactionsToExcel(filePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error exporting to Excel: " + e.getMessage());
             }
-        }
-
-        if (!dir.canWrite()) {
-            System.out.println("No write permission for the directory: " + dir.getAbsolutePath());
-            return;
-        }
-
-        String filePath = "D:/javaaa/oop/borrow_transactions.xlsx";
-        try {
-            Model.getInstance().exportClientBorrowTransactionsToExcel(filePath);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error exporting to Excel: " + e.getMessage());
+        } else {
+            System.out.println("No directory selected.");
         }
     }
 
