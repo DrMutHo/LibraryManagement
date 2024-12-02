@@ -21,16 +21,16 @@ import main.Models.Book;
 
 public class CardController implements Initializable {
     @FXML
-    private Rectangle imageView;
+    public Rectangle imageView;
 
     @FXML
-    private Label title;
+    public Label title;
 
     @FXML
-    private Label author;
+    public Label author;
 
     @FXML
-    private Text rating;
+    public Text rating;
 
     @FXML
     public HBox ratingBar;
@@ -52,5 +52,26 @@ public class CardController implements Initializable {
         author.setText("By " + book.getAuthor());
         rating.setText(book.getAverage_rating() + " ★");
 
+    }
+
+    // Getter methods
+    public Rectangle getImageView() {
+        return imageView;
+    }
+
+    public Label getTitle() {
+        return title;
+    }
+
+    public Label getAuthor() {
+        return author;
+    }
+
+    public Text getRating() {
+        return rating;
+    }
+
+    public HBox getRatingBar() {
+        return ratingBar;
     }
 }

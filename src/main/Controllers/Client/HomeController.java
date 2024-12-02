@@ -130,22 +130,7 @@ public class HomeController implements Initializable {
     }
 
     private void showBookDetails(Book book) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/resources/FXML/Client/BookDetailWithReview.fxml"));
-            BorderPane bookDetailsRoot = loader.load();
-
-            BookDetailWithReviewController controller = loader.getController();
-            controller.setBook(book);
-
-            Stage stage = new Stage();
-            stage.setTitle("Book Details");
-            stage.setScene(new Scene(bookDetailsRoot));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Model.getInstance().setSelectedBook(book);
     }
 
     private void updateHighestRatedBooks(String genre) {
