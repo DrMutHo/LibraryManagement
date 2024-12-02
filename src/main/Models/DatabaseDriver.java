@@ -19,17 +19,40 @@ import javafx.collections.ObservableList;
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 
+/**
+ * DatabaseDriver class provides functionality to connect to a MySQL database
+ * using the HikariCP connection pool. The connection details (username and
+ * password) are loaded from environment variables using the Dotenv library.
+ * This class handles database connection configuration, connection pooling,
+ * and closing of the data source.
+ */
 public class DatabaseDriver {
     private HikariDataSource dataSource;
 
+    /**
+     * Returns the HikariDataSource object for obtaining connections.
+     *
+     * @return the HikariDataSource instance
+     */
     public HikariDataSource getDataSource() {
         return this.dataSource;
     }
 
+    /**
+     * Sets the HikariDataSource object to be used for obtaining connections.
+     *
+     * @param dataSource the HikariDataSource to set
+     */
     public void setDataSource(HikariDataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Constructs a DatabaseDriver and sets up the HikariCP connection pool.
+     * Loads database credentials from environment variables and configures
+     * the connection pool with properties such as URL, username, password,
+     * and connection timeout values.
+     */
     public DatabaseDriver() {
         try {
             // Tải biến môi trường
@@ -57,16 +80,30 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Obtains a connection from the connection pool.
+     *
+     * @return a Connection object to the database
+     * @throws SQLException if there is an issue getting a connection from the pool
+     */
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
 
+    /**
+     * Closes the HikariDataSource and releases any database resources.
+     */
     public void close() {
         if (dataSource != null) {
             dataSource.close();
         }
     }
 
+    /**
+     * Retrieves all admin IDs from the Admin table.
+     * 
+     * @return a ResultSet containing the admin IDs, or null if an error occurs.
+     */
     public ResultSet getAllAdminIDs() {
         ResultSet resultSet = null;
         String query = "SELECT admin_id FROM Admin";
@@ -83,6 +120,16 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the book data associated with a specific copy ID from the library
+     * system.
+     * This includes joining the Book, BookCopy, and BorrowTransaction tables to get
+     * the relevant information.
+     * 
+     * @param copy_id the ID of the book copy whose details are to be retrieved.
+     * @return a ResultSet containing the book data for the specified copy ID, or
+     *         null if an error occurs.
+     */
     public ResultSet getBookDataByCopyID(int copy_id) {
         ResultSet resultSet = null;
         String query = "SELECT Book.* FROM Book " +
@@ -102,6 +149,17 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the data of a single book associated with a specific copy ID from
+     * the library system.
+     * This method joins the Book, BookCopy, and BorrowTransaction tables to
+     * retrieve the relevant information
+     * for the specified copy ID. It limits the result to only one record.
+     *
+     * @param copy_id the ID of the book copy whose details are to be retrieved.
+     * @return a ResultSet containing the book data for the specified copy ID, or
+     *         null if an error occurs.
+     */
     public ResultSet get1BookDataByCopyID(int copy_id) {
         ResultSet resultSet = null;
         String query = "SELECT Book.* FROM Book " +
@@ -122,6 +180,21 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves all borrow transactions for a specific client identified by their
+     * client ID.
+     * This method joins the BorrowTransaction, BookCopy, and Book tables to
+     * retrieve information
+     * related to the client's borrow transactions, including the book title, copy
+     * ID, borrow date,
+     * return date, and transaction status.
+     * 
+     * @param client_id the ID of the client whose borrow transactions are to be
+     *                  retrieved.
+     * @return a ResultSet containing the borrow transaction details for the
+     *         specified client ID,
+     *         or null if an error occurs.
+     */
     public ResultSet getTransactionByClientID(int client_id) {
         ResultSet resultSet = null;
         String query = "SELECT " +
@@ -147,6 +220,15 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves all borrow transactions in the system.
+     * This method selects transaction details such as transaction ID, client ID,
+     * copy ID,
+     * borrow date, return date, and status from the BorrowTransaction table.
+     * 
+     * @return a ResultSet containing all borrow transaction details, or null if an
+     *         error occurs.
+     */
     public ResultSet getAllBorrowTransactions() {
         ResultSet resultSet = null;
         String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status FROM BorrowTransaction";
@@ -160,6 +242,18 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves all books borrowed by a client based on their client ID.
+     * This method joins the BorrowTransaction, BookCopy, and Book tables to
+     * retrieve
+     * the details of books borrowed by the specified client.
+     *
+     * @param client_id the ID of the client whose borrowed books are to be
+     *                  retrieved.
+     * @return a ResultSet containing the details of the books borrowed by the
+     *         specified client,
+     *         or null if an error occurs.
+     */
     public ResultSet getBookByClientID(int client_id) {
         ResultSet resultSet = null;
         String query = "SELECT " +
@@ -180,6 +274,18 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the book(s) on the client's wishlist, specifically the one
+     * currently being processed.
+     * This method joins the BorrowTransaction, BookCopy, and Book tables and
+     * filters the transactions
+     * where the status is 'Processing', limiting the result to a single book.
+     *
+     * @param client_id the ID of the client whose wishlist book is to be retrieved.
+     * @return a ResultSet containing the book(s) currently on the wishlist for the
+     *         specified client,
+     *         or null if an error occurs.
+     */
     public ResultSet getWishList(int client_id) {
         ResultSet resultSet = null;
         String query = "SELECT " +
@@ -201,6 +307,20 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the book that a client is currently reading, based on their client
+     * ID.
+     * This method looks for the book with a status of 'Processing', indicating that
+     * the
+     * client is currently borrowing the book. It limits the result to only one
+     * book.
+     * 
+     * @param client_id the ID of the client whose currently reading book is to be
+     *                  retrieved.
+     * @return a ResultSet containing the details of the book the client is
+     *         currently reading,
+     *         or null if an error occurs.
+     */
     public ResultSet getReadingBook(int client_id) {
         ResultSet resultSet = null;
         String query = "SELECT " +
@@ -222,6 +342,14 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves all data from the Book table.
+     * This method queries the Book table to fetch all records without any filtering
+     * or conditions.
+     * 
+     * @return a ResultSet containing all rows from the Book table, or null if an
+     *         error occurs.
+     */
     public ResultSet getAllBookData() {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book";
@@ -237,6 +365,15 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the title of a book based on its book ID.
+     * This method queries the Book table to fetch the title for the book that
+     * matches the provided ID.
+     *
+     * @param bookId the ID of the book whose title is to be retrieved.
+     * @return the title of the book if found, or null if no book with the given ID
+     *         exists or an error occurs.
+     */
     public String getBookTitleById(int bookId) {
         String query = "SELECT title FROM Book WHERE book_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -253,6 +390,15 @@ public class DatabaseDriver {
 
     }
 
+    /**
+     * Retrieves the top 6 highest-rated books from the Book table.
+     * This method queries the Book table and orders the results by the
+     * average_rating field in descending order,
+     * limiting the result to the top 6 books.
+     * 
+     * @return a ResultSet containing the top 6 highest-rated books, or null if an
+     *         error occurs.
+     */
     public ResultSet getHighestRatingBooks() {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book " +
@@ -269,6 +415,15 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the highest-rated book from the Book table.
+     * This method queries the Book table and orders the results by the
+     * average_rating field in descending order,
+     * limiting the result to the top book.
+     *
+     * @return a ResultSet containing the highest-rated book, or null if an error
+     *         occurs.
+     */
     public ResultSet getHighestRatingBook() {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book " +
@@ -285,6 +440,22 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the top 10 highest-rated books from the Book table, optionally
+     * filtered by genre.
+     * If a genre is provided (other than "TẤT CẢ"), the results are filtered to
+     * only include books
+     * of that genre. If no genre is provided, it retrieves books from all genres.
+     * The method uses the `IFNULL` function to handle cases where the
+     * `average_rating` is null by normalizing
+     * it to 0.0, and orders the books by the normalized rating in descending order.
+     * 
+     * @param genre the genre to filter by, or "TẤT CẢ" to include all genres. If
+     *              null or "TẤT CẢ", all genres are included.
+     * @return a ResultSet containing the top 10 highest-rated books (or fewer if
+     *         not enough books match),
+     *         or null if an error occurs.
+     */
     public ResultSet getHighestRatingBooksByGenre(String genre) {
         ResultSet resultSet = null;
         String query = "SELECT *, " +
@@ -314,6 +485,14 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the data of a client from the Client table based on their username.
+     * This method uses a SQL query to fetch all columns of the client whose
+     * username matches the provided value.
+     * 
+     * @param username the username of the client whose data is to be retrieved.
+     * @return a ResultSet containing the client's data, or null if an error occurs.
+     */
     public ResultSet getClientData(String username) {
         Statement statement;
         ResultSet resultSet = null;
@@ -326,6 +505,14 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the data of an admin from the admin table based on their username.
+     * This method uses a SQL query to fetch all columns of the admin whose username
+     * matches the provided value.
+     * 
+     * @param username the username of the admin whose data is to be retrieved.
+     * @return a ResultSet containing the admin's data, or null if an error occurs.
+     */
     public ResultSet getAdminData(String username) {
         Statement statement;
         ResultSet resultSet = null;
@@ -338,6 +525,21 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Creates a new client in the Client table.
+     * This method generates a new client ID, library card number, and sets the
+     * initial outstanding fees to zero.
+     * It also inserts the client's data into the database, including name, email,
+     * phone number, address, and a hashed password.
+     * The registration date is set to the current date and time.
+     * 
+     * @param email         the client's email address.
+     * @param phone_number  the client's phone number.
+     * @param address       the client's address.
+     * @param username      the client's username.
+     * @param password_hash the hashed password of the client.
+     * @param name          the client's full name.
+     */
     public void createClient(String email, String phone_number, String address, String username, String password_hash,
             String name) {
         String newLibraryCardNum = null;
@@ -389,6 +591,15 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Retrieves the name of a client based on their client ID.
+     * This method queries the Client table to fetch the name of the client whose
+     * client_id matches the provided value.
+     *
+     * @param clientId the ID of the client whose name is to be retrieved.
+     * @return the name of the client if found, or null if no client with the given
+     *         ID exists or an error occurs.
+     */
     public String getClientNameById(int clientId) {
         String query = "SELECT name FROM Client WHERE client_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -406,6 +617,24 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Retrieves notifications for a specific recipient based on their ID and
+     * account type.
+     * The notifications are ordered by the `is_read` status (unread notifications
+     * come first),
+     * and then by the creation date in descending order. Optionally, the number of
+     * results can be limited
+     * based on the `limit` parameter.
+     * 
+     * @param recipientId the ID of the recipient (client or admin) whose
+     *                    notifications are to be retrieved.
+     * @param accountType the type of account (e.g., "Client", "Admin") to filter
+     *                    notifications.
+     * @param limit       the maximum number of notifications to retrieve. If zero
+     *                    or negative, all matching notifications are returned.
+     * @return a ResultSet containing the matching notifications, or null if an
+     *         error occurs.
+     */
     public ResultSet getNotifications(int recipientId, String AccountType, int limit) {
         String query = "SELECT * FROM Notification WHERE recipient_id = ? And recipient_type = ? ORDER BY is_read ASC, created_at DESC";
         if (limit > 0) {
@@ -426,6 +655,14 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Deletes a notification from the Notification table based on the provided
+     * notification ID.
+     * This method executes a DELETE query to remove the notification with the
+     * specified ID.
+     * 
+     * @param notificationId the ID of the notification to be deleted.
+     */
     public void deleteNotification(int notificationId) {
         String query = "DELETE FROM Notification WHERE notification_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -437,6 +674,16 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Updates the read status of a notification in the Notification table.
+     * This method sets the `is_read` field of a notification based on the provided
+     * notification ID
+     * and the new read status (true or false).
+     * 
+     * @param notificationId the ID of the notification to be updated.
+     * @param isRead         the new read status of the notification (true if read,
+     *                       false if unread).
+     */
     public void updateNotification(int notificationId, boolean isRead) {
         String query = "UPDATE Notification SET is_read = ? WHERE notification_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -449,6 +696,19 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Inserts a new notification into the Notification table.
+     * This method creates a new notification entry with details such as recipient
+     * ID, recipient type,
+     * notification type, message, creation timestamp, and read status.
+     * If the insertion is successful, it sets the generated notification ID to the
+     * provided notification object.
+     * 
+     * @param notification the Notification object containing the details to be
+     *                     inserted into the database.
+     * @return true if the notification was successfully inserted and the ID was
+     *         generated, false otherwise.
+     */
     public boolean insertNotification(Notification notification) {
         String query = "INSERT INTO Notification (recipient_id, recipient_type, notification_type, message, created_at, is_read) VALUES (?, ?, ?, ?, ?, ?);";
         try (Connection conn = dataSource.getConnection();
@@ -474,6 +734,20 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Retrieves a notification from the Notification table based on the provided
+     * notification ID.
+     * This method queries the database for a notification and returns a
+     * Notification object
+     * with details such as recipient ID, recipient type, notification type,
+     * message, creation timestamp,
+     * and read status. If no notification is found with the provided ID, it returns
+     * null.
+     * 
+     * @param notificationId the ID of the notification to be retrieved.
+     * @return a Notification object containing the details of the notification, or
+     *         null if no matching notification is found.
+     */
     public Notification getNotificationById(int notificationId) {
         String query = "SELECT * FROM Notification WHERE notification_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -496,6 +770,19 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Counts the number of unread notifications for a specific recipient.
+     * This method queries the Notification table to count how many notifications
+     * have the `is_read` status set to `false`
+     * for the specified recipient ID and account type.
+     * 
+     * @param recipientId the ID of the recipient whose unread notifications are to
+     *                    be counted.
+     * @param accountType the type of the recipient's account (e.g., "Client",
+     *                    "Admin").
+     * @return the count of unread notifications for the specified recipient, or 0
+     *         if no unread notifications are found or an error occurs.
+     */
     public int countUnreadNotifications(int recipientId, String AccountType) {
         String query = "SELECT COUNT(*) AS unread_count FROM Notification WHERE recipient_id = ? AND recipient_type = ? AND is_read = false;";
         try (Connection conn = dataSource.getConnection();
@@ -512,6 +799,17 @@ public class DatabaseDriver {
         return 0;
     }
 
+    /**
+     * Marks all notifications as read for a specific recipient.
+     * This method updates the `is_read` status to `true` (1) for all notifications
+     * that belong to the specified recipient (identified by recipient ID and
+     * account type).
+     * 
+     * @param recipientId the ID of the recipient whose notifications should be
+     *                    marked as read.
+     * @param accountType the type of the recipient's account (e.g., "Client",
+     *                    "Admin").
+     */
     public void markAllNotificationsAsRead(int recipientId, String AccountType) {
         String query = "UPDATE notification SET is_read = 1 WHERE recipient_id = ? AND recipient_type = ?";
         try (Connection conn = dataSource.getConnection();
@@ -524,6 +822,22 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Inserts a new book review into the BookReview table.
+     * This method adds a review for a specified book from a given client, including
+     * the rating and comment.
+     * If the review is successfully inserted, the average rating of the book is
+     * updated.
+     * 
+     * @param bookId   the ID of the book being reviewed.
+     * @param clientId the ID of the client submitting the review.
+     * @param rating   the rating given by the client (can be null if no rating is
+     *                 provided).
+     * @param comment  the review comment submitted by the client (can be null or
+     *                 empty).
+     * @return true if the review is successfully inserted and the book's average
+     *         rating is updated, false otherwise.
+     */
     public boolean insertBookReview(int bookId, int clientId, Double rating, String comment) {
         String query = "INSERT INTO BookReview (book_id, client_id, rating, comment) VALUES (?, ?, ?, ?);";
         try (Connection conn = dataSource.getConnection();
@@ -552,6 +866,16 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Updates the average rating and review count for a specified book in the Book
+     * table.
+     * This method calculates the average rating and total number of reviews for a
+     * given book by querying
+     * the BookReview table and updates the corresponding values in the Book table.
+     * 
+     * @param bookId the ID of the book whose average rating and review count need
+     *               to be updated.
+     */
     private void updateBookAverageRating(int bookId) {
         String avgQuery = "SELECT AVG(rating) AS avg_rating, COUNT(*) AS review_count FROM BookReview WHERE book_id = ? AND rating IS NOT NULL;";
         String updateBookQuery = "UPDATE Book SET average_rating = ?, review_count = ? WHERE book_id = ?;";
@@ -577,6 +901,18 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Retrieves all reviews for a specific book from the BookReview table.
+     * This method queries the BookReview table to get all reviews for the given
+     * book ID,
+     * ordered by the review date in descending order. It returns the list of
+     * reviews as an ObservableList
+     * of `BookReview` objects.
+     * 
+     * @param bookId the ID of the book whose reviews are to be retrieved.
+     * @return an ObservableList containing all reviews for the specified book,
+     *         ordered by review date.
+     */
     public ObservableList<BookReview> getAllReviewsForBook(int bookId) {
         ObservableList<BookReview> reviews = FXCollections.observableArrayList();
         String query = "SELECT review_id, book_id, client_id, rating, comment, review_date " +
@@ -602,6 +938,17 @@ public class DatabaseDriver {
         return reviews;
     }
 
+    /**
+     * Retrieves the review made by a specific user for a particular book.
+     * This method queries the BookReview table to find a review for the given book
+     * ID and client ID.
+     * If a review exists, it returns the corresponding `BookReview` object.
+     * 
+     * @param bookId   the ID of the book for which the review is being retrieved.
+     * @param clientId the ID of the client who submitted the review.
+     * @return the `BookReview` object corresponding to the provided bookId and
+     *         clientId, or null if no review exists.
+     */
     public BookReview getUserReview(int bookId, int clientId) {
         String query = "SELECT review_id, book_id, client_id, rating, comment, review_date FROM BookReview WHERE book_id = ? AND client_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -624,6 +971,22 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Inserts a new book review or updates an existing review for a specific user
+     * and book.
+     * This method first checks if the user has already submitted a review for the
+     * given book.
+     * If the user has not submitted a review, it inserts a new review; otherwise,
+     * it updates the existing review.
+     * 
+     * @param bookId   the ID of the book being reviewed.
+     * @param clientId the ID of the client submitting the review.
+     * @param rating   the rating given to the book (null if no rating is provided).
+     * @param comment  the comment provided by the client (null if no comment is
+     *                 provided).
+     * @return true if the review was successfully inserted or updated, false
+     *         otherwise.
+     */
     public boolean upsertBookReview(int bookId, int clientId, Double rating, String comment) {
         BookReview existingReview = getUserReview(bookId, clientId);
 
@@ -634,6 +997,19 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Updates an existing book review for a specific review ID.
+     * This method updates the rating and/or comment for a book review identified by
+     * the given review ID.
+     * It also updates the review date to the current time. After updating the
+     * review, it recalculates the book's average rating.
+     * 
+     * @param reviewId the ID of the review to be updated.
+     * @param rating   the new rating for the review (null if no change in rating).
+     * @param comment  the new comment for the review (null if no change in
+     *                 comment).
+     * @return true if the review was successfully updated, false otherwise.
+     */
     public boolean updateBookReview(int reviewId, Double rating, String comment) {
         String query = "UPDATE BookReview SET rating = ?, comment = ?, review_date = ? WHERE review_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -670,6 +1046,15 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Retrieves the count of reviews for a specific book.
+     * This method queries the `BookReview` table to count how many reviews exist
+     * for a given book ID.
+     * 
+     * @param bookId the ID of the book for which the review count is being
+     *               retrieved.
+     * @return the number of reviews for the book, or 0 if no reviews are found.
+     */
     public int getReviewCount(int bookId) {
         String query = "SELECT COUNT(*) AS count FROM BookReview WHERE book_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -685,6 +1070,15 @@ public class DatabaseDriver {
         return 0;
     }
 
+    /**
+     * Retrieves the sum of ratings for a specific book.
+     * This method queries the `BookReview` table to calculate the sum of all
+     * ratings for a given book ID.
+     * 
+     * @param bookId the ID of the book for which the sum of ratings is being
+     *               retrieved.
+     * @return the sum of ratings for the book, or 0.0 if no ratings are found.
+     */
     public double getSumRatings(int bookId) {
         String query = "SELECT SUM(rating) AS sum FROM BookReview WHERE book_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -700,6 +1094,17 @@ public class DatabaseDriver {
         return 0.0;
     }
 
+    /**
+     * Retrieves the number of books borrowed by a specific client.
+     * This method queries the `BorrowTransaction` table to count the number of
+     * transactions
+     * associated with a particular client ID.
+     * 
+     * @param clientId the ID of the client for which the borrowed book count is
+     *                 being retrieved.
+     * @return the number of borrowed books for the client, or 0 if no transactions
+     *         are found.
+     */
     public int getNumberOfBorrowedBooks(int clientId) {
         String query = "SELECT COUNT(*) AS count FROM BorrowTransaction WHERE client_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -715,6 +1120,19 @@ public class DatabaseDriver {
         return 0;
     }
 
+    /**
+     * Retrieves the most borrowed book by a specific client.
+     * This method queries the `BorrowTransaction` table, joining it with `BookCopy`
+     * and `Book` tables
+     * to find the book that a client has borrowed the most. The results are ordered
+     * by the borrow count in descending order,
+     * and only the most frequently borrowed book is returned.
+     *
+     * @param clientId the ID of the client for which the favorite (most borrowed)
+     *                 book is being retrieved.
+     * @return the `Book` object representing the client's most borrowed book, or
+     *         null if no books are found.
+     */
     public Book getClientFavouriteBook(int clientId) {
         String query = "SELECT b.*, COUNT(bt.copy_id) AS borrow_count " +
                 "FROM BorrowTransaction bt " +
@@ -737,6 +1155,19 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Retrieves the most frequently borrowed genre for a specific client.
+     * This method queries the `BorrowTransaction` table, joining it with `BookCopy`
+     * and `Book` tables
+     * to find the genre that the client has borrowed the most. The results are
+     * ordered by the genre count in descending order,
+     * and only the most frequently borrowed genre is returned.
+     *
+     * @param clientId the ID of the client for which the favorite genre is being
+     *                 retrieved.
+     * @return the genre that the client has borrowed the most, or null if no books
+     *         are found.
+     */
     public String getClientFavouriteGenre(int clientId) {
         String query = "SELECT b.genre, COUNT(b.genre) AS genre_count " +
                 "FROM BorrowTransaction bt " +
@@ -759,6 +1190,21 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Retrieves the most recent borrow activities of a client.
+     * This method queries the `BorrowTransaction` table, joining it with `BookCopy`
+     * and `Book` tables to fetch
+     * the client's recent borrowed books along with the borrow date. The results
+     * are ordered by the borrow date in descending
+     * order, and only the specified number of recent activities (up to the limit)
+     * are returned.
+     *
+     * @param clientId the ID of the client whose recent activities are being
+     *                 retrieved.
+     * @param limit    the maximum number of recent activities to retrieve.
+     * @return a list of strings describing the recent borrow activities, where each
+     *         string contains the book title and borrow date.
+     */
     public List<String> getClientRecentActivities(int clientId, int limit) {
         String query = "SELECT bt.borrow_date, b.title " +
                 "FROM BorrowTransaction bt " +
@@ -784,6 +1230,20 @@ public class DatabaseDriver {
         return activities;
     }
 
+    /**
+     * Retrieves the top-rated books for a client based on their reviews.
+     * This method queries the `BookReview` table, joins it with the `Book` table,
+     * and retrieves the books rated by the client in descending order of their
+     * ratings.
+     * The results are limited to the specified number of top books.
+     *
+     * @param clientId the ID of the client whose top-rated books are being
+     *                 retrieved.
+     * @param limit    the maximum number of top-rated books to retrieve.
+     * @return a string containing the book details for the top-rated books, where
+     *         each book's data is separated by a pipe ('|'),
+     *         and each book is on a new line.
+     */
     public String getTopBooksForClient(int clientId, int limit) {
         String query = "SELECT b.book_id, b.author, b.image_path, br.rating AS client_rating " +
                 "FROM BookReview br " +
@@ -815,6 +1275,20 @@ public class DatabaseDriver {
         return result.toString();
     }
 
+    /**
+     * Retrieves the monthly borrowing trends for a specific client.
+     * This method queries the `BorrowTransaction` table, groups the transactions by
+     * month,
+     * and counts the number of borrowings for each month.
+     * The result is returned as a map where the key is the month (in 'YYYY-MM'
+     * format)
+     * and the value is the number of borrowings in that month.
+     *
+     * @param clientId the ID of the client whose borrowing trends are being
+     *                 retrieved.
+     * @return a map where the keys are months in 'YYYY-MM' format, and the values
+     *         are the number of borrowings for each month.
+     */
     public Map<String, Integer> getMonthlyBorrowingTrends(int clientId) {
         String query = "SELECT DATE_FORMAT(borrow_date, '%Y-%m') AS month, COUNT(*) AS borrow_count " +
                 "FROM BorrowTransaction " +
@@ -837,6 +1311,20 @@ public class DatabaseDriver {
         return trends;
     }
 
+    /**
+     * Retrieves the borrowing trends by genre for a specific client.
+     * This method queries the `BorrowTransaction` and `Book` tables, grouping
+     * borrow transactions
+     * by genre, and counting the number of books borrowed for each genre.
+     * The result is returned as a map where the key is the genre, and the value is
+     * the number of borrowings
+     * for that genre.
+     *
+     * @param clientId the ID of the client whose borrowing trends are being
+     *                 retrieved.
+     * @return a map where the keys are genres, and the values are the number of
+     *         borrowings for each genre.
+     */
     public Map<String, Integer> getBorrowingTrendsByCategory(int clientId) {
         String query = "SELECT b.genre, COUNT(*) AS borrow_count " +
                 "FROM BorrowTransaction bt " +
@@ -860,6 +1348,22 @@ public class DatabaseDriver {
         return trends;
     }
 
+    /**
+     * Extracts a `Book` object from the provided `ResultSet` and maps the columns
+     * to the corresponding
+     * fields of the `Book` class. This method retrieves details such as the book's
+     * ID, title, author,
+     * ISBN, genre, language, description, publication year, image path, average
+     * rating, review count,
+     * and the quantity of book copies available.
+     * The quantity of the book is retrieved by calling the `countBookCopies` method
+     * with the `book_id`.
+     *
+     * @param rs the `ResultSet` object containing the book's data from the database
+     *           query.
+     * @return a `Book` object populated with the data from the `ResultSet`.
+     * @throws SQLException if there is an error accessing the database.
+     */
     private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
         int book_id = rs.getInt("book_id");
         String title = rs.getString("title");
@@ -879,6 +1383,19 @@ public class DatabaseDriver {
                 average_rating, review_count, quantity);
     }
 
+    /**
+     * Retrieves the first available book copy for a specific book from the
+     * database.
+     * The query searches for a book copy that is marked as available (`is_available
+     * = TRUE`) for the
+     * provided `bookId`. It returns the details of the first available copy it
+     * finds.
+     *
+     * @param bookId the ID of the book for which an available copy is being
+     *               requested.
+     * @return a `BookCopy` object representing the available book copy, or `null`
+     *         if no available copy is found.
+     */
     public BookCopy getAvailableBookCopy(int bookId) {
         String query = "SELECT * FROM BookCopy WHERE book_id = ? AND is_available = TRUE LIMIT 1";
         try (Connection conn = dataSource.getConnection();
@@ -898,6 +1415,15 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Retrieves the book ID associated with a given copy ID.
+     * This method queries the `BookCopy` table to find the book ID corresponding to
+     * the provided copy ID.
+     *
+     * @param copyId the ID of the book copy.
+     * @return the book ID associated with the given copy ID, or -1 if no book copy
+     *         is found.
+     */
     public int getBookIdByCopyId(int copyId) {
         int bookId = -1;
 
@@ -916,6 +1442,15 @@ public class DatabaseDriver {
         return bookId;
     }
 
+    /**
+     * Counts the number of available copies for a specific book.
+     * This method queries the `BookCopy` table to count the available copies (where
+     * `is_available = true`)
+     * of the book specified by the given `book_id`.
+     *
+     * @param book_id the ID of the book to count the available copies for.
+     * @return the number of available copies for the given book.
+     */
     public int countBookCopies(int book_id) {
         int count = 0;
         String query = "SELECT COUNT(*) AS count FROM BookCopy WHERE book_id = ? AND is_available = true";
@@ -932,6 +1467,17 @@ public class DatabaseDriver {
         return count;
     }
 
+    /**
+     * Creates a new borrow transaction for a client borrowing a specific book copy.
+     * This method inserts a new record into the `BorrowTransaction` table with the
+     * client ID,
+     * copy ID, borrow date, and an initial status of "Processing".
+     * 
+     * @param clientId the ID of the client who is borrowing the book.
+     * @param copyId   the ID of the book copy being borrowed.
+     * @return true if the borrow transaction was successfully created, false
+     *         otherwise.
+     */
     public boolean createBorrowTransaction(int clientId, int copyId) {
         String query = "INSERT INTO BorrowTransaction (client_id, copy_id, borrow_date, status) VALUES (?, ?, ?, 'Processing')";
         try (Connection conn = dataSource.getConnection();
@@ -947,6 +1493,18 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Updates the availability status of a specific book copy in the system.
+     * This method modifies the `is_available` field of the `BookCopy` table for the
+     * given copy ID.
+     * 
+     * @param copyId      the ID of the book copy whose availability is to be
+     *                    updated.
+     * @param isAvailable the new availability status of the book copy.
+     *                    `true` means the book is available, and `false` means it
+     *                    is not.
+     * @return true if the update was successful, false otherwise.
+     */
     public boolean updateBookCopyAvailability(int copyId, boolean isAvailable) {
         String query = "UPDATE BookCopy SET is_available = ? WHERE copy_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -961,6 +1519,14 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Retrieves a list of active borrow transactions for a specific client that are
+     * in the 'Processing' status.
+     * 
+     * @param clientId the ID of the client whose active borrow transactions are to
+     *                 be fetched.
+     * @return a list of active borrow transactions for the given client.
+     */
     public List<BorrowTransaction> getActiveBorrowTransactions(int clientId) {
         List<BorrowTransaction> transactions = new ArrayList<>();
         String query = "SELECT * FROM BorrowTransaction WHERE client_id = ? AND status = 'Processing'";
@@ -987,6 +1553,13 @@ public class DatabaseDriver {
         return transactions;
     }
 
+    /**
+     * Retrieves a list of active borrow transactions that are in the 'Processing'
+     * status.
+     * 
+     * @return a list of active borrow transactions that are currently being
+     *         processed.
+     */
     public List<BorrowTransaction> getActiveBorrowTransactions() {
         String query = "SELECT * FROM BorrowTransaction WHERE status = 'Processing'";
         List<BorrowTransaction> activeTransactions = new ArrayList<>();
@@ -1010,6 +1583,14 @@ public class DatabaseDriver {
         return activeTransactions;
     }
 
+    /**
+     * Creates a new notification request for a client regarding a specific book.
+     * 
+     * @param clientId the ID of the client making the request
+     * @param bookId   the ID of the book for which the request is made
+     * @return true if the notification request was successfully created, false
+     *         otherwise
+     */
     public boolean createNotificationRequest(int clientId, int bookId) {
         String query = "INSERT INTO NotificationRequest (client_id, book_id, request_date) VALUES (?, ?, ?)";
         try (Connection conn = dataSource.getConnection();
@@ -1025,6 +1606,14 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Checks if a client has an active borrow transaction for a specific book.
+     * 
+     * @param clientId the ID of the client
+     * @param bookId   the ID of the book
+     * @return true if the client has an active borrow for the specified book, false
+     *         otherwise
+     */
     public boolean hasActiveBorrowForBook(int clientId, int bookId) {
         String query = "SELECT COUNT(*) AS count FROM BorrowTransaction bt " +
                 "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
@@ -1043,6 +1632,13 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Retrieves a notification request for a specific client and book.
+     * 
+     * @param clientId the ID of the client
+     * @param bookId   the ID of the book
+     * @return the NotificationRequest object if found, or null if no request exists
+     */
     public NotificationRequest getNotificationRequest(int clientId, int bookId) {
         String query = "SELECT * FROM NotificationRequest WHERE client_id = ? AND book_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -1063,6 +1659,13 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Retrieves all notification requests for a specific book.
+     * 
+     * @param bookId the ID of the book for which notification requests are to be
+     *               retrieved
+     * @return a list of NotificationRequest objects for the specified book
+     */
     public List<NotificationRequest> getNotificationRequestsForBook(int bookId) {
         List<NotificationRequest> requests = new ArrayList<>();
         String query = "SELECT * FROM NotificationRequest WHERE book_id = ?";
@@ -1084,6 +1687,13 @@ public class DatabaseDriver {
         return requests;
     }
 
+    /**
+     * Deletes a notification request based on the provided request ID.
+     * 
+     * @param requestId the ID of the notification request to be deleted
+     * @return true if the notification request was deleted successfully, false
+     *         otherwise
+     */
     public boolean deleteNotificationRequest(int requestId) {
         String query = "DELETE FROM NotificationRequest WHERE request_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -1097,6 +1707,18 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Processes the return of a book for a given borrow transaction.
+     * This method updates the status of the transaction to 'Returned', sets the
+     * return date,
+     * and updates the availability of the book copy. It also processes
+     * notifications for clients
+     * who requested a notification for the book once it is returned.
+     *
+     * @param transactionId The ID of the borrow transaction to process.
+     * @return {@code true} if the return is processed successfully, {@code false}
+     *         otherwise.
+     */
     public boolean processBookReturn(int transactionId) {
         String updateTransaction = "UPDATE BorrowTransaction SET status = 'Returned', return_date = ? WHERE transaction_id = ?";
         String getCopyIdQuery = "SELECT copy_id, book_id FROM BorrowTransaction WHERE transaction_id = ?";
@@ -1158,6 +1780,24 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Checks if a return reminder notification has already been sent for a borrow
+     * transaction
+     * on the specified day.
+     *
+     * This method queries the `Notification` table to check whether a
+     * "ReturnReminder" notification
+     * has been created for a given transaction ID and the specified borrow day (5
+     * or 6).
+     * If the reminder notification has been sent for that day, it returns true;
+     * otherwise, false.
+     *
+     * @param transactionId The ID of the borrow transaction.
+     * @param dayBorrowed   The day of the borrowing (5 or 6).
+     * @return {@code true} if a return reminder has been sent for the specified
+     *         day,
+     *         {@code false} otherwise.
+     */
     public boolean hasReturnReminder(int transactionId, long dayBorrowed) {
         String query = "";
         if (dayBorrowed == 5) {
@@ -1186,6 +1826,18 @@ public class DatabaseDriver {
 
     }
 
+    /**
+     * Sets the avatar image for a client by updating the `avatar_image_path` field
+     * in the `Client` table.
+     * 
+     * This method allows you to set the avatar image of a client by providing the
+     * file URI of the image.
+     * The method will update the `avatar_image_path` in the database for the given
+     * client ID.
+     *
+     * @param clientId The ID of the client whose avatar image is to be updated.
+     * @param fileURI  The file URI of the avatar image to be set for the client.
+     */
     public void setClientAvatar(int clientId, String fileURI) {
         String query = "UPDATE Client SET avatar_image_path = ? WHERE client_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -1197,5 +1849,4 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
     }
-
 }
