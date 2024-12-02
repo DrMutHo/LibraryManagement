@@ -2,6 +2,8 @@ package main.Controllers.Admin;
 
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
+
 import javax.swing.plaf.ButtonUI;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -32,6 +34,7 @@ public class AdminMenuController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addListeners();
         checkAndUpdateNotificationButton();
+        // Model.getInstance().getDatabaseDriver().toCSV();
     }
 
     private void addListeners() {
@@ -42,25 +45,22 @@ public class AdminMenuController implements Initializable {
         noti_btn.setOnAction(event -> onNotification());
         transaction_btn.setOnAction(event -> onTransaction());
 
-        Model.getInstance().getAllNotifications()
-                .addListener((javafx.collections.ListChangeListener.Change<? extends Notification> change) -> {
-                    while (change.next()) {
-                        if (change.wasAdded()) {
-                            for (Notification newNoti : change.getAddedSubList()) {
-                                newNoti.isReadProperty().addListener((obs, wasRead, isNowRead) -> {
-                                    Platform.runLater(this::checkAndUpdateNotificationButton);
-                                });
-                            }
-                        }
-                        if (change.wasRemoved()) {
-                        }
-                        if (change.wasUpdated()) {
-                            Platform.runLater(this::checkAndUpdateNotificationButton);
-                        }
-                    }
-                });
+        ObservableList<Notification> notifications = Model.getInstance().getAllNotifications();
 
-        for (Notification notification : Model.getInstance().getAllNotifications()) {
+        notifications.addListener((javafx.collections.ListChangeListener.Change<? extends Notification> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (Notification notification : c.getAddedSubList()) {
+                        notification.isReadProperty().addListener((observable, oldValue, newValue) -> {
+                            Platform.runLater(this::checkAndUpdateNotificationButton);
+                        });
+                    }
+                }
+                Platform.runLater(this::checkAndUpdateNotificationButton);
+            }
+        });
+
+        for (Notification notification : notifications) {
             notification.isReadProperty().addListener((obs, wasRead, isNowRead) -> {
                 Platform.runLater(this::checkAndUpdateNotificationButton);
             });
@@ -108,5 +108,6 @@ public class AdminMenuController implements Initializable {
             noti_btn.setText("Notification");
         }
     }
+
 
 }

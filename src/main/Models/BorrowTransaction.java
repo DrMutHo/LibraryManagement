@@ -1,6 +1,9 @@
 package main.Models;
 
+import java.awt.TextField;
 import java.time.LocalDate;
+import javafx.beans.property.*;
+import javafx.scene.control.*;;
 
 public class BorrowTransaction {
     private int transactionId;
@@ -10,6 +13,7 @@ public class BorrowTransaction {
     private LocalDate borrowDate;
     private LocalDate returnDate;
     private String status;
+    private CheckBox selected;
 
     public BorrowTransaction() {
     }
@@ -23,6 +27,7 @@ public class BorrowTransaction {
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
         this.status = status;
+        this.selected = new CheckBox();
     }
 
     // Getters và Setters cho tất cả các thuộc tính
@@ -82,4 +87,14 @@ public class BorrowTransaction {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public CheckBox getSelected() {
+        return this.selected; //
+    }
+
+    public void setSelected(CheckBox selected) {
+        this.selected = selected; // Set the checkbox selected or not
+    }
+
+   
 }

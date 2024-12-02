@@ -10,12 +10,17 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.io.BufferedWriter;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javax.xml.crypto.Data;
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 
@@ -94,6 +99,34 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    public String getBookTitleByCopyId(int copyId) {
+        String title = null;
+        String query = "SELECT b.title " +
+                       "FROM Book b " +
+                       "JOIN BookCopy bc ON b.book_id = bc.book_id " +
+                       "WHERE bc.copy_id = ?";
+    
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+    
+            // Set the copyId parameter
+            pstmt.setInt(1, copyId);
+    
+            // Execute the query and get the result set
+            ResultSet rs = pstmt.executeQuery();
+    
+            // Check if the result set contains a title
+            if (rs.next()) {
+                title = rs.getString("title");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return title;  // Will return null if no book found for the given copyId
+    }
+    
+
     public ResultSet get1BookDataByCopyID(int copy_id) {
         ResultSet resultSet = null;
         String query = "SELECT Book.* FROM Book " +
@@ -136,19 +169,6 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
 
-        return resultSet;
-    }
-
-    public ResultSet getAllBorrowTransactions() {
-        ResultSet resultSet = null;
-        String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status FROM BorrowTransaction";
-        try {
-            Connection connection = this.dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            resultSet = preparedStatement.executeQuery();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return resultSet;
     }
 
@@ -594,6 +614,43 @@ public class DatabaseDriver {
         }
         return reviews;
     }
+
+
+
+    public ObservableList<BorrowTransaction> getAllBorrowTransactions() {
+        ObservableList<BorrowTransaction> borrowTransactions = FXCollections.observableArrayList();
+        String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status " +
+                       "FROM BorrowTransaction ORDER BY borrow_date DESC;";
+    
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+    
+            // Execute the query and get the result set
+            ResultSet rs = pstmt.executeQuery();
+    
+            // Iterate over the result set and create BorrowTransaction objects
+            while (rs.next()) {
+                int transactionId = rs.getInt("transaction_id");
+                int clientId = rs.getInt("client_id");
+                int copyId = rs.getInt("copy_id");
+               
+                LocalDate borrowDate = rs.getDate("borrow_date").toLocalDate();
+                LocalDate returnDate = rs.getDate("return_date") != null ? rs.getDate("return_date").toLocalDate() : null;
+                String status = rs.getString("status");
+                String title = Model.getInstance().getDatabaseDriver().getBookTitleByCopyId(copyId);
+    
+                // Create a new BorrowTransaction object
+                BorrowTransaction transaction = new BorrowTransaction(transactionId, clientId, title, copyId, borrowDate,
+                        returnDate, status);
+                borrowTransactions.add(transaction);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return borrowTransactions;
+    }
+    
+
 
     public BookReview getUserReview(int bookId, int clientId) {
         String query = "SELECT review_id, book_id, client_id, rating, comment, review_date FROM BookReview WHERE book_id = ? AND client_id = ?;";
@@ -1411,21 +1468,21 @@ public class DatabaseDriver {
     }
 
     public int addBook2(Book book) {
-        String checkQuery = "SELECT book_id FROM Book WHERE title = ?";
+        // Câu truy vấn kiểm tra xem sách đã tồn tại với ISBN chưa
+        String checkQuery = "SELECT book_id FROM Book WHERE isbn = ?";
         String query = "INSERT INTO Book (title, author, isbn, genre, language, description, publication_year, image_path, average_rating, review_count) "
-                +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        // Check if book with the same title already exists
+        // Kiểm tra nếu sách với cùng ISBN đã tồn tại
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement stmt2 = conn.prepareStatement(checkQuery)) {
 
-            // Set the title parameter
-            stmt2.setString(1, book.getTitle());
+            // Đặt giá trị của ISBN vào tham số
+            stmt2.setString(1, book.getIsbn());
 
             try (ResultSet rs = stmt2.executeQuery()) {
                 if (rs.next()) {
-                    // Book already exists, return the existing book_id
+                    // Nếu sách đã tồn tại, trả về book_id
                     int existingBookId = rs.getInt("book_id");
                     return existingBookId;
                 }
@@ -1434,11 +1491,11 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
 
-        // Insert the new book into the database if not found
+        // Chèn sách mới vào cơ sở dữ liệu nếu không tìm thấy sách với ISBN này
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            // Set the parameters based on the book object
+            // Đặt các giá trị cho các tham số của câu lệnh INSERT
             stmt.setString(1, book.getTitle());
             stmt.setString(2, book.getAuthor());
             stmt.setString(3, book.getIsbn());
@@ -1447,13 +1504,13 @@ public class DatabaseDriver {
             stmt.setString(6, book.getDescription());
             stmt.setInt(7, book.getPublication_year());
             stmt.setString(8, book.getImagePath());
-            stmt.setBigDecimal(9, BigDecimal.ZERO); // Use BigDecimal for ratings
-            stmt.setInt(10, 0); // Set review count to 0
+            stmt.setBigDecimal(9, BigDecimal.ZERO); // Sử dụng BigDecimal cho rating
+            stmt.setInt(10, 0); // Đặt review count là 0
 
-            // Execute the INSERT statement
+            // Thực thi câu lệnh INSERT
             int rowsAffected = stmt.executeUpdate();
 
-            // If insertion was successful, retrieve the generated book_id
+            // Nếu câu lệnh chèn thành công, lấy book_id từ các khóa tự động sinh
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
@@ -1467,7 +1524,26 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
 
-        return -1; // Return -1 if the book insertion fails
+        return -1; // Trả về -1 nếu chèn sách thất bại
+    }
+
+    public int checkBookExist(String title) {
+        String query = "SELECT book_id FROM Book WHERE title = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            // Set parameter
+            stmt.setString(1, title);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("book_id"); // Trả về book_id nếu tìm thấy
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; // Nếu không tìm thấy, trả về 0
     }
 
     public void addBookCopy(int bookId, boolean isAvailable, String condition) {
@@ -1488,4 +1564,83 @@ public class DatabaseDriver {
         }
 
     }
+
+    public void ProcessReturnBook(int transaction_id) {
+        String query = "UPDATE BorrowTransaction SET status = 'Done' WHERE transaction_id = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {  // Close the parenthesis here
+    
+            stmt.setInt(1, transaction_id); // Set the transaction_id
+            stmt.executeUpdate();  // Execute the update
+    
+        } catch (SQLException e) {
+            e.printStackTrace();  // Print stack trace if an error occurs
+        }
+    }
+
+    public Map<Integer, Map<Integer, Double>> loadDataFromDatabase() {
+        String query = "SELECT client_id, book_id, rating FROM BookReview;";
+        Map<Integer, Map<Integer, Double>> resultMap = new HashMap<>();
+
+        try (Connection conn = dataSource.getConnection(); // Replace dataSource with your actual data source
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int clientId = rs.getInt("client_id");
+                int bookId = rs.getInt("book_id");
+                double rating = rs.getDouble("rating");
+
+                // Check if the clientId already exists in the resultMap
+                resultMap.computeIfAbsent(clientId, k -> new HashMap<>())
+                        .put(bookId, rating);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultMap;
+    }
+
+//     CREATE TABLE IF NOT EXISTS BookCopy (
+//     copy_id INT AUTO_INCREMENT PRIMARY KEY,           -- Unique ID for each physical book copy
+//     book_id INT,                                      -- Foreign key referencing the book this copy belongs to
+//     is_available BOOLEAN DEFAULT TRUE,                -- Availability status of the book copy
+//     book_condition ENUM('New', 'Good', 'Fair', 'Poor') DEFAULT 'Good', -- Physical condition of the book copy
+//     FOREIGN KEY (book_id) REFERENCES Book(book_id) ON DELETE CASCADE
+// );
+    
+    // public void toCSV() {
+    //     String query = "SELECT client_id, book_id, rating FROM BookReview;";
+    //     String output = getClass().getResource("/resources/Database/Data.csv").getFile();
+    
+    //     try (Connection conn = dataSource.getConnection();
+    //          PreparedStatement pstmt = conn.prepareStatement(query);
+    //          ResultSet rs = pstmt.executeQuery();
+    //          BufferedWriter writer = Files.newBufferedWriter(Paths.get(output))) {
+    
+    //         writer.write("client_id,book_id,rating\n");
+    
+    //         // Write data rows
+    //         while (rs.next()) {
+    //             int userId = rs.getInt("client_id");
+    //             int bookId = rs.getInt("book_id");
+    //             double rating = rs.getDouble("rating");
+    
+    //             try {
+    //                 writer.write(userId + "," + bookId + "," + rating + "\n");
+    //             } catch (IOException e) {
+    //                 e.printStackTrace(); // Handle the write exception
+    //             }
+    //         }
+    
+    //     } catch (SQLException | IOException e) {
+    //         e.printStackTrace(); // Handle SQL and IOException for the whole block
+    //     }
+    // }
 }
+    
+
+    // public boolean insertNotification(Notification notification) {
+    //     String query = "

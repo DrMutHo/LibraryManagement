@@ -178,6 +178,21 @@ public class Model {
         }
     }
 
+    public void AddBookCTL(Book currentBook, int quantity) {
+        try {
+            int bookId = Model.getInstance().getDatabaseDriver().addBook2(currentBook);
+
+            String bookIdString = String.valueOf(bookId);
+
+            for (int i = 0; i < quantity; ++i) {
+                Model.getInstance().getDatabaseDriver().addBookCopy(bookId, true, "Good");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void setHighestRatedBooks(String genre) {
         HighestRatedBooks.clear();
 
@@ -427,7 +442,7 @@ public class Model {
     private void prepareNotifications(ObservableList<Notification> notifications, int limit) {
         ResultSet resultSet = (viewFactory.getLoginAccountType().equals(AccountType.CLIENT))
                 ? databaseDriver.getNotifications(this.client.getClientId(), "Client", limit)
-                : databaseDriver.getNotifications(this.client.getClientId(), "Admin", limit);
+                : databaseDriver.getNotifications(this.admin.getadmin_id(), "Admin", limit);
 
         try {
             while (resultSet != null && resultSet.next()) {
@@ -516,11 +531,19 @@ public class Model {
         void onBorrowTransactionAdminCreated();
 
         void onBookReturnProcessed();
+
+        void onAddBook();
     }
 
     public void notifyBookReturnProcessed() {
         for (ModelListenerAdmin listener : listenersAdmin) {
             listener.onBookReturnProcessed();
+        }
+    }
+
+    public void notifyAddBook() {
+        for (ModelListenerAdmin listener : listenersAdmin) {
+            listener.onAddBook();
         }
     }
 
@@ -532,6 +555,14 @@ public class Model {
 
     public void notifyBorrowTransactionAdminCreatedEvent() {
         notifyBorrowTransactionAdminCreated();
+    }
+
+    public void notifyAddBookEvent() {
+        notifyAddBook();
+    }
+
+    public void notifyBookReturnProcessedEvent() {
+        notifyBookReturnProcessed();
     }
 
     public void setClientAvatar(String fileURI) {

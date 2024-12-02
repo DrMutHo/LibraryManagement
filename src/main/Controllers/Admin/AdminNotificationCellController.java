@@ -1,4 +1,4 @@
-package main.Controllers.Client;
+package main.Controllers.Admin;
 
 import main.Models.Notification;
 import main.Models.Model;
@@ -16,11 +16,11 @@ import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
-public class NotificationCellController implements Initializable {
+public class AdminNotificationCellController implements Initializable {
     @FXML
     private AnchorPane rootPane;
     @FXML
-    private Label client_name_lbl;
+    private Label admin_name_lbl;
     @FXML
     private Label recipient_type_lbl;
     @FXML
@@ -34,14 +34,13 @@ public class NotificationCellController implements Initializable {
 
     private final Notification notification;
 
-    public NotificationCellController(Notification notification) {
+    public AdminNotificationCellController(Notification notification) {
         this.notification = notification;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        String clientName = Model.getInstance().getDatabaseDriver().getClientNameById(notification.getRecipientId());
-        client_name_lbl.setText(clientName != null ? clientName : "Unknown");
+        admin_name_lbl.setText("admin");
 
         notification_type_lbl.setText(notification.getNotificationType().toString());
 

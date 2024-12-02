@@ -69,7 +69,7 @@
                         </VBox>
                         <VBox prefHeight="300.0" prefWidth="850.0">
                            <children>
-                              <Label prefHeight="50.0" prefWidth="225.0" styleClass="label-title" text="Recommended for you">
+                              <Label fx:id = "Recommender" prefHeight="50.0" prefWidth="225.0" styleClass="label-title" text="Recommended for you">
                                  <font>
                                     <Font name="Berlin Sans FB Demi Bold" size="20.0" />
                                  </font>

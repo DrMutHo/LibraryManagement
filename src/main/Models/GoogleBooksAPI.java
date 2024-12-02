@@ -148,7 +148,7 @@ public class GoogleBooksAPI {
                         : "No Description";
                 int publicationYear = volumeInfo.has("publishedDate")
                         ? getPublicationYear(volumeInfo.get("publishedDate").getAsString())
-                        : 0;
+                        : -1;
                 String imageUrl = volumeInfo.has("imageLinks")
                         && volumeInfo.getAsJsonObject("imageLinks").has("thumbnail")
                                 ? volumeInfo.getAsJsonObject("imageLinks").get("thumbnail").getAsString()

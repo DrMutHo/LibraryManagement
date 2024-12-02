@@ -11,7 +11,8 @@ import main.Models.BookReview;
 import main.Models.Model;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
-
+import java.net.URL;
+import java.net.URI;
 
 public class BookEdit {
 
@@ -63,6 +64,7 @@ public class BookEdit {
 
     public void setBook(Book book) {
         this.currentBook = book;
+        textDescription.setPromptText(this.currentBook.getDescription());
         displayBookDetails();
     }
 
@@ -77,7 +79,7 @@ public class BookEdit {
        
         if (currentBook.getImagePath() != null && !currentBook.getImagePath().isEmpty()) {
             try {
-                Image image = new Image(getClass().getResourceAsStream(currentBook.getImagePath()));
+                Image image = new Image(currentBook.getImagePath());
                 bookImageView.setImage(image);
             } catch (Exception e) {
                 System.out.println("Image not found: " + currentBook.getImagePath());
@@ -99,19 +101,51 @@ public class BookEdit {
         String language = textLanguage1.getText();
         String publicationYear = textPublicationYear1.getText();
         String description = textDescription.getText();
-        String url = imageurl.getText();
-        Image imagedak = new Image(url);
-        bookImageView1.setImage(imagedak);
-        currentBook.setTitle(title);
-        currentBook.setAuthor(author);
-        currentBook.setIsbn(isbn);
-        currentBook.setGenre(genre);
-        currentBook.setLanguage(language);
-        currentBook.setPublication_year(selectedRating);
-        currentBook.setImage_path(url);
+        String urls = imageurl.getText();
 
-        Model.getInstance().getDatabaseDriver()
-                    .updateBook(currentBook);
+        String imagePath = currentBook.getImagePath();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            bookImageView.setImage(new Image(imagePath));
+        } else {
+            bookImageView.setImage(new Image("/resources/Images/default.png"));
+        }
+        
+        if (!title.isEmpty()) {
+            currentBook.setTitle(title);
+        }
+        
+        if (!author.isEmpty()) {
+            currentBook.setAuthor(author);
+        }
+        
+        if (!isbn.isEmpty()) {
+            currentBook.setIsbn(isbn);
+        }
+        
+        if (!genre.isEmpty()) {
+            currentBook.setGenre(genre);
+        }
+        
+        if (!language.isEmpty()) {
+            currentBook.setLanguage(language);
+        }
+        
+        if (!publicationYear.isEmpty()) {
+            try {
+                // Convert publicationYear to an integer
+                int publicationYearInt = Integer.parseInt(publicationYear);
+                currentBook.setPublication_year(publicationYearInt);
+            } catch (NumberFormatException e) {
+                // Handle the case where the input is not a valid number
+                e.printStackTrace(); // Optionally show a user-friendly message or log the error
+            }
+        }
+        
+        if (!description.isEmpty()) {
+            currentBook.setDescription(description);
+        }
+
+        Model.getInstance().getDatabaseDriver().updateBook(currentBook);
 
         // Here you can also save the changes to a database, or a file, or process the data
         System.out.println("Changes Saved: " + title + ", " + author);

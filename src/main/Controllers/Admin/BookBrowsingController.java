@@ -18,14 +18,13 @@ import javafx.stage.Stage;
 import main.Models.Book;
 import main.Models.BookReview;
 import main.Models.Model;
-import main.Controllers.Client.*;
-
+import main.Controllers.Admin.BookDetailWithReviewController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class BookBrowsingController implements Initializable {
+public class BookBrowsingController implements Initializable, Model.ModelListenerAdmin {
 
     @FXML
     private TextField searchField;
@@ -34,7 +33,7 @@ public class BookBrowsingController implements Initializable {
     @FXML
     private TableColumn<Book, String> colTitle, colAuthor, colGenre;
     @FXML
-    private TableColumn<Book, Integer> colYear;
+    private TableColumn<Book, Integer> colYear, colQuantity;
     @FXML
     private TableColumn<Book, Double> colRating;
     @FXML
@@ -51,16 +50,48 @@ public class BookBrowsingController implements Initializable {
 
     private FilteredList<Book> filteredData;
     private SortedList<Book> sortedData;
-  
-    private  Button addBookButton;
+
+    private Button addBookButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        initializeBookTable();
+    }
+
+    @Override
+    public void onBorrowTransactionAdminCreated() {
+        initializeBookTable();
+    }
+
+    @Override
+    public void onBookReturnProcessed() {
+        initializeBookTable();
+    }
+
+    @Override
+    public void onAddBook() {
+        initializeBookTable();
+    }
+
+    public void initializeBookTable() {
         Model.getInstance().setAllBook();
         colTitle.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
         colAuthor.setCellValueFactory(cellData -> cellData.getValue().authorProperty());
         colGenre.setCellValueFactory(cellData -> cellData.getValue().genreProperty());
         colYear.setCellValueFactory(cellData -> cellData.getValue().publication_yearProperty().asObject());
+        colQuantity.setCellValueFactory(cellData -> cellData.getValue().quantityProperty().asObject());
+
+        colYear.setCellFactory(column -> new TableCell<Book, Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == -1) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(item));
+                }
+            }
+        });
         colRating.setCellValueFactory(cellData -> cellData.getValue().average_ratingProperty().asObject());
 
         filteredData = new FilteredList<>(Model.getInstance().getAllBook(), p -> true);
@@ -87,8 +118,6 @@ public class BookBrowsingController implements Initializable {
 
         bookTable.setItems(sortedData);
 
-        initializeRatingStars();
-
         bookTable.setOnMouseClicked(this::onBookSelect);
     }
 
@@ -97,20 +126,24 @@ public class BookBrowsingController implements Initializable {
         for (int i = 1; i <= 5; i++) {
             Label star = new Label("☆");
             star.setStyle("-fx-font-size: 24; -fx-text-fill: gold;");
-            final int starValue = i;
-
-            star.setOnMouseEntered(event -> {
-                for (int j = 0; j < starValue; j++) {
-                    ((Label) ratingStars.getChildren().get(j)).setText("★");
-                }
-                for (int j = starValue; j < 5; j++) {
-                    ((Label) ratingStars.getChildren().get(j)).setText("☆");
-                }
-            });
-
-
             ratingStars.getChildren().add(star);
         }
+
+        int starValue = (int) selectedBook.getAverage_rating();
+        for (int j = 0; j < starValue; j++) {
+            ((Label) ratingStars.getChildren().get(j)).setText("★");
+        }
+        for (int j = starValue; j < 5; j++) {
+            ((Label) ratingStars.getChildren().get(j)).setText("☆");
+        }
+    }
+
+    private double calculateNewAverageRating(Book book) {
+        int totalReviews = Model.getInstance().getDatabaseDriver().getReviewCount(book.getBook_id());
+        double sumRatings = Model.getInstance().getDatabaseDriver().getSumRatings(book.getBook_id());
+        if (totalReviews == 0)
+            return 0.0;
+        return sumRatings / totalReviews;
     }
 
     @FXML
@@ -124,9 +157,11 @@ public class BookBrowsingController implements Initializable {
             if (selectedBook != null) {
                 this.selectedBook = selectedBook;
                 displayBookDetails(selectedBook);
+                initializeRatingStars();
             }
         }
     }
+
     @FXML
     private void openEditWindow() {
         if (selectedBook == null) {
@@ -137,23 +172,23 @@ public class BookBrowsingController implements Initializable {
             alert.showAndWait();
             return;
         }
-    
+
         try {
             // Load the FXML file for the new window
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/resources/Fxml/Admin/BookEdit.fxml"));
-            
+
             // Create a new Stage (Window)
             Stage stage = new Stage();
             stage.setTitle("Danh Sách Người Mượn Sách");
-            
+
             // Set the scene for the stage
             stage.setScene(new Scene(loader.load()));
-    
+
             // Get the controller and pass the selectedBook to it
             BookEdit controller = loader.getController();
             controller.setBook(selectedBook);
-    
+
             // Show the new window without blocking the current one
             stage.show();
         } catch (IOException e) {
@@ -165,7 +200,6 @@ public class BookBrowsingController implements Initializable {
             alert.showAndWait();
         }
     }
-    
 
     private void displayBookDetails(Book book) {
         labelTitle.textProperty().bind(Bindings.concat("Title: ", book.titleProperty()));
@@ -175,7 +209,7 @@ public class BookBrowsingController implements Initializable {
 
         if (book.getImagePath() != null && !book.getImagePath().isEmpty()) {
             try {
-                Image image = new Image(getClass().getResourceAsStream(book.getImagePath()));
+                Image image = new Image(book.getImagePath());
                 bookImageView.setImage(image);
             } catch (Exception e) {
                 System.out.println("Image not found: " + book.getImagePath());
@@ -199,7 +233,7 @@ public class BookBrowsingController implements Initializable {
 
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/resources/Fxml/Client/BookDetailWithReview.fxml"));
+                    getClass().getResource("/resources/Fxml/Admin/BookDetailWithReview.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Chi Tiết Sách");
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -224,9 +258,9 @@ public class BookBrowsingController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Admin/AddBook.fxml"));
             Stage stage = new Stage();
-            stage.setTitle("Thêm Sách");  
-            stage.initModality(Modality.APPLICATION_MODAL); 
-            stage.setScene(new Scene(loader.load()));  
+            stage.setTitle("Thêm Sách");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(loader.load()));
 
             AddBookController controller = loader.getController();
 
@@ -235,15 +269,14 @@ public class BookBrowsingController implements Initializable {
             Model.getInstance().setAllBook();
             bookTable.refresh();
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Lỗi");
-                alert.setHeaderText(null);
-                alert.setContentText("Không thể mở cửa sổ thêm sách.");
-                alert.showAndWait();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Lỗi");
+            alert.setHeaderText(null);
+            alert.setContentText("Không thể mở cửa sổ thêm sách.");
+            alert.showAndWait();
+        }
     }
 
 }
-
