@@ -236,22 +236,20 @@ public class Model {
 
             Row headerRow = sheet.createRow(0);
             headerRow.createCell(0).setCellValue("Transaction ID");
-            headerRow.createCell(1).setCellValue("Client ID");
-            headerRow.createCell(2).setCellValue("Copy ID");
-            headerRow.createCell(3).setCellValue("Borrow Date");
-            headerRow.createCell(4).setCellValue("Return Date");
-            headerRow.createCell(5).setCellValue("Status");
+            headerRow.createCell(1).setCellValue("Copy ID");
+            headerRow.createCell(2).setCellValue("Borrow Date");
+            headerRow.createCell(3).setCellValue("Return Date");
+            headerRow.createCell(4).setCellValue("Status");
 
             int rowNum = 1;
             while (resultSet.next()) {
                 Row row = sheet.createRow(rowNum++);
                 row.createCell(0).setCellValue(resultSet.getInt("transaction_id"));
-                row.createCell(1).setCellValue(resultSet.getInt("client_id"));
-                row.createCell(2).setCellValue(resultSet.getInt("copy_id"));
-                row.createCell(3).setCellValue(resultSet.getDate("borrow_date").toString());
-                row.createCell(4).setCellValue(
+                row.createCell(1).setCellValue(resultSet.getInt("copy_id"));
+                row.createCell(2).setCellValue(resultSet.getDate("borrow_date").toString());
+                row.createCell(3).setCellValue(
                         resultSet.getDate("return_date") != null ? resultSet.getDate("return_date").toString() : "");
-                row.createCell(5).setCellValue(resultSet.getString("status"));
+                row.createCell(4).setCellValue(resultSet.getString("status"));
             }
 
             try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
