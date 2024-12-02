@@ -265,7 +265,7 @@ public class BorrowTransactionController implements Initializable {
 
         String filePath = "D:/javaaa/oop/borrow_transactions.xlsx";
         try {
-            Model.getInstance().exportBorrowTransactionsToExcel(filePath);
+            Model.getInstance().exportClientBorrowTransactionsToExcel(filePath);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error exporting to Excel: " + e.getMessage());
@@ -282,26 +282,6 @@ public class BorrowTransactionController implements Initializable {
             alert.showAndWait();
             return;
         }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/resources/Fxml/Client/BookDetailWithReview.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Transaction Details");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(loader.load()));
-
-            BookDetailWithReviewController controller = loader.getController();
-            controller.setBook(selectedBook);
-
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Cannot open the transaction details window.");
-            alert.showAndWait();
-        }
+        Model.getInstance().setSelectedBook(selectedBook);
     }
 }

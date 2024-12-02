@@ -213,6 +213,47 @@ public class Model {
         }
     }
 
+    public void exportClientBorrowTransactionsToExcel(String filePath) {
+        try {
+            ResultSet resultSet = databaseDriver
+                    .getTransactionByClientID(Model.getInstance().getClient().getClientId());
+
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Transactions");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Transaction ID");
+            headerRow.createCell(1).setCellValue("Client ID");
+            headerRow.createCell(2).setCellValue("Copy ID");
+            headerRow.createCell(3).setCellValue("Borrow Date");
+            headerRow.createCell(4).setCellValue("Return Date");
+            headerRow.createCell(5).setCellValue("Status");
+
+            int rowNum = 1;
+            while (resultSet.next()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(resultSet.getInt("transaction_id"));
+                row.createCell(1).setCellValue(resultSet.getInt("client_id"));
+                row.createCell(2).setCellValue(resultSet.getInt("copy_id"));
+                row.createCell(3).setCellValue(resultSet.getDate("borrow_date").toString());
+                row.createCell(4).setCellValue(
+                        resultSet.getDate("return_date") != null ? resultSet.getDate("return_date").toString() : "");
+                row.createCell(5).setCellValue(resultSet.getString("status"));
+            }
+
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+
+            workbook.close();
+            resultSet.close();
+            System.out.println("Excel file generated successfully: " + filePath);
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void exportBorrowTransactionsToExcel(String filePath) {
         try {
             ResultSet resultSet = databaseDriver.getAllBorrowTransactions();
@@ -526,4 +567,5 @@ public class Model {
     public void setClientAvatar(String fileURI) {
         databaseDriver.setClientAvatar(Model.getInstance().getClient().getClientId(), fileURI);
     }
+
 }
