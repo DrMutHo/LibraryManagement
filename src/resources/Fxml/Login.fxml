@@ -52,7 +52,7 @@
             </HBox>
             <HBox fx:id="hbox_0" alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT" styleClass="hbox_set">
                <children>
-                  <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="29.0" prefWidth="239.0" styleClass="text" HBox.hgrow="NEVER">
+                  <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" styleClass="text_username" HBox.hgrow="NEVER">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -75,7 +75,7 @@
             </HBox>
             <HBox fx:id="hbox_1" alignment="CENTER" blendMode="SRC_ATOP" nodeOrientation="RIGHT_TO_LEFT" styleClass="hbox_set">
                <children>
-                  <Button fx:id="toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="25.0" styleClass="button_set" HBox.hgrow="NEVER">
+                  <Button fx:id="toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" mnemonicParsing="false" styleClass="button_set" HBox.hgrow="NEVER">
                      <graphic>
                         <ImageView fx:id="imageIcon" fitHeight="20.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
@@ -85,7 +85,7 @@
                   </Button>
                   <StackPane HBox.hgrow="NEVER">
                      <children>
-                        <PasswordField fx:id="passwordField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="28.0" prefWidth="196.0" styleClass="text">
+                        <PasswordField fx:id="passwordField" nodeOrientation="LEFT_TO_RIGHT" styleClass="text">
                            <StackPane.margin>
                               <Insets />
                            </StackPane.margin>
@@ -116,7 +116,7 @@
                   <Insets bottom="5.0" top="5.0" />
                </padding>
             </HBox>
-            <Button fx:id="loginButton" mnemonicParsing="false" prefHeight="38.49" prefWidth="190.31" styleClass="button_login" text="LOGIN">
+            <Button fx:id="loginButton" mnemonicParsing="false" styleClass="button_login" text="LOGIN">
                <VBox.margin>
                   <Insets left="90.0" top="20.0" />
                </VBox.margin>
@@ -126,9 +126,9 @@
                   <Insets left="105.0" top="10.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="createnewaccountButton" mnemonicParsing="false" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="SIGN UP">
+            <Button fx:id="createnewaccountButton" mnemonicParsing="false" styleClass="button_createnewaccount" text="SIGN UP">
                <VBox.margin>
-                  <Insets left="110.0" top="10.0" />
+                  <Insets left="140.0" top="10.0" />
                </VBox.margin>
             </Button>
          </children>
