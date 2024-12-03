@@ -4,6 +4,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
@@ -23,6 +25,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
@@ -81,24 +84,10 @@ public class SignupController implements Initializable {
     private HBox signup_hbox5;
     @FXML 
     private Button signup_createNewAccountButton;
-    @FXML 
-    private ImageView signup_imageErrorIcon;
-    @FXML 
-    private ImageView signup_imageErrorIcon1;
-    @FXML 
-    private ImageView signup_imageErrorIcon2;
-    @FXML 
-    private ImageView signup_imageErrorIcon3;
-    @FXML 
-    private ImageView signup_imageErrorIcon4;
-    @FXML 
-    private ImageView signup_imageErrorIcon5;
     @FXML
     private TextField signup_name;
     @FXML
     private HBox signup_hbox6;
-    @FXML
-    private ImageView signup_imageErrorIcon6;
     @FXML
     private AnchorPane signup_anchorpane;
     @FXML
@@ -276,81 +265,106 @@ public class SignupController implements Initializable {
                 return isValidSignUp(email, phoneNum, username, password, password1, address, name);
             }
         };
-        new Thread(task).start();
+        
         task.setOnSucceeded(event -> { 
             if (task.getValue()) {
                 Model.getInstance().evaluateClientCred(username);
                 Model.getInstance().getViewFactory().showLoading(() -> {
                     try {
-                       
-                    } catch (NullPointerException e) {
+                       Model.getInstance().getDatabaseDriver().createClient(email, phoneNum, address, username, hashedPassword, name);
+                    } catch (Exception e) {
                         Thread.currentThread().interrupt();
                     }
                     Platform.runLater(() -> {
-                        Model.getInstance().getDatabaseDriver().createClient(email, phoneNum, address, username, hashedPassword, name);
                         successNotification.setVisible(true);
                     });
                 }, signup_anchorpane);
             }
         });
+        new Thread(task).start();
     }
 
     private boolean isValidSignUp(String email, String phoneNum,
     String username, String password, String password1, String address, String name) {
         boolean isValid = true;
+        StringBuilder errorMessages = new StringBuilder();
 
         if (!isValidName(name)) {
-            highlightField(signup_hbox6, signup_imageErrorIcon6);
-        } else {
-            resetField(signup_hbox6, signup_imageErrorIcon6);
-        }
-        if (!isValidUserName(username)) {
-            highlightField(signup_hbox0, signup_imageErrorIcon);
+            errorMessages.append("- Tên hợp lệ phải không để trống và chỉ chứa chữ cái.\n");
             isValid = false;
-        } else {
-            resetField(signup_hbox0, signup_imageErrorIcon);
         }
 
-        if(!isValidAddress(address)) {
-            highlightField(signup_hbox5, signup_imageErrorIcon1);
+        if (!isValidUserName(username)) {
+            errorMessages.append("- Tên người dùng phải chưa tồn tại.\n");
             isValid = false;
-        } else {
-            resetField(signup_hbox5, signup_imageErrorIcon1);
         }
-        
+
+        if (!isValidAddress(address)) {
+            errorMessages.append("- Địa chỉ không được để trống.\n");
+            isValid = false;
+        }
+
         if (!isValidEmail(email)) {
-            highlightField(signup_hbox3, signup_imageErrorIcon3);
+            errorMessages.append("- Địa chỉ email không hợp lệ.\n");
             isValid = false;
-        } else {
-            resetField(signup_hbox3, signup_imageErrorIcon3);
         }
-        
+
         if (!isValidPassword(password, password1)) {
-            highlightField(signup_hbox1, signup_imageErrorIcon4);
-            highlightField(signup_hbox2, signup_imageErrorIcon5);
+            errorMessages.append("- Mật khẩu không khớp hoặc ít nhất phải có 8 ký tự.\n");
             isValid = false;
-        } else {
-            resetField(signup_hbox1, signup_imageErrorIcon4);
-            resetField(signup_hbox2, signup_imageErrorIcon5);
         }
-        
+
         if (!isValidPhoneNum(phoneNum)) {
-            highlightField(signup_hbox4, signup_imageErrorIcon2);
+            errorMessages.append("- Số điện thoại phải gồm 10 chữ số.\n");
             isValid = false;
-        } else {
-            resetField(signup_hbox4, signup_imageErrorIcon2);
+        }
+
+        if (errorMessages.length() > 0) {
+            // Nếu có lỗi, hiển thị tất cả các lỗi trong một hộp thoại cảnh báo
+            showAlert(AlertType.WARNING, "Lỗi Đăng Ký", errorMessages.toString());
+            isValid = false;
         }
         return isValid;
     }
     
-    private void highlightField(HBox hbox, ImageView icon) {
-        hbox.getStyleClass().add("signup_hbox_set-error"); 
-        icon.setImage(new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
-    }
-        
-    private void resetField(HBox hbox, ImageView icon) {
-        hbox.getStyleClass().remove("signup_hbox_set-error"); 
-        icon.setImage(null); 
+    private void showAlert(AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            // Tạo một Alert với loại được chỉ định
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null); // Không có tiêu đề phụ
+            alert.setContentText(message); // Thiết lập thông báo
+    
+            // Chọn biểu tượng phù hợp dựa trên AlertType
+            ImageView icon = new ImageView();
+    
+            // Thay đổi hình ảnh dựa trên loại cảnh báo
+            switch (alertType) {
+                case INFORMATION:
+                    icon.setImage(new Image(getClass().getResource("/resources/Images/success.png").toExternalForm()));
+                    break;
+                case WARNING:
+                    icon.setImage(new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
+                    break;
+                case ERROR:
+                    icon.setImage(new Image(getClass().getResource("/resources/Images/error-icon.png").toExternalForm()));
+                    break;
+                default:
+                    icon.setImage(new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
+                    break;
+            }
+    
+            // Thiết lập kích thước cho biểu tượng
+            icon.setFitHeight(30); // Chiều cao hình ảnh
+            icon.setFitWidth(30); // Chiều rộng hình ảnh
+            alert.setGraphic(icon); // Thêm hình ảnh vào Alert
+    
+            // Thay đổi nền của Alert thành màu trắng
+            alert.getDialogPane().setStyle("-fx-background-color: white;"); // Nền trắng
+    
+            // Hiển thị Alert
+            alert.showAndWait();
+        });
     }
 
     private boolean isValidName(String name) {

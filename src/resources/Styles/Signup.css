@@ -3,11 +3,13 @@
 
 .signup_anchorpane {
     -fx-background-color: white;    
+    -fx-pref-width: 850;
+    -fx-pref-height: 750;
 
 }
 .signup_label {
     -fx-font-family: "Playwrite GB S", cursive;
-    -fx-font-size: 50px;
+    -fx-font-size: 30px;
     -fx-text-fill: white;
 }
 
@@ -66,6 +68,9 @@
     -fx-border-width: 2;
     -fx-padding: 20;
     -fx-border-color: brown;
+    -fx-padding: 10px;
+    -fx-pref-height: 580;
+    -fx-pref-width: 300;
 }
 .signup_button {
     -fx-background-color: #4CAF50;
