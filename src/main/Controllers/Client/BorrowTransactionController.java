@@ -393,30 +393,6 @@ public class BorrowTransactionController implements Initializable {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Chọn Thư Mục Lưu Tệp");
 
-        // Check if the directory exists, if not, create it
-        if (!dir.exists()) {
-            boolean created = dir.mkdirs();
-            if (!created) {
-                System.out.println("Failed to create directory: " + dir.getAbsolutePath());
-                return;
-            }
-        }
-
-        // Check if the directory has write permissions
-        if (!dir.canWrite()) {
-            System.out.println("No write permission for the directory: " + dir.getAbsolutePath());
-            return;
-        }
-
-        // Define the path to the Excel file
-        String filePath = "D:/javaaa/oop/borrow_transactions.xlsx";
-        try {
-            // Export the borrow transactions to Excel
-            Model.getInstance().exportClientBorrowTransactionsToExcel(filePath);
-        } catch (Exception e) {
-            // Handle any errors during the export process
-            e.printStackTrace();
-            System.out.println("Error exporting to Excel: " + e.getMessage());
         // Mở cửa sổ chọn thư mục và lấy thư mục người dùng chọn
         File selectedDirectory = directoryChooser.showDialog(null);
 
