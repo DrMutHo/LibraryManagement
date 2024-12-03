@@ -639,6 +639,15 @@ public class Model {
     }
 
 
+    /**
+     * Evaluates the credentials of an admin user based on the provided username.
+     * <p>
+     * This method retrieves admin data from the database using the provided username.
+     * If the admin exists, it sets the admin details and marks the login as successful.
+     * </p>
+     *
+     * @param username The username of the admin to evaluate. Must not be null or empty.
+     */
     public void evaluateAdminCred(String username) {
         ResultSet resultSet = databaseDriver.getAdminData(username);
         try {
@@ -662,6 +671,15 @@ public class Model {
         }
     }
 
+    /**
+     * Evaluates the credentials of a client user based on the provided username.
+     * <p>
+     * This method retrieves client data from the database using the provided username.
+     * If the client exists, it sets the client details and marks the login as successful.
+     * </p>
+     *
+     * @param username The username of the client to evaluate. Must not be null or empty.
+     */
     public void evaluateClientCred(String username) {
         ResultSet resultSet = databaseDriver.getClientData(username);
         try {
@@ -692,6 +710,17 @@ public class Model {
         }
     }
 
+    /**
+     * Prepares a list of notifications for display.
+     * <p>
+     * This method retrieves notifications from the database based on the account type
+     * (Client or Admin) and the provided limit. It then constructs Notification objects
+     * and adds them to the provided ObservableList.
+     * </p>
+     *
+     * @param notifications The ObservableList to populate with notifications.
+     * @param limit         The maximum number of notifications to retrieve. Use -1 for no limit.
+     */
     private void prepareNotifications(ObservableList<Notification> notifications, int limit) {
         ResultSet resultSet = (viewFactory.getLoginAccountType().equals(AccountType.CLIENT))
                 ? databaseDriver.getNotifications(this.client.getClientId(), "Client", limit)
@@ -733,16 +762,43 @@ public class Model {
         }
     }
 
+    /**
+     * Deletes the specified notification.
+     * <p>
+     * This method removes the notification from the database and updates the local
+     * notifications list accordingly.
+     * </p>
+     *
+     * @param notification The notification to delete. Must not be null.
+     */
     public void deleteNotification(Notification notification) {
         databaseDriver.deleteNotification(notification.getNotificationId());
         allNotifications.remove(notification);
     }
 
+    /**
+     * Updates the specified notification as read.
+     * <p>
+     * This method updates the notification's status in the database and marks it as read
+     * in the local notifications list.
+     * </p>
+     *
+     * @param notification The notification to update. Must not be null.
+     */
     public void updateNotification(Notification notification) {
         databaseDriver.updateNotification(notification.getNotificationId(), true);
         notification.setRead(true);
     }
 
+    /**
+     * Inserts a new notification into the system.
+     * <p>
+     * This method adds the notification to the database and, upon successful insertion,
+     * updates the local notifications list on the JavaFX application thread.
+     * </p>
+     *
+     * @param notification The notification to insert. Must not be null.
+     */
     public void insertNotification(Notification notification) {
         if (databaseDriver.insertNotification(notification)) {
             Platform.runLater(() -> {
@@ -751,10 +807,27 @@ public class Model {
         }
     }
 
+    /**
+     * Sends a notification by inserting it into the database.
+     * <p>
+     * This method is used to dispatch a notification without updating the local list.
+     * </p>
+     *
+     * @param notification The notification to send. Must not be null.
+     */
     public void sendNotification(Notification notification) {
         databaseDriver.insertNotification(notification);
     }
 
+    /**
+     * Marks all notifications for the specified recipient as read.
+     * <p>
+     * This method updates the read status of all notifications for the given recipient
+     * in the database and reflects the changes in the local notifications list.
+     * </p>
+     *
+     * @param recipientId The ID of the recipient whose notifications are to be marked as read.
+     */
     public void markAllNotificationsAsRead(int recipientId) {
         if (viewFactory.getLoginAccountType().equals(AccountType.CLIENT))
             databaseDriver.markAllNotificationsAsRead(recipientId, "Client");
@@ -765,44 +838,86 @@ public class Model {
         }
     }
 
+    /**
+     * Sets all notifications by preparing and loading them into the local list.
+     * <p>
+     * This method retrieves all notifications without any limit and populates the
+     * {@code allNotifications} ObservableList.
+     * </p>
+     */
     public void setAllNotifications() {
         prepareNotifications(this.allNotifications, -1);
     }
 
+    /**
+     * Retrieves all notifications.
+     *
+     * @return An ObservableList containing all notifications.
+     */
     public ObservableList<Notification> getAllNotifications() {
         return allNotifications;
     }
 
+    /**
+     * Notifies listeners that a borrow transaction has been created for a client.
+     */
     public void notifyBorrowTransactionClientCreatedEvent() {
         notifyBorrowTransactionClientCreated();
     }
 
     // Admin section //
 
+    /**
+     * Listener interface for admin model events.
+     */
     public interface ModelListenerAdmin {
+        /**
+         * Called when a borrow transaction is created by an admin.
+         */
         void onBorrowTransactionAdminCreated();
 
+        /**
+         * Called when a book return is processed by an admin.
+         */
         void onBookReturnProcessed();
     }
 
+    /**
+     * Notifies all registered admin listeners that a book return has been processed.
+     */
     public void notifyBookReturnProcessed() {
         for (ModelListenerAdmin listener : listenersAdmin) {
             listener.onBookReturnProcessed();
         }
     }
 
+    /**
+     * Notifies all registered admin listeners that a borrow transaction has been created.
+     */
     public void notifyBorrowTransactionAdminCreated() {
         for (ModelListenerAdmin listener : listenersAdmin) {
             listener.onBorrowTransactionAdminCreated();
         }
     }
 
+    /**
+     * Notifies all registered admin listeners that a borrow transaction event has occurred.
+     */
     public void notifyBorrowTransactionAdminCreatedEvent() {
         notifyBorrowTransactionAdminCreated();
     }
 
+    /**
+     * Sets the avatar image path for the client.
+     * <p>
+     * This method updates the client's avatar image path in the database.
+     * </p>
+     *
+     * @param fileURI The URI of the avatar image file. Must not be null or empty.
+     */
     public void setClientAvatar(String fileURI) {
         databaseDriver.setClientAvatar(Model.getInstance().getClient().getClientId(), fileURI);
     }
+
 
 }

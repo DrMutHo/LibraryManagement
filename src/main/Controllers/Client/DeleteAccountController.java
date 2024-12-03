@@ -287,5 +287,6 @@ public class DeleteAccountController implements Initializable {
                 errorAlert.showAndWait();
             }
         });
+        new Thread(verifyPasswordTask).start();
     }
 }

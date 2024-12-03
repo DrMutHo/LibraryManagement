@@ -144,10 +144,11 @@ public class ChangePasswordController implements Initializable {
      */
     @FXML
     private HBox hBox2;
+
     /**
      * Initializes the controller class.
      * Sets up the password fields and toggle buttons.
-     * 
+     *
      * @param url The location used to resolve relative paths for the root object.
      * @param resourceBundle The resources used to localize the root object.
      */
@@ -156,6 +157,10 @@ public class ChangePasswordController implements Initializable {
         passwordField_init();
     }
 
+    /**
+     * Initializes the password fields and their corresponding text fields.
+     * Sets up visibility toggling and loads the appropriate icons.
+     */
     public void passwordField_init() {
 
         // Initialize password fields and text fields
@@ -178,8 +183,14 @@ public class ChangePasswordController implements Initializable {
         toggleButton2.setOnAction(event -> togglePasswordVisibility(passwordField2, textField2, imageView2));
     }
 
-
-    // Helper method to initialize password fields and text fields
+    /**
+     * Helper method to initialize password fields and text fields.
+     * Sets visibility and binds text properties for synchronization.
+     *
+     * @param passwordField The PasswordField to initialize.
+     * @param textField The TextField corresponding to the PasswordField.
+     * @param hBox The HBox container holding the field and its toggle button.
+     */
     private void initializePasswordAndTextFields(PasswordField passwordField, TextField textField, HBox hBox) {
         passwordField.setVisible(true);
         passwordField.setManaged(true);
@@ -192,7 +203,12 @@ public class ChangePasswordController implements Initializable {
         addTextFieldListener(textField, hBox);
     }
 
-    // Focus listener for password fields
+    /**
+     * Adds a focus listener to the PasswordField to update the HBox style based on focus state.
+     *
+     * @param passwordField The PasswordField to add the listener to.
+     * @param hBox The HBox container holding the field and its toggle button.
+     */
     private void addPasswordFieldFocusListener(PasswordField passwordField, HBox hbox) {
         passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -203,7 +219,12 @@ public class ChangePasswordController implements Initializable {
         });
     }
 
-    // Focus listener for text fields
+    /**
+     * Adds a focus listener to the TextField to update the HBox style based on focus state.
+     *
+     * @param textField The TextField to add the listener to.
+     * @param hBox The HBox container holding the field and its toggle button.
+     */
     private void addTextFieldListener(TextField textField, HBox hbox) {
         textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -214,7 +235,14 @@ public class ChangePasswordController implements Initializable {
         });
     }
 
-    // Toggle password visibility for each field
+    /**
+     * Toggles the visibility of the password fields between PasswordField and TextField.
+     * Also updates the visibility icon accordingly.
+     *
+     * @param passwordField The PasswordField to toggle.
+     * @param textField The TextField corresponding to the PasswordField.
+     * @param imageView The ImageView displaying the visibility icon.
+     */
     private void togglePasswordVisibility(PasswordField passwordField, TextField textField, ImageView imageView) {
         if (passwordField.isVisible()) {
             // Hide PasswordField, show TextField
@@ -232,7 +260,6 @@ public class ChangePasswordController implements Initializable {
             imageView.setImage(eyeClosed); // Set the eye-closed icon
         }
     }
-
 
     /**
      * Handles the process of changing the password. This method retrieves input values, validates them,
@@ -262,14 +289,14 @@ public class ChangePasswordController implements Initializable {
      */
     @FXML
     private void changePassword() {
-        // Lấy giá trị từ các trường nhập liệu
+        // Retrieve values from input fields
         String currentPassword = passwordField0.getText();
         String newPassword = passwordField1.getText();
         String confirmPassword = passwordField2.getText();
         boolean canUpdate = true;
         String errorMessage = "";
 
-        // Kiểm tra các điều kiện đầu vào và highlight các trường hợp lỗi
+        // Validate input conditions and accumulate error messages
         if (!isValidCurrentPassword(currentPassword)) {
             errorMessage += "Current password is required.\n";
             canUpdate = false;
@@ -285,21 +312,21 @@ public class ChangePasswordController implements Initializable {
             canUpdate = false;
         }
 
-        // Kiểm tra mật khẩu hiện tại từ cơ sở dữ liệu
+        // Check if the current password matches the one in the database
         if (!checkCurrentPassword(Model.getInstance().getClient().getUsername(), currentPassword)) {
             errorMessage += "Current password is incorrect.\n";
             canUpdate = false;
         }
 
-        // Kiểm tra nếu tất cả các điều kiện đều hợp lệ
+        // If all initial validations pass
         if (canUpdate) {
-            // Kiểm tra nếu mật khẩu xác nhận trùng khớp
+            // Check if new password and confirmation match
             if (!newPassword.equals(confirmPassword)) {
                 errorMessage += "New password and confirmation do not match.\n";
                 canUpdate = false;
             }
 
-            // Cập nhật mật khẩu mới vào cơ sở dữ liệu
+            // If confirmation matches, attempt to update the password in the database
             if (canUpdate) {
                 if (updatePassword(Model.getInstance().getClient().getUsername(), newPassword)) {
                     showAlert("Password changed successfully!", Alert.AlertType.INFORMATION);
@@ -309,7 +336,7 @@ public class ChangePasswordController implements Initializable {
             }
         }
 
-        // Nếu có lỗi, hiển thị thông báo lỗi
+        // If there are any validation errors, display them to the user
         if (!canUpdate) {
             showAlert("Please correct the following errors:\n" + errorMessage, Alert.AlertType.ERROR);
         }
@@ -325,7 +352,6 @@ public class ChangePasswordController implements Initializable {
     private boolean isValidCurrentPassword(String currentPassword) {
         return !currentPassword.isEmpty();
     }
-
 
     /**
      * Validates the new password to ensure it is not empty and has a minimum length of 6 characters.
@@ -358,9 +384,9 @@ public class ChangePasswordController implements Initializable {
     private void showAlert(String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle("Notification");
-        alert.setHeaderText(null); // Có thể bỏ trống hoặc thiết lập header nếu cần
+        alert.setHeaderText(null); // Can be left empty or set as needed
         alert.setContentText(message);
-        alert.showAndWait(); // Chờ người dùng đóng thông báo trước khi tiếp tục
+        alert.showAndWait(); // Wait for user to close the alert before continuing
     }
 
     /**
@@ -391,8 +417,8 @@ public class ChangePasswordController implements Initializable {
      * @return {@code true} if the password matches the hash, {@code false} otherwise
      */
     private boolean verifyPassword(String password, String storedPasswordHash) {
-        // Giả sử bạn dùng thư viện bcrypt hoặc PBKDF2 để so sánh hash
-        // Ví dụ sử dụng BCrypt để xác thực mật khẩu
+        // Assuming you are using a hashing library like BCrypt or PBKDF2 to compare hashes
+        // Example using BCrypt to verify password
         return BCrypt.checkpw(password, storedPasswordHash);
     }
 
