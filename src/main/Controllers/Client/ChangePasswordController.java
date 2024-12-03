@@ -27,6 +27,8 @@ import main.Views.ViewFactory;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.Parent;
 
 /**
  * Controller class for the Change Password view.
@@ -142,40 +144,6 @@ public class ChangePasswordController implements Initializable {
      */
     @FXML
     private HBox hBox2;
-
-    /**
-     * Warning icon for current password field validation.
-     */
-    @FXML
-    private ImageView warning0;
-
-    /**
-     * Warning icon for new password field validation.
-     */
-    @FXML
-    private ImageView warning1;
-
-    /**
-     * Warning icon for retyped new password field validation.
-     */
-    @FXML
-    private ImageView warning2;
-
-    /**
-     * Flag to track visibility of the current password field.
-     */
-    private boolean passwordVisible0 = false;
-
-    /**
-     * Flag to track visibility of the new password field.
-     */
-    private boolean passwordVisible1 = false;
-
-    /**
-     * Flag to track visibility of the retyped new password field.
-     */
-    private boolean passwordVisible2 = false;
-
     /**
      * Initializes the controller class.
      * Sets up the password fields and toggle buttons.
@@ -188,12 +156,7 @@ public class ChangePasswordController implements Initializable {
         passwordField_init();
     }
 
-    /**
-     * Initializes password fields and their corresponding text fields, toggle buttons, and icons.
-     */
     public void passwordField_init() {
-        // Set prompt text for the password fields
-        setPromptText();
 
         // Initialize password fields and text fields
         initializePasswordAndTextFields(passwordField0, textField0, hBox0);
@@ -215,30 +178,8 @@ public class ChangePasswordController implements Initializable {
         toggleButton2.setOnAction(event -> togglePasswordVisibility(passwordField2, textField2, imageView2));
     }
 
-    /**
-     * Sets the prompt text for all password fields.
-     */
-    /**
-     * Helper method to set prompt text for all password fields.
-     * Sets appropriate placeholder messages for the password fields and corresponding text fields.
-     */
-    private void setPromptText() {
-        passwordField0.setPromptText("Enter your current password");
-        passwordField1.setPromptText("Your new password must be over 6 letters");
-        passwordField2.setPromptText("Retype your new password");
-        textField0.setPromptText("Enter your current password");
-        textField1.setPromptText("Your new password must be over 6 letters");
-        textField2.setPromptText("Retype your new password");
-    }
 
-    /**
-     * Helper method to initialize password fields and text fields.
-     * Configures visibility, binding, and focus listeners for the fields.
-     * 
-     * @param passwordField The PasswordField to initialize.
-     * @param textField The TextField synchronized with the PasswordField.
-     * @param hBox The HBox containing the password field and toggle button.
-     */
+    // Helper method to initialize password fields and text fields
     private void initializePasswordAndTextFields(PasswordField passwordField, TextField textField, HBox hBox) {
         passwordField.setVisible(true);
         passwordField.setManaged(true);
@@ -251,14 +192,7 @@ public class ChangePasswordController implements Initializable {
         addTextFieldListener(textField, hBox);
     }
 
-    /**
-     * Adds a focus listener to a {@link PasswordField} to update the style of the surrounding {@link HBox}.
-     * When the {@link PasswordField} gains focus, a specified style class is added to the {@link HBox}.
-     * When the {@link PasswordField} loses focus, the style class is removed.
-     *
-     * @param passwordField the {@link PasswordField} to which the focus listener is added
-     * @param hbox          the {@link HBox} whose style will be updated based on the focus state of the {@link PasswordField}
-     */
+    // Focus listener for password fields
     private void addPasswordFieldFocusListener(PasswordField passwordField, HBox hbox) {
         passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -269,15 +203,7 @@ public class ChangePasswordController implements Initializable {
         });
     }
 
-
-    /**
-     * Adds a focus listener to a {@link TextField} to update the style of the surrounding {@link HBox}.
-     * When the {@link TextField} gains focus, a specified style class is added to the {@link HBox}.
-     * When the {@link TextField} loses focus, the style class is removed.
-     *
-     * @param textField the {@link TextField} to which the focus listener is added
-     * @param hbox      the {@link HBox} whose style will be updated based on the focus state of the {@link TextField}
-     */
+    // Focus listener for text fields
     private void addTextFieldListener(TextField textField, HBox hbox) {
         textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -288,24 +214,7 @@ public class ChangePasswordController implements Initializable {
         });
     }
 
-
-    /**
-     * Toggles the visibility of the {@link PasswordField} and the {@link TextField} to switch between
-     * displaying and hiding the password. Updates the icon of the provided {@link ImageView} to indicate
-     * the current visibility state.
-     *
-     * When the {@link PasswordField} is visible:
-     * - It is hidden and the {@link TextField} is shown, displaying the password as plain text.
-     * - The {@link ImageView} is updated to show the "eye-open" icon.
-     *
-     * When the {@link TextField} is visible:
-     * - It is hidden and the {@link PasswordField} is shown, masking the password.
-     * - The {@link ImageView} is updated to show the "eye-closed" icon.
-     *
-     * @param passwordField the {@link PasswordField} used to hide the password
-     * @param textField     the {@link TextField} used to show the password in plain text
-     * @param imageView     the {@link ImageView} used to display the visibility toggle icon
-     */
+    // Toggle password visibility for each field
     private void togglePasswordVisibility(PasswordField passwordField, TextField textField, ImageView imageView) {
         if (passwordField.isVisible()) {
             // Hide PasswordField, show TextField
@@ -358,45 +267,51 @@ public class ChangePasswordController implements Initializable {
         String newPassword = passwordField1.getText();
         String confirmPassword = passwordField2.getText();
         boolean canUpdate = true;
+        String errorMessage = "";
 
         // Kiểm tra các điều kiện đầu vào và highlight các trường hợp lỗi
         if (!isValidCurrentPassword(currentPassword)) {
-            highlightField(hBox0, warning0);
+            errorMessage += "Current password is required.\n";
             canUpdate = false;
-        } else {
-            resetField(hBox0, warning0);
         }
 
         if (!isValidNewPassword(newPassword)) {
-            highlightField(hBox1, warning1);
+            errorMessage += "New password must be at least 6 characters.\n";
             canUpdate = false;
-        } else {
-            resetField(hBox1, warning1);
         }
 
         if (!isValidConfirmPassword(confirmPassword)) {
-            highlightField(hBox2, warning2);
+            errorMessage += "Confirmation password is required and should match new password.\n";
             canUpdate = false;
-        } else {
-            resetField(hBox2, warning2);
         }
 
         // Kiểm tra mật khẩu hiện tại từ cơ sở dữ liệu
         if (!checkCurrentPassword(Model.getInstance().getClient().getUsername(), currentPassword)) {
-            highlightField(hBox0, warning0);
+            errorMessage += "Current password is incorrect.\n";
             canUpdate = false;
         }
 
         // Kiểm tra nếu tất cả các điều kiện đều hợp lệ
         if (canUpdate) {
-            // Cập nhật mật khẩu mới vào cơ sở dữ liệu
-            if (updatePassword(Model.getInstance().getClient().getUsername(), newPassword)) {
-                showAlert("Password changed successfully!", Alert.AlertType.INFORMATION);
-            } else {
-                showAlert("Error updating password.", Alert.AlertType.ERROR);
+            // Kiểm tra nếu mật khẩu xác nhận trùng khớp
+            if (!newPassword.equals(confirmPassword)) {
+                errorMessage += "New password and confirmation do not match.\n";
+                canUpdate = false;
             }
-        } else {
-            showAlert("Please correct the highlighted errors.", Alert.AlertType.ERROR);
+
+            // Cập nhật mật khẩu mới vào cơ sở dữ liệu
+            if (canUpdate) {
+                if (updatePassword(Model.getInstance().getClient().getUsername(), newPassword)) {
+                    showAlert("Password changed successfully!", Alert.AlertType.INFORMATION);
+                } else {
+                    showAlert("Error updating password. Please try again.", Alert.AlertType.ERROR);
+                }
+            }
+        }
+
+        // Nếu có lỗi, hiển thị thông báo lỗi
+        if (!canUpdate) {
+            showAlert("Please correct the following errors:\n" + errorMessage, Alert.AlertType.ERROR);
         }
     }
 
@@ -431,31 +346,6 @@ public class ChangePasswordController implements Initializable {
     private boolean isValidConfirmPassword(String confirmPassword) {
         return !confirmPassword.isEmpty() && confirmPassword.length() >= 6;
     }
-
-    /**
-     * Highlights the given {@link HBox} and updates the {@link ImageView} icon to indicate an error.
-     * This is used when the input field has invalid data.
-     *
-     * @param hbox  the {@link HBox} containing the input field to highlight
-     * @param icon  the {@link ImageView} to display the error icon
-     */
-    private void highlightField(HBox hbox, ImageView icon) {
-        hbox.getStyleClass().add("hbox_set-error");
-        icon.setImage(new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
-    }
-
-    /**
-     * Resets the given {@link HBox} and {@link ImageView} to their default state when the input is valid.
-     * This removes the error highlight and icon.
-     *
-     * @param hbox  the {@link HBox} containing the input field to reset
-     * @param icon  the {@link ImageView} to remove the error icon
-     */
-    private void resetField(HBox hbox, ImageView icon) {
-        hbox.getStyleClass().remove("hbox_set-error");
-        icon.setImage(null);
-    }
-
 
     /**
      * Displays an alert with the given message and alert type.

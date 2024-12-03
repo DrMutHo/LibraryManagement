@@ -26,12 +26,6 @@ import main.Models.Model;
 
 public class EditProfileController {
     @FXML
-    private HBox hbox_0;
-    @FXML
-    private HBox hbox_01;
-    @FXML
-    private HBox hbox_02;
-    @FXML
     private TextField addressField;
     @FXML
     private TextField phoneField;
@@ -43,21 +37,16 @@ public class EditProfileController {
     private Button changePhoneNum;
     @FXML
     private Button changeEmail;
-    @FXML
-    private ImageView warning0;
-    @FXML
-    private ImageView warning01;
-    @FXML
-    private ImageView warning02;
 
     public void username_password_promptext_init() {
         // Set prompt text for the username and password fields
         setPromptText();
+    }
 
-        // Add focus listeners for each field (addressField, phoneField, emailField)
-        addTextFieldFocusListener(addressField, hbox_0);
-        addTextFieldFocusListener(emailField, hbox_02);
-        addTextFieldFocusListener(phoneField, hbox_01);
+    public void resetText() {
+        addressField.clear();
+        phoneField.clear();
+        emailField.clear();
     }
 
     // Helper method to set prompt text
@@ -65,19 +54,6 @@ public class EditProfileController {
         addressField.setPromptText("Enter your new address");
         phoneField.setPromptText("Enter your new phone number");
         emailField.setPromptText("Enter your new email(abc@gmail.com)");
-    }
-
-    // Focus listener for textField
-    private void addTextFieldFocusListener(TextField field, HBox hbox) {
-        field.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                // When textField is focused, add the focus style to the corresponding HBox
-                hbox.getStyleClass().add("hbox_set-focused");
-            } else {
-                // When focus is lost, remove the focus style from the HBox
-                hbox.getStyleClass().remove("hbox_set-focused");
-            }
-        });
     }
 
     // Check if email is valid using API
@@ -173,6 +149,7 @@ public class EditProfileController {
         } else {
             showAlert(AlertType.WARNING, "Warning", "Please enter a valid address.");
         }
+        resetText();
     }
 
     @FXML
@@ -187,6 +164,7 @@ public class EditProfileController {
         } else {
             showAlert(AlertType.WARNING, "Warning", "Please enter a valid phone number.");
         }
+        resetText();
     }
 
     @FXML
@@ -202,6 +180,7 @@ public class EditProfileController {
             showAlert(AlertType.WARNING, "Invalid Email",
                     "Invalid email address or already in use. Please create a valid email.");
         }
+        resetText();
     }
 
     private boolean updateAddress(String newAddress, String username) {

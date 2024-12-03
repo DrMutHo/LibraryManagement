@@ -215,6 +215,7 @@ public class DeleteAccountController implements Initializable {
      * is deleted from the database, and the application navigates to the login screen. If the user cancels or 
      * the password is incorrect, appropriate messages are displayed.
      */
+    // Action when the delete button is pressed
     @FXML
     private void handleDeleteButton() {
         String username = Model.getInstance().getClient().getUsername(); // Replace with actual current username logic
