@@ -7,69 +7,75 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="600.0" styleClass="root" stylesheets="@../../Styles/Client/EditProfile.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.EditProfileController">
-   <children>
-        <VBox alignment="CENTER" layoutX="20.0" layoutY="15.0" prefHeight="400.0" prefWidth="560.0" spacing="15.0">
-            <!-- Tiêu đề -->
-            <HBox alignment="CENTER" spacing="10.0">
-                <ImageView fitHeight="50.0" fitWidth="50.0">
-                    <image>
-                        <Image url="@../../Images/who-am-i-png-what-663.png" />
-                    </image>
-                </ImageView>
-                <Label styleClass="title-label" text="Edit your profile" />
-            </HBox>
-            
-            <Label styleClass="subtitle-label" text="Your online presence should evolve as quickly as the world around you." wrapText="true" />
 
-            <!-- Địa chỉ mới -->
-            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="form-section">
-                <Label styleClass="form-label" text="New address:" />
-                <HBox alignment="CENTER" spacing="5.0">
-                    <ImageView fitHeight="30.0" fitWidth="30.0">
-                        <image>
-                            <Image url="@../../Images/address.png" />
-                        </image>
-                    </ImageView>
-                    <TextField fx:id="addressField" promptText="Enter new address" styleClass="form-input" />
-                </HBox>
-                <Button fx:id="changeAdress" onAction="#handleChangeAddressButtonClick" styleClass="form-button" text="CHANGE ADDRESS" />
-            </HBox>
-
-            <Separator />
-
-            <!-- Số điện thoại mới -->
-            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="form-section">
-                <Label styleClass="form-label" text="New phonenumber:" />
-                <HBox alignment="CENTER" spacing="5.0">
-                    <ImageView fitHeight="30.0" fitWidth="30.0">
-                        <image>
-                            <Image url="@../../Images/phoneNum.jpg" />
-                        </image>
-                    </ImageView>
-                    <TextField fx:id="phoneField" promptText="Enter new phone number" styleClass="form-input" />
-                </HBox>
-                <Button fx:id="changePhoneNum" onAction="#handleChangePhoneButtonClick" styleClass="form-button" text="CHANGE PHONE NUMBER" />
-            </HBox>
-
-            <Separator />
-
-            <!-- Email mới -->
-            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="form-section">
-                <Label styleClass="form-label" text="New email:" />
-                <HBox alignment="CENTER" spacing="5.0">
-                    <ImageView fitHeight="30.0" fitWidth="30.0">
-                        <image>
-                            <Image url="@../../Images/email.jpg" />
-                        </image>
-                    </ImageView>
-                    <TextField fx:id="emailField" promptText="Enter new email" styleClass="form-input" />
-                </HBox>
-                <Button fx:id="changeEmail" onAction="#handleChangeEmailButtonClick" styleClass="form-button" text="CHANGE EMAIL" />
-            </HBox>
-        </VBox>
-    </children>
-</AnchorPane>
+<BorderPane styleClass="root" stylesheets="@../../Styles/Client/EditProfile.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.EditProfileController">
+   <center>
+      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="600.0" styleClass="root" stylesheets="@../../Styles/Client/EditProfile.css">
+         <children>
+              <VBox alignment="CENTER" layoutX="20.0" layoutY="15.0" prefHeight="400.0" prefWidth="560.0" spacing="15.0">
+                  <!-- Tiêu đề -->
+                  <HBox alignment="CENTER" spacing="10.0">
+                      <ImageView fitHeight="50.0" fitWidth="50.0">
+                          <image>
+                              <Image url="@../../Images/who-am-i-png-what-663.png" />
+                          </image>
+                      </ImageView>
+                      <Label styleClass="title-label" text="Edit your profile" />
+                  </HBox>
+                  
+                  <Label styleClass="subtitle-label" text="Your online presence should evolve as quickly as the world around you." wrapText="true" />
+      
+                  <!-- Địa chỉ mới -->
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="form-section">
+                      <Label styleClass="form-label" text="New address:" />
+                      <HBox alignment="CENTER" spacing="5.0">
+                          <ImageView fitHeight="30.0" fitWidth="30.0">
+                              <image>
+                                  <Image url="@../../Images/address.png" />
+                              </image>
+                          </ImageView>
+                          <TextField fx:id="addressField" promptText="Enter new address" styleClass="form-input" />
+                      </HBox>
+                      <Button fx:id="changeAdress" onAction="#handleChangeAddressButtonClick" styleClass="form-button" text="CHANGE ADDRESS" />
+                  </HBox>
+      
+                  <Separator />
+      
+                  <!-- Số điện thoại mới -->
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="form-section">
+                      <Label styleClass="form-label" text="New phonenumber:" />
+                      <HBox alignment="CENTER" spacing="5.0">
+                          <ImageView fitHeight="30.0" fitWidth="30.0">
+                              <image>
+                                  <Image url="@../../Images/phoneNum.jpg" />
+                              </image>
+                          </ImageView>
+                          <TextField fx:id="phoneField" promptText="Enter new phone number" styleClass="form-input" />
+                      </HBox>
+                      <Button fx:id="changePhoneNum" onAction="#handleChangePhoneButtonClick" styleClass="form-button" text="CHANGE PHONE NUMBER" />
+                  </HBox>
+      
+                  <Separator />
+      
+                  <!-- Email mới -->
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="form-section">
+                      <Label styleClass="form-label" text="New email:" />
+                      <HBox alignment="CENTER" spacing="5.0">
+                          <ImageView fitHeight="30.0" fitWidth="30.0">
+                              <image>
+                                  <Image url="@../../Images/email.jpg" />
+                              </image>
+                          </ImageView>
+                          <TextField fx:id="emailField" promptText="Enter new email" styleClass="form-input" />
+                      </HBox>
+                      <Button fx:id="changeEmail" onAction="#handleChangeEmailButtonClick" styleClass="form-button" text="CHANGE EMAIL" />
+                  </HBox>
+              </VBox>
+          </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

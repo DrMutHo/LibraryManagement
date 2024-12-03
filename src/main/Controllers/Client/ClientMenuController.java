@@ -145,7 +145,7 @@ public class ClientMenuController implements Initializable {
     }
 
 
-        /**
+    /**
      * Phương thức này được gọi khi người dùng thực hiện đăng xuất.
      * Nó sẽ đóng cửa sổ hiện tại (dashboard), hiển thị cửa sổ đăng nhập và 
      * đặt cờ đăng nhập của người dùng thành false.
