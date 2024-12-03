@@ -437,3 +437,4 @@ public class ChangePasswordController implements Initializable {
         }
     }
 }
+

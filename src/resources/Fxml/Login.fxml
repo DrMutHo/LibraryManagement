@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -12,11 +13,12 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="outer_pane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="AnchorPane_out" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
+<AnchorPane fx:id="outer_pane" prefHeight="750.0" prefWidth="850.0" styleClass="AnchorPane_out" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
    <children>
-      <ImageView fitHeight="750.0" fitWidth="850.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="33.0" AnchorPane.topAnchor="0.0">
+      <ImageView fitHeight="761.0" fitWidth="850.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-11.0" AnchorPane.topAnchor="0.0">
          <image>
             <Image url="@../Images/112-library-wallpaper-kids-room-mural-modern-design.png" />
          </image>
@@ -24,47 +26,78 @@
             <Rectangle2D height="750.0" width="850.0" />
          </viewport>
       </ImageView>
-      <AnchorPane fx:id="inner_pane" layoutX="213.0" layoutY="83.0" maxHeight="586.31" maxWidth="489.25" minHeight="-Infinity" minWidth="-Infinity" prefHeight="584.0" prefWidth="425.0" styleClass="AnchorPane_login" stylesheets="@../Styles/Login.css" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="213.0">
+      <VBox layoutX="220.0" layoutY="82.0" prefHeight="573.0" prefWidth="426.0" styleClass="AnchorPane_login">
          <children>
-            <ImageView fx:id="lib_image" fitHeight="333.0" fitWidth="289.0" layoutX="75.0" layoutY="14.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
+            <ImageView fx:id="lib_image" fitHeight="333.0" fitWidth="289.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
                <image>
                   <Image url="@../Images/online-library-isometric-design_98292-34.jpg" />
                </image>
+               <VBox.margin>
+                  <Insets left="50.0" />
+               </VBox.margin>
             </ImageView>
-            <Label fx:id="errorLabel" text="Error Message" visible="false" />
-            <Button fx:id="loginButton" layoutX="125.0" layoutY="452.0" mnemonicParsing="false" prefHeight="38.49" prefWidth="190.31" styleClass="button_login" text="LOGIN" />
-            <Button fx:id="forgotaccountButton" alignment="CENTER" layoutX="134.0" layoutY="491.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="171.0" styleClass="button_forgotPassword" text="Forgotten your password?" textAlignment="CENTER" />
-            <Button fx:id="createnewaccountButton" layoutX="141.0" layoutY="530.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="SIGN UP" />
-            <ChoiceBox fx:id="acc_selector" layoutX="274.0" layoutY="289.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="26.0" prefWidth="94.0" styleClass="choose_account_selector">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ChoiceBox>
-            <Label fx:id="chooseaccountLabel" alignment="CENTER" layoutX="43.0" layoutY="283.0" prefHeight="39.0" prefWidth="230.0" styleClass="choose_account" text="Choose your account type:" />
-            <HBox fx:id="hbox_0" alignment="CENTER" layoutX="88.0" layoutY="330.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="265.0" styleClass="hbox_set">
+            <HBox>
                <children>
-                  <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="230.0" styleClass="text" HBox.hgrow="NEVER" />
+                  <Label fx:id="chooseaccountLabel" alignment="CENTER" prefHeight="39.0" prefWidth="230.0" styleClass="choose_account" text="Choose your account type:">
+                     <HBox.margin>
+                        <Insets left="30.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ChoiceBox fx:id="acc_selector" nodeOrientation="RIGHT_TO_LEFT" prefHeight="26.0" prefWidth="94.0" styleClass="choose_account_selector">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ChoiceBox>
+               </children>
+            </HBox>
+            <HBox fx:id="hbox_0" alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT" styleClass="hbox_set">
+               <children>
+                  <TextField fx:id="usernameField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="29.0" prefWidth="246.0" styleClass="text" HBox.hgrow="NEVER">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </TextField>
                   <ImageView fitHeight="27.0" fitWidth="31.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
                      <image>
                         <Image url="@../Images/527489.png" />
                      </image>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
                   </ImageView>
                </children>
+               <VBox.margin>
+                  <Insets left="50.0" right="50.0" top="10.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding>
             </HBox>
-            <HBox fx:id="hbox_1" alignment="CENTER" blendMode="SRC_ATOP" layoutX="88.0" layoutY="386.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="266.0" styleClass="hbox_set">
+            <HBox fx:id="hbox_1" alignment="CENTER" blendMode="SRC_ATOP" nodeOrientation="RIGHT_TO_LEFT" styleClass="hbox_set">
                <children>
-                  <Button fx:id="toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" styleClass="button_set" HBox.hgrow="NEVER">
+                  <Button fx:id="toggleButton" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" mnemonicParsing="false" styleClass="button_set" HBox.hgrow="NEVER">
                      <graphic>
-                        <ImageView fx:id="imageIcon" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="imageIcon" fitHeight="20.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
                   </Button>
-                  <StackPane prefHeight="38.0" prefWidth="190.0" HBox.hgrow="NEVER">
+                  <StackPane HBox.hgrow="NEVER">
                      <children>
-                        <PasswordField fx:id="passwordField" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="207.0" styleClass="text" />
-                        <TextField fx:id="textField" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="207.0" styleClass="text" />
+                        <PasswordField fx:id="passwordField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="29.0" prefWidth="205.0" styleClass="text">
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                        </PasswordField>
+                        <TextField fx:id="textField" nodeOrientation="LEFT_TO_RIGHT" prefHeight="29.0" prefWidth="205.0" styleClass="text">
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                        </TextField>
                      </children>
                   </StackPane>
-                  <ImageView fitHeight="27.0" fitWidth="45.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view" HBox.hgrow="NEVER">
+                  <ImageView fitHeight="27.0" fitWidth="31.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
                      <image>
                         <Image url="@../Images/password.png" />
                      </image>
@@ -76,18 +109,40 @@
                      </viewport>
                   </ImageView>
                </children>
+               <VBox.margin>
+                  <Insets left="50.0" right="50.0" top="10.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding>
             </HBox>
-            <AnchorPane fx:id="notificationPane" layoutX="7.0" layoutY="53.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="212.0" prefWidth="411.0" styleClass="alert_anchorpane" stylesheets="@../Styles/Notification.css" visible="false">
-               <children>
-                  <Button fx:id="alert_button" layoutX="255.0" layoutY="154.0" mnemonicParsing="false" onAction="#handleOkButtonAction" prefHeight="30.0" prefWidth="88.0" styleClass="alert_okButton" text="OK!" />
-                  <ImageView fitHeight="240.0" fitWidth="179.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Images/oops.jpg" />
-                     </image>
-                  </ImageView>
-                  <Text layoutX="194.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="alert_notice" text="Your account or password is incorrect !" />
-               </children>
-            </AnchorPane>
+            <Button fx:id="loginButton" mnemonicParsing="false" prefHeight="38.49" prefWidth="190.31" styleClass="button_login" text="LOGIN">
+               <VBox.margin>
+                  <Insets left="90.0" top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="forgotaccountButton" alignment="CENTER" mnemonicParsing="false" styleClass="button_forgotPassword" text="Forgotten your password?" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets left="105.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="createnewaccountButton" mnemonicParsing="false" prefHeight="43.0" prefWidth="158.0" styleClass="button_createnewaccount" text="SIGN UP">
+               <VBox.margin>
+                  <Insets left="110.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+      <Label fx:id="errorLabel" layoutX="213.0" layoutY="83.0" text="Error Message" visible="false" />
+      <AnchorPane fx:id="notificationPane" layoutX="220.0" layoutY="136.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="212.0" prefWidth="411.0" styleClass="alert_anchorpane" stylesheets="@../Styles/Notification.css" visible="false">
+         <children>
+            <Button fx:id="alert_button" layoutX="255.0" layoutY="154.0" mnemonicParsing="false" onAction="#handleOkButtonAction" prefHeight="30.0" prefWidth="88.0" styleClass="alert_okButton" text="OK!" />
+            <ImageView fitHeight="240.0" fitWidth="179.0" layoutX="14.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/oops.jpg" />
+               </image>
+            </ImageView>
+            <Text layoutX="194.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="alert_notice" text="Your account or password is incorrect !" />
          </children>
       </AnchorPane>
    </children>

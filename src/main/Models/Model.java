@@ -77,6 +77,22 @@ public class Model {
     }
 
     /**
+     * logout method
+     */
+    public void reset() {
+        this.clientLoginSuccessFlag = false;
+        this.adminLoginSuccessFlag = false;
+        this.allBook.clear();
+        this.HighestRatedBooks.clear();
+        this.BorrowTransactions.clear();
+        this.allNotifications.clear();
+        this.recentlyAddBook.clear();
+        this.listenersClient.clear();
+        this.listenersAdmin.clear();
+        this.selectedBook.set(null);
+    }
+
+    /**
      * Interface for client-related listeners. Defines the method to be called 
      * when a borrow transaction is created for the client.
      */
