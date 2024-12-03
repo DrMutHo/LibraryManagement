@@ -269,10 +269,30 @@ public class SignupController implements Initializable {
         String address = signup_addressField.getText();
         String name = signup_name.getText();
         String hashedPassword = BCrypt.hashpw(password1, BCrypt.gensalt());
-        if (isValidSignUp(email, phoneNum, username, password, password1, address, name)) {
-            Model.getInstance().getDatabaseDriver().createClient(email, phoneNum, address, username, hashedPassword, name);
-            successNotification.setVisible(true);
-        } 
+        Task<Boolean> task = new Task<>() {
+            @Override
+            protected Boolean call() throws Exception {
+                // Thực hiện công việc trong nền (background)
+                return isValidSignUp(email, phoneNum, username, password, password1, address, name);
+            }
+        };
+        new Thread(task).start();
+        task.setOnSucceeded(event -> { 
+            if (task.getValue()) {
+                Model.getInstance().evaluateClientCred(username);
+                Model.getInstance().getViewFactory().showLoading(() -> {
+                    try {
+                       
+                    } catch (NullPointerException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    Platform.runLater(() -> {
+                        Model.getInstance().getDatabaseDriver().createClient(email, phoneNum, address, username, hashedPassword, name);
+                        successNotification.setVisible(true);
+                    });
+                }, signup_anchorpane);
+            }
+        });
     }
 
     private boolean isValidSignUp(String email, String phoneNum,
@@ -340,69 +360,45 @@ public class SignupController implements Initializable {
         return true;
     }
 
+    /**
+     * Xác minh địa chỉ email thông qua API.
+     *
+     * @param email Địa chỉ email cần xác minh.
+     * @return true nếu email hợp lệ, ngược lại trả về false.
+     */
     private boolean isValidEmailApi(String email) {
-        boolean isValidEmailApi = false;
         if (email == null || email.trim().isEmpty()) {
-            return isValidEmailApi;
-        } else {
-            try { 
-            @SuppressWarnings("deprecation")
-            URL url = new URL("https://emailvalidation.abstractapi.com/v1/?api_key=fe97d39becd94b14a4a19b97ebcc29a1&email=" + email);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET"); 
-
-            int responseCode = conn.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-                Gson gson = new Gson();
-                Type type = new TypeToken<Map<String, Object>>(){}.getType();
-                Map<String, Object> map = gson.fromJson(response.toString(), type);
-                
-                System.out.println(map.get("is_free_email"));
-                Map<String, Object> isFreeEmail = (Map<String, Object>) map.get("is_free_email");
-
-
-                boolean value = (boolean) isFreeEmail.get("value");
-                isValidEmailApi = value;
-                System.out.println("Value of is_free_email: " + value);
-            } else {
-                System.out.println("GET request not worked");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            return false;
         }
+        String apiResponse = Model.getInstance().getDatabaseDriver().getEmailValidationApiResponse(email);
+        if (apiResponse != null) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<Map<String, Object>>() {}.getType();
+            Map<String, Object> map = gson.fromJson(apiResponse, type);
+            Map<String, Object> isFreeEmail = (Map<String, Object>) map.get("is_free_email");
+            boolean value = (boolean) isFreeEmail.get("value");
+            System.out.println("Value of is_free_email: " + value);
+            return value;
+        }
+        return false;
     }
-    return isValidEmailApi;
-}   
 
+   /**
+     * Kiểm tra tính hợp lệ của email trong cơ sở dữ liệu.
+     *
+     * @param email Địa chỉ email cần kiểm tra.
+     * @return true nếu email không tồn tại trong cơ sở dữ liệu, ngược lại trả về false.
+     */
     private boolean isValidEmailDatabase(String email) {
-        boolean isValidEmailDatabase = false;
-        if (email.trim().isEmpty() || email == null) {
-            return isValidEmailDatabase;
-        } else {
-            try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection()) {
-                String query = "SELECT COUNT(*) FROM Client WHERE email = ?";
-                try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                    preparedStatement.setString(1, email);
-                    ResultSet resultSet = preparedStatement.executeQuery();
-                    if (resultSet.next()) {
-                        int count = resultSet.getInt(1);
-                        return count == 0;
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        if (email == null || email.trim().isEmpty()) {
+            return false;
         }
-        return isValidEmailDatabase;
+
+        int count = Model.getInstance().getDatabaseDriver().getEmailCountFromDatabase(email);
+        return count == 0;
     }
+
+
     private boolean isValidEmail(String email) {
         return isValidEmailApi(email) && isValidEmailDatabase(email);
     }
@@ -412,23 +408,13 @@ public class SignupController implements Initializable {
     }
 
     private boolean isValidUserName(String username) {
+    int count = Model.getInstance().getDatabaseDriver().getUsernameCount(username);
     if (username == null || username.trim().isEmpty()) {
         return false; 
     }
-    try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection()) {
-        String query = "SELECT COUNT(*) FROM Client WHERE username = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, username);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                int count = resultSet.getInt(1);
-                return count == 0;
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace(); 
-    }
-
+    if (count == 0) {
+        return true;
+    } 
     return false;
 }
 

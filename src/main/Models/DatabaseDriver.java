@@ -1,6 +1,10 @@
 package main.Models;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,10 +14,21 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.Views.NotificationType;
@@ -29,6 +44,7 @@ public class DatabaseDriver {
     public void setDataSource(HikariDataSource dataSource) {
         this.dataSource = dataSource;
     }
+    
 
     public DatabaseDriver() {
         try {
@@ -43,7 +59,7 @@ public class DatabaseDriver {
             config.setJdbcUrl(url);
             config.setUsername(username);
             config.setPassword(password);
-            config.setMaximumPoolSize(10); // Số lượng kết nối tối đa trong pool
+            config.setMaximumPoolSize(151); // Số lượng kết nối tối đa trong pool
             config.setConnectionTimeout(30000); // Thời gian chờ kết nối (30 giây)
             config.setIdleTimeout(600000); // Thời gian chờ kết nối không sử dụng (10 phút)
             config.setMaxLifetime(1800000); // Thời gian sống tối đa của kết nối (30 phút)
@@ -57,16 +73,28 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * 
+     * @return
+     * @throws SQLException
+     */
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
-
+    
+    /**
+     * 
+     */
     public void close() {
         if (dataSource != null) {
             dataSource.close();
         }
     }
 
+    /**
+     * 
+     * @return
+     */
     public ResultSet getAllAdminIDs() {
         ResultSet resultSet = null;
         String query = "SELECT admin_id FROM Admin";
@@ -101,6 +129,8 @@ public class DatabaseDriver {
 
         return resultSet;
     }
+
+    
 
     public ResultSet get1BookDataByCopyID(int copy_id) {
         ResultSet resultSet = null;
@@ -1198,4 +1228,262 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Gửi yêu cầu API để xác minh địa chỉ email.
+     *
+     * @param email Địa chỉ email cần xác minh.
+     * @return Phản hồi API dưới dạng chuỗi JSON, hoặc null nếu xảy ra lỗi.
+     */
+    public String getEmailValidationApiResponse(String email) {
+        try {
+            @SuppressWarnings("deprecation")
+            URL url = new URL("https://emailvalidation.abstractapi.com/v1/?api_key=fe97d39becd94b14a4a19b97ebcc29a1&email=" + email);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                return response.toString();
+            } else {
+                System.out.println("GET request not worked");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Truy vấn số lượng email khớp trong cơ sở dữ liệu.
+     *
+     * @param email Địa chỉ email cần kiểm tra.
+     * @return Số lượng email khớp.
+     */
+    public int getEmailCountFromDatabase(String email) {
+        String query = "SELECT COUNT(*) FROM Client WHERE email = ?";
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return -1;
+            }
+
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public String getEmailByUsername(String username) {
+        String query = "SELECT email FROM client WHERE username = ?";
+    
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, username);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString("email");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void sendNewPassword(String recipientEmail, String newPassword) throws MessagingException {
+        String smtpHost = "smtp.gmail.com";
+        String smtpPort = "587"; 
+        String senderEmail = "thuha25121976@gmail.com"; 
+        String senderPassword = "bbjh xcbp oxtj qozz";
+    
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", smtpHost);
+        properties.put("mail.smtp.port", smtpPort);
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true"); 
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(senderEmail, senderPassword);
+            }
+        });
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(senderEmail));
+        message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
+        message.setSubject("Your New Password");
+        message.setText("Dear customer,\n\nYour new password is: " + newPassword + "\n\nPlease log in and change your password as soon as possible.\n\nThank you.");
+        Transport.send(message);
+        System.out.println("Email sent successfully to " + recipientEmail);
+    }
+
+    public int updatePassword(String username, String newPassword) {
+        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+        int row = 0;
+        String query = "UPDATE client SET password_hash = ? WHERE username = ?";
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, hashedPassword); 
+            preparedStatement.setString(2, username);       
+            row = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return row;
+    }
+
+    public void deleteAccount(String username) {
+        String deleteTransactionsQuery = "DELETE FROM borrowtransaction WHERE client_id = (SELECT client_id FROM client WHERE username = ?)";
+        String deleteNotificationRequestsQuery = "DELETE FROM notificationrequest WHERE client_id = (SELECT client_id FROM client WHERE username = ?)";
+        String deleteAccountQuery = "DELETE FROM client WHERE username = ?";
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsQuery);
+                PreparedStatement deleteNotificationRequestsStatement = connection
+                        .prepareStatement(deleteNotificationRequestsQuery);
+                PreparedStatement deleteAccountStatement = connection.prepareStatement(deleteAccountQuery)) {
+
+            // Check connection validity
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Invalid database connection!");
+                return;
+            }
+
+            // Step 1: Delete related borrow transactions
+            deleteTransactionsStatement.setString(1, username);
+            int rowsAffectedInTransactions = deleteTransactionsStatement.executeUpdate();
+            if (rowsAffectedInTransactions > 0) {
+                System.out.println("Related borrow transactions deleted successfully.");
+            }
+
+            // Step 2: Delete related notification requests
+            deleteNotificationRequestsStatement.setString(1, username);
+            int rowsAffectedInNotificationRequests = deleteNotificationRequestsStatement.executeUpdate();
+            if (rowsAffectedInNotificationRequests > 0) {
+                System.out.println("Related notification requests deleted successfully.");
+            }
+
+            // Step 3: Delete the account from the client table
+            deleteAccountStatement.setString(1, username);
+            int rowsAffectedInAccount = deleteAccountStatement.executeUpdate();
+            if (rowsAffectedInAccount > 0) {
+                System.out.println("Account deleted successfully.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int updateAddress(String newAddress, String username) {
+        // Câu truy vấn để cập nhật địa chỉ
+        String updateQuery = "UPDATE client SET address = ? WHERE username = ?";
+        int row = 0;
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+
+            // Kiểm tra kết nối
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return 0;
+            }
+
+            // Cài đặt tham số vào câu truy vấn
+            preparedStatement.setString(1, newAddress); // Đặt địa chỉ mới
+            preparedStatement.setString(2, username); // Đặt tên người dùng
+
+            // Thực thi câu lệnh update
+            row = preparedStatement.executeUpdate();
+
+            // Nếu có ít nhất một dòng bị ảnh hưởng, tức là địa chỉ đã được cập nhật
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return row;
+    }
+
+    public int updatePhoneNumber(String newPhoneNumber, String username) {
+        // Câu truy vấn để cập nhật số điện thoại
+        String updateQuery = "UPDATE client SET phone_number = ? WHERE username = ?";
+        int row = 0;
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+
+            // Kiểm tra kết nối
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return 0;
+            }
+
+            // Cài đặt tham số vào câu truy vấn
+            preparedStatement.setString(1, newPhoneNumber); // Đặt số điện thoại mới
+            preparedStatement.setString(2, username); // Đặt tên người dùng
+
+            // Thực thi câu lệnh update
+            row = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return row;
+    }
+
+    public int updateEmail(String newEmail, String username) {
+        // Câu truy vấn để cập nhật email
+        String updateQuery = "UPDATE client SET email = ? WHERE username = ?";
+        int row = 0;
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+
+            // Kiểm tra kết nối
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return 0;
+            }
+
+            // Cài đặt tham số vào câu truy vấn
+            preparedStatement.setString(1, newEmail); // Đặt email mới
+            preparedStatement.setString(2, username); // Đặt tên người dùng
+
+            // Thực thi câu lệnh update
+            row = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return row; 
+    }
+
+    public int getUsernameCount(String username) {
+        String query = "SELECT COUNT(*) FROM Client WHERE username = ?";
+        int count = 0;
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            
+            preparedStatement.setString(1, username);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    count = resultSet.getInt(1);  // Lấy số lượng tên người dùng
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();  // In ra lỗi nếu có
+        }
+        return count;  // Trả về số lần xuất hiện tên người dùng trong cơ sở dữ liệu
+    }
 }
