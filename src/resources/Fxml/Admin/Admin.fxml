@@ -9,7 +9,7 @@
     </left>
 
     <center>
-        <fx:include source="CreateClient.fxml"/>
+        <fx:include source="AdminDashboard.fxml"/>
     </center>
 
 </BorderPane>

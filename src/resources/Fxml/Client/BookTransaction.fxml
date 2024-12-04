@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="750.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.BookTransactionController">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="900.0" spacing="10.0">
+         <children>
+            <Separator maxHeight="-Infinity" orientation="VERTICAL" prefHeight="21.0" prefWidth="0.0" />
+            <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="timeLabel" alignment="CENTER" prefHeight="28.0" prefWidth="227.0">
+                     <font>
+                        <Font name="Book Antiqua" size="18.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="44.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../Images/profile-user.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+   <center>
+    <VBox alignment="TOP_CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="310.0" prefWidth="850.0" spacing="10" BorderPane.alignment="TOP_CENTER">
+    <TableView fx:id="transactionTable" prefHeight="310.0" prefWidth="848.0">
+        <columns>
+            <TableColumn fx:id="titleColumn" prefWidth="130.5" text="Transaction ID" />
+            <TableColumn fx:id="copyIdColumn" prefWidth="87.5" text="Book ID" />
+            <TableColumn fx:id="borrowDateColumn" prefWidth="131.5" text="Copy ID" />
+            <TableColumn fx:id="returnDateColumn" prefWidth="179.5" text="Borrow Date" />
+            <TableColumn fx:id="statusColumn" minWidth="0.0" prefWidth="157.0" text="Return Date" />
+               <TableColumn fx:id="titleColumn1" maxWidth="373.5" prefWidth="163.0" text="Status" />
+        </columns>
+    </TableView>
+</VBox>
+   </center>
+   </BorderPane>

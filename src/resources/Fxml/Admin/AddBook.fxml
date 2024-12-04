@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane stylesheets="@../../Styles/Admin/AddBook.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Admin.AddBookController">
+   <center>
+      <HBox fx:id="bookListContainer" prefWidth="598.0" spacing="15" styleClass="main-layout">
+         <children>
+            <VBox prefWidth="597.0" spacing="20" styleClass="center-section">
+               <children>
+                  <VBox spacing="10" styleClass="reviews-section">
+                     <children>
+                        <Label prefHeight="27.0" prefWidth="309.0" styleClass="section-title" text="Add book with Google book API" />
+                        <TextField fx:id="searchEdt" promptText="Search books by title or author..." styleClass="search-bar" />
+                        <Button fx:id="searchBtn" prefHeight="36.0" prefWidth="558.0" styleClass="search-button" text="🔍 Search" />
+                        <ScrollPane prefHeight="298.0" prefWidth="553.0" styleClass="book-scroll-pane">
+                           <content>
+                              <VBox fx:id="bookContainer" prefHeight="296.0" prefWidth="522.0" spacing="10" />
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
+             
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </center>
+</BorderPane>

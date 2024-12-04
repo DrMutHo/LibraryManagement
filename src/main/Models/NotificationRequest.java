@@ -2,6 +2,11 @@ package main.Models;
 
 import java.time.LocalDateTime;
 
+/**
+ * The {@code NotificationRequest} class represents a request for a notification
+ * within the system. It encapsulates details such as the request ID, client ID,
+ * book ID, and the date the request was made.
+ */
 public class NotificationRequest {
     private int requestId;
     private int clientId;

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox fx:id="card" stylesheets="@../../Styles/Admin/HBoxCardBook.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Admin.CardController2" spacing="10">
+   <children>
+      <!-- Image and Info Container -->
+      <StackPane prefHeight="100.0" prefWidth="82.0">
+         <children>
+            <ImageView fx:id="bookImage" fitHeight="83.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </StackPane>
+
+      <!-- VBox to hold ISBN and Title labels vertically -->
+      <VBox fx:id="vBoxIsbnAndTitle" alignment="TOP_LEFT" maxWidth="Infinity" spacing="5">
+         <!-- ISBN Label -->
+         <Label fx:id="isbnLabel" maxWidth="Infinity" wrapText="true" />
+         
+         <!-- Title Label (below ISBN) -->
+         <Label fx:id="titleLabel" maxWidth="Infinity" wrapText="true" />
+      </VBox>
+
+      <!-- VBox for Quantity Input and Add Book Button (Aligned to the right) -->
+      <VBox fx:id="vBoxQuantityAndButton" spacing="10">
+         <TextField fx:id="Quantity" promptText="Quantity" />
+         <Button fx:id="AddBook" mnemonicParsing="false" onAction="#AddBookCTL" text="Add Book" />
+      </VBox>
+   </children>
+</HBox>

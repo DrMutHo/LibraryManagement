@@ -6,6 +6,14 @@ import javafx.beans.property.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * The {@code Notification} class represents a notification within the system.
+ * <p>
+ * It encapsulates details such as the notification ID, recipient information,
+ * notification type, message content, creation timestamp, and read status.
+ * This class utilizes JavaFX properties to allow for property bindings in the UI.
+ * </p>
+ */
 public class Notification {
     private final IntegerProperty notificationId;
     private final IntegerProperty recipientId;
@@ -31,7 +39,7 @@ public class Notification {
      * @param message          The message content of the notification.
      */
     public Notification(int recipientId, RecipientType recipientType, NotificationType notificationType,
-            String message) {
+                        String message) {
         this.notificationId = new SimpleIntegerProperty();
         this.recipientId = new SimpleIntegerProperty(recipientId);
         this.recipientType = new SimpleObjectProperty<>(recipientType);
@@ -60,7 +68,7 @@ public class Notification {
      *                         false if unread).
      */
     public Notification(int notificationId, int recipientId, RecipientType recipientType,
-            NotificationType notificationType, String message, LocalDateTime createdAt, boolean isRead) {
+                        NotificationType notificationType, String message, LocalDateTime createdAt, boolean isRead) {
         this.notificationId = new SimpleIntegerProperty(notificationId);
         this.recipientId = new SimpleIntegerProperty(recipientId);
         this.recipientType = new SimpleObjectProperty<>(recipientType);
