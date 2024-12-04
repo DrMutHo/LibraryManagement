@@ -1,7 +1,9 @@
 package main.Controllers.Client;
 
+import java.io.Console;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.animation.ScaleTransition;
@@ -27,11 +29,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.Models.Book;
+import main.Models.BookRecommendation;
 import main.Models.Model;
 
 public class HomeController implements Initializable {
     @FXML
     private HBox highestRatedBooks;
+    @FXML
+    private HBox Recommended;
     @FXML
     private ComboBox<String> genreComboBox;
     @FXML
@@ -116,6 +121,26 @@ public class HomeController implements Initializable {
 
             // Add the newly created card to the highest rated books display
             highestRatedBooks.getChildren().add(cardBox);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addBookToRecommended(Book book) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/resources/FXML/Client/Card.fxml"));
+            VBox cardBox = loader.load();
+
+            CardController cardController = loader.getController();
+            cardController.setData(book);
+            addOpenBookEffect(cardBox, cardController);
+            addReadingBookEffect(readingBook1);
+            readingBook1.setOnMouseClicked(event -> showBookDetails(Model.getInstance().getReadingBook()));
+            cardBox.setOnMouseClicked(event -> showBookDetails(book));
+
+            Recommended.getChildren().add(cardBox);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -208,13 +233,21 @@ public class HomeController implements Initializable {
     private void updateHighestRatedBooks(String genre) {
         // Clear the current list of highest-rated books
         highestRatedBooks.getChildren().clear();
+        Recommended.getChildren().clear();
 
         // Set the highest-rated books in the model based on the selected genre
         Model.getInstance().setHighestRatedBooks(genre);
 
-        // Add each book from the filtered list of highest-rated books to the display
+        BookRecommendation bookRecommendation = new BookRecommendation();
+        List<Book> dak = bookRecommendation.Recommendation();
+
+
         for (Book book : Model.getInstance().getHighestRatedBook()) {
             addBookToHighestRatedBooks(book);
+        }
+
+        for(Book book : dak){
+            addBookToRecommended(book);
         }
     }
 

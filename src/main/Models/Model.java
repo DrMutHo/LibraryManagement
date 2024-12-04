@@ -7,6 +7,9 @@ import main.Models.Client;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import main.Models.Client;
+import main.Models.Admin;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -25,6 +28,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.Views.AccountType;
+import java.sql.Timestamp;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 import main.Views.ViewFactory;
@@ -53,6 +60,8 @@ public class Model {
     private ObjectProperty<Book> selectedBook;
     private final Client client;
     private final Admin admin;
+
+    private GoogleBooksAPI BookAddSearch;
 
     /**
      * Initializes a new instance of the Model class, setting up various fields including lists for books, 
@@ -130,6 +139,7 @@ public class Model {
         for (ModelListenerClient listener : listenersClient) {
             listener.onBorrowTransactionClientCreated();
         }
+
     }
 
     /**
@@ -180,7 +190,7 @@ public class Model {
      * @return A boolean indicating whether the admin login was successful.
      */
     public boolean getAdminLoginSuccessFlag() {
-        return this.clientLoginSuccessFlag;
+        return this.adminLoginSuccessFlag;
     }
 
     /**
@@ -189,7 +199,7 @@ public class Model {
      * @param flag A boolean value to set the admin login success flag.
      */
     public void setAdminLoginSuccessFlag(boolean flag) {
-        this.clientLoginSuccessFlag = flag;
+        this.adminLoginSuccessFlag = flag;
     }
 
     /**
@@ -289,6 +299,21 @@ public class Model {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void AddBookCTL(Book currentBook, int quantity) {
+        try {
+            int bookId = Model.getInstance().getDatabaseDriver().addBook2(currentBook);
+
+            String bookIdString = String.valueOf(bookId);
+
+            for (int i = 0; i < quantity; ++i) {
+                Model.getInstance().getDatabaseDriver().addBookCopy(bookId, true, "Good");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -740,7 +765,8 @@ public class Model {
     private void prepareNotifications(ObservableList<Notification> notifications, int limit) {
         ResultSet resultSet = (viewFactory.getLoginAccountType().equals(AccountType.CLIENT))
                 ? databaseDriver.getNotifications(this.client.getClientId(), "Client", limit)
-                : databaseDriver.getNotifications(this.client.getClientId(), "Admin", limit);
+                : databaseDriver.getNotifications(this.admin.getadmin_id(), "Admin", limit);
+
         try {
             while (resultSet != null && resultSet.next()) {
                 int notificationId = resultSet.getInt("notification_id");
@@ -896,6 +922,8 @@ public class Model {
          * Called when a book return is processed by an admin.
          */
         void onBookReturnProcessed();
+
+        void onAddBook();
     }
 
     /**
@@ -906,6 +934,13 @@ public class Model {
             listener.onBookReturnProcessed();
         }
     }
+
+    public void notifyAddBook() {
+        for (ModelListenerAdmin listener : listenersAdmin) {
+            listener.onAddBook();
+        }
+    }
+
 
     /**
      * Notifies all registered admin listeners that a borrow transaction has been created.
@@ -921,6 +956,14 @@ public class Model {
      */
     public void notifyBorrowTransactionAdminCreatedEvent() {
         notifyBorrowTransactionAdminCreated();
+    }
+
+    public void notifyAddBookEvent() {
+        notifyAddBook();
+    }
+
+    public void notifyBookReturnProcessedEvent() {
+        notifyBookReturnProcessed();
     }
 
     /**

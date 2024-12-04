@@ -1,4 +1,4 @@
-package main.Controllers.Client;
+package main.Controllers.Admin;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
@@ -46,18 +46,8 @@ public class BookDetailWithReviewController {
     private TableColumn<BookReview, String> colReviewDate;
     @FXML
     private TableColumn<BookReview, String> colReviewer;
-    @FXML
-    private HBox writeReviewStars;
-    @FXML
-    private TextArea writeReviewTextArea;
-    @FXML
-    private Button notifyMeButton;
-
-    private NotificationRequest currentNotificationRequest = null;
 
     private Book currentBook;
-    private BookReview userReview = null;
-    private int selectedRating = 0;
 
     /**
      * Sets the current book and updates the UI with the book's details, reviews, 
@@ -111,8 +101,14 @@ public class BookDetailWithReviewController {
         labelISBN.textProperty().bind(Bindings.concat("ISBN: ", currentBook.isbnProperty()));
         labelGenre.textProperty().bind(Bindings.concat("Genre: ", currentBook.genreProperty()));
         labelLanguage.textProperty().bind(Bindings.concat("Language: ", currentBook.languageProperty()));
-        labelPublicationYear.textProperty()
-                .bind(Bindings.concat("Publication Year: ", currentBook.publication_yearProperty().asString()));
+        if (currentBook.getPublication_year() == -1) {
+            labelPublicationYear.textProperty()
+                    .bind(Bindings.concat("Publication Year: No Publication Year",
+                            currentBook.publication_yearProperty().asString()));
+        } else
+            labelPublicationYear.textProperty()
+                    .bind(Bindings.concat("Publication Year: ",
+                            currentBook.publication_yearProperty().asString()));
         labelAverageRating.textProperty()
                 .bind(Bindings.createStringBinding(() -> getStars(currentBook.average_ratingProperty().get()),
                         currentBook.average_ratingProperty()));

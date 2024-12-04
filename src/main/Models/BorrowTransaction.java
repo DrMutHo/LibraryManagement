@@ -1,6 +1,9 @@
 package main.Models;
 
+import java.awt.TextField;
 import java.time.LocalDate;
+import javafx.beans.property.*;
+import javafx.scene.control.*;;
 
 /**
  * Represents a borrowing transaction of a book by a client.
@@ -15,6 +18,7 @@ public class BorrowTransaction {
     private LocalDate borrowDate;
     private LocalDate returnDate;
     private String status;
+    private CheckBox selected;
 
     /**
      * Default constructor for BorrowTransaction.
@@ -42,6 +46,7 @@ public class BorrowTransaction {
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
         this.status = status;
+        this.selected = new CheckBox();
     }
 
     /**
@@ -169,4 +174,14 @@ public class BorrowTransaction {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public CheckBox getSelected() {
+        return this.selected; //
+    }
+
+    public void setSelected(CheckBox selected) {
+        this.selected = selected; // Set the checkbox selected or not
+    }
+
+   
 }

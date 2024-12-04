@@ -73,18 +73,17 @@ public class LoginController implements Initializable {
     private Image eyeClosed;
     @FXML
     private ImageView imageIcon;
-    @FXML 
+    @FXML
     private Button alert_button;
     @FXML
     private AnchorPane notificationPane;
-    @FXML ImageView lib_image;
+    @FXML
+    ImageView lib_image;
     private Stage stage;
     @FXML
     private AnchorPane inner_pane;
 
-    
-    
-        @Override
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         acc_selector_init();
         username_password_promptext_init();
@@ -174,7 +173,7 @@ public class LoginController implements Initializable {
         imageIcon.setImage(isPasswordVisible ? eyeOpen : eyeClosed);
     }
 
-    @FXML 
+    @FXML
     private void onResetPassword() {
         stage = (Stage) forgotaccountButton.getScene().getWindow();
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
@@ -185,10 +184,11 @@ public class LoginController implements Initializable {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                
+
                 // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
                 Platform.runLater(() -> {
-                    Model.getInstance().getViewFactory().ShowResetPasswordWindow();;
+                    Model.getInstance().getViewFactory().ShowResetPasswordWindow();
+                    ;
                     Model.getInstance().getViewFactory().closeStage(stage);
                 });
             }, outer_pane);
@@ -273,16 +273,20 @@ public class LoginController implements Initializable {
         enableAllComponents(inner_pane);
 
     }
+
     private void disableAllComponents(AnchorPane root) {
         for (javafx.scene.Node node : root.getChildren()) {
-            // Kiểm tra nếu node không phải là notificationPane và không phải con của notificationPane
-            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null && ((AnchorPane) node).getId().equals("notificationPane"))) {
+            // Kiểm tra nếu node không phải là notificationPane và không phải con của
+            // notificationPane
+            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null
+                    && ((AnchorPane) node).getId().equals("notificationPane"))) {
                 node.setDisable(true);
             } else if (node instanceof AnchorPane && ((AnchorPane) node).getId().equals("notificationPane")) {
                 // Nếu node là notificationPane, duyệt qua các con của notificationPane
                 AnchorPane notificationPane = (AnchorPane) node;
                 for (javafx.scene.Node notificationChild : notificationPane.getChildren()) {
-                    notificationChild.setDisable(false);  // Đảm bảo các thành phần trong notificationPane không bị disable
+                    notificationChild.setDisable(false); // Đảm bảo các thành phần trong notificationPane không bị
+                                                         // disable
                 }
             }
         }
@@ -290,19 +294,21 @@ public class LoginController implements Initializable {
 
     private void enableAllComponents(AnchorPane root) {
         for (javafx.scene.Node node : root.getChildren()) {
-            // Kiểm tra nếu node không phải là notificationPane và không phải con của notificationPane
-            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null && ((AnchorPane) node).getId().equals("notificationPane"))) {
+            // Kiểm tra nếu node không phải là notificationPane và không phải con của
+            // notificationPane
+            if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null
+                    && ((AnchorPane) node).getId().equals("notificationPane"))) {
                 node.setDisable(false);
             } else if (node instanceof AnchorPane && ((AnchorPane) node).getId().equals("notificationPane")) {
                 // Nếu node là notificationPane, duyệt qua các con của notificationPane
                 AnchorPane notificationPane = (AnchorPane) node;
                 for (javafx.scene.Node notificationChild : notificationPane.getChildren()) {
-                    notificationChild.setDisable(false);  // Đảm bảo các thành phần trong notificationPane không bị disable
+                    notificationChild.setDisable(false); // Đảm bảo các thành phần trong notificationPane không bị
+                                                         // disable
                 }
             }
         }
     }
-
 
     private void onsignUp() {
         stage = (Stage) createnewaccountButton.getScene().getWindow();
@@ -314,7 +320,7 @@ public class LoginController implements Initializable {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                
+
                 // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
                 Platform.runLater(() -> {
                     Model.getInstance().getViewFactory().showSignUpWindow();
@@ -339,6 +345,7 @@ public class LoginController implements Initializable {
     private boolean isValidClientCredentials(String username, String password) {
         try (ResultSet resultSet = Model.getInstance().getDatabaseDriver().getClientData(username)) {
             if (resultSet != null && resultSet.next()) {
+
                 String storedPasswordHash = resultSet.getString("password_hash");
                 return verifyPassword(password, storedPasswordHash);
             }
@@ -347,7 +354,7 @@ public class LoginController implements Initializable {
         }
         return false;
     }
-    
+
     private boolean verifyPassword(String password, String storedPasswordHash) {
         return BCrypt.checkpw(password, storedPasswordHash);
     }

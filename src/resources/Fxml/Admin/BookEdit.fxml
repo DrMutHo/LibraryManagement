@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane stylesheets="@../../Styles/Client/BookDetailWithReview.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Admin.BookEdit">
+
+    <center>
+        <HBox spacing="15" styleClass="main-layout">
+
+              <VBox prefWidth="250.0" spacing="10" styleClass="book-details-section">
+                <ImageView fx:id="bookImageView" fitHeight="200" fitWidth="150" preserveRatio="true" />
+                <Label fx:id="labelTitle" styleClass="section-title" text="Title" />
+                <Label fx:id="labelAuthor" text="Author" />
+                <Label fx:id="labelISBN" text="ISBN" />
+                <Label fx:id="labelGenre" text="Genre" />
+                <Label fx:id="labelLanguage" text="Language" />
+                <Label fx:id="labelPublicationYear" text="Publication Year" />
+            <Label fx:id="originalquantity" layoutX="10.0" layoutY="284.0" text="Quantity" />
+            </VBox>
+
+            <VBox spacing="20" styleClass="center-section">
+
+                <HBox spacing="15">
+
+                    <VBox prefWidth="250.0" spacing="10" styleClass="description-section">
+                        <Label styleClass="section-title" text="Description:" />
+                        <TextArea fx:id="textDescription" editable="true" prefHeight="488.0" prefWidth="216.0" wrapText="true" />
+                    </VBox>
+
+                    <VBox prefWidth="400.0" spacing="15" styleClass="write-review-panel">
+                  <Label styleClass="section-title" text="Edit Panel" />
+                  <VBox prefHeight="439.0" prefWidth="366.0" spacing="15">
+                     <children>
+                        <ImageView fx:id="bookImageView1" fitHeight="133.0" fitWidth="150" preserveRatio="true" />
+                        <TextField fx:id="imageurl" editable="true" layoutX="10.0" layoutY="158.0" promptText="Image URL" />
+                        <TextField fx:id="textTitle1" editable="true" promptText="Title" />
+                        <TextField fx:id="textAuthor1" editable="true" promptText="Author" />
+                        <TextField fx:id="textISBN1" editable="true" promptText="ISBN" />
+                        <TextField fx:id="textGenre1" editable="true" promptText="Genre" />
+                        <TextField fx:id="textLanguage1" editable="true" promptText="Language" />
+                        <TextField fx:id="textPublicationYear1" editable="true" promptText="Publication Year" />
+                        <TextField fx:id="Quantity" editable="true" layoutX="10.0" layoutY="158.0" promptText="Quantity:" />
+                     </children>
+                  </VBox>
+                        <HBox spacing="20">
+                            <Button onAction="#onSubmitReview" styleClass="action-button" text="Save Changes" />
+                            <Button onAction="#onCancel" styleClass="action-button" text="Cancel" />
+                        </HBox>
+                    </VBox>
+
+                </HBox>
+            </VBox>
+
+        </HBox>
+    </center>
+</BorderPane>

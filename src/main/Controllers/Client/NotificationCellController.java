@@ -95,5 +95,5 @@ public class NotificationCellController implements Initializable {
             }
         });
     }
-    
 }
+

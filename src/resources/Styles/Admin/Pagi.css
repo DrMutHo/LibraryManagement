@@ -1,0 +1,31 @@
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: transparent;
+}
+
+/* Pagination styles */
+.pagination {
+    -fx-padding: 10;
+    -fx-background-color: #f0f8ff;
+    -fx-border-color: #81c784;
+    -fx-border-radius: 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.pagination .arrow-button {
+    -fx-background-color: #388e3c;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+}
+
+.pagination .arrow-button:hover {
+    -fx-background-color: #2e7d32;
+    -fx-cursor: hand;
+}
+
+.pagination .page-label {
+    -fx-text-fill: #388e3c;
+    -fx-font-weight: bold;
+}
