@@ -579,4 +579,7 @@ public class Model {
         databaseDriver.setClientAvatar(Model.getInstance().getClient().getClientId(), fileURI);
     }
 
+    public void setAllBooksAverageRating() {
+        databaseDriver.setAllBooksAverageRating();
+    }
 }

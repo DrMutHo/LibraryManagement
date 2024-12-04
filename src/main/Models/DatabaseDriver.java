@@ -257,7 +257,7 @@ public class DatabaseDriver {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book " +
                 "ORDER BY average_rating DESC " +
-                "LIMIT 6";
+                "LIMIT 10";
         try {
             Connection connection = this.dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -1198,4 +1198,24 @@ public class DatabaseDriver {
         }
     }
 
+    public void setAllBooksAverageRating() {
+        String query = """
+                UPDATE Book b
+                JOIN (
+                    SELECT book_id, AVG(rating) AS avg_rating
+                    FROM BookReview
+                    GROUP BY book_id
+                ) br ON b.book_id = br.book_id
+                SET b.average_rating = br.avg_rating;
+
+                """;
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println("Updated average_rating for " + rowsAffected + " books.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -13,7 +13,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" stylesheets="@../../Styles/Client/Home.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.HomeController">
+<BorderPane fx:id="HomePage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" stylesheets="@../../Styles/Client/Home.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.HomeController">
    <top>
       <HBox alignment="CENTER" prefHeight="58.0" prefWidth="850.0" spacing="10.0" styleClass="hbox-header" BorderPane.alignment="CENTER">
          <children>
@@ -60,7 +60,7 @@
                                     <ComboBox fx:id="genreComboBox" prefWidth="150.0" promptText="All" />
                                  </children>
                               </HBox>
-                              <ScrollPane hbarPolicy="NEVER" prefHeight="218.0" prefWidth="850.0" vbarPolicy="NEVER">
+                              <ScrollPane hbarPolicy="NEVER" prefHeight="218.0" prefWidth="850.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
                                  <content>
                                     <HBox fx:id="highestRatedBooks" prefHeight="408.0" prefWidth="909.0" styleClass="hbox-recentlyAdd" />
                                  </content>
