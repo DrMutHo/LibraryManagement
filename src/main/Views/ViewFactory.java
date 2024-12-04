@@ -23,24 +23,34 @@ import main.Controllers.Client.ChangePasswordController;
 import main.Controllers.Client.ClientController;
 import main.Controllers.Client.ProfileController;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.scene.control.ProgressIndicator;
+import main.Controllers.Client.ClientController;
+import main.Controllers.Admin.AdminController;
 
 public class ViewFactory {
+
     private AccountType loginAccountType;
-    // Client Views
+
+    // Client and Admin Menu Options
     private final ObjectProperty<ClientMenuOptions> clientSelectedMenuItem;
     private final ObjectProperty<ProfileMenuOptions> profileSelectedMenuItem;
+    private final ObjectProperty<AdminMenuOptions> adminSelectedMenuItem;
+
+    // Client Views
+
     private BorderPane dashboardView;
     private BorderPane homeView;
     private BorderPane profileView;
     private BorderPane browsingView;
     private BorderPane notiView;
-    private BorderPane booktransactionView;
     private BorderPane bookDetailsView;
     private BorderPane BorrowTransactionView;
     private BorderPane profileDetailView;
-    private AnchorPane changePasswordView;
-    private AnchorPane editProfileView;
-    private AnchorPane deleteAccountView;
+    private BorderPane changePasswordView;
+    private BorderPane editProfileView;
+    private BorderPane deleteAccountView;
 
     public void resetAllPanes() {
         dashboardView = null;
@@ -48,7 +58,6 @@ public class ViewFactory {
         profileView = null;
         browsingView = null;
         notiView = null;
-        booktransactionView = null;
         bookDetailsView = null;
         BorrowTransactionView = null;
         profileDetailView = null;
@@ -57,12 +66,22 @@ public class ViewFactory {
         deleteAccountView = null;
     }
 
+    // Admin Views
+    private BorderPane adminDashboardView;
+    private BorderPane adminProfileView;
+    private BorderPane adminBookBrowsingView;
+    private BorderPane adminClientsBrowsingView;
+    private BorderPane adminNotiView;
+    private BorderPane adminBookTransactionView;
+
     public ViewFactory() {
-        this.loginAccountType = AccountType.CLIENT;
+        this.loginAccountType = AccountType.CLIENT; // Default to Client
         this.clientSelectedMenuItem = new SimpleObjectProperty<>();
         this.profileSelectedMenuItem = new SimpleObjectProperty<>();
+        this.adminSelectedMenuItem = new SimpleObjectProperty<>();
     }
 
+    // Setters and Getters for Account Type and Menu Selection
     public AccountType getLoginAccountType() {
         return this.loginAccountType;
     }
@@ -71,9 +90,7 @@ public class ViewFactory {
         this.loginAccountType = loginAccountType;
     }
 
-    /*
-     * Client Views Section.
-     */
+    // Client Views Section
     public ObjectProperty<ClientMenuOptions> getClientSelectedMenuItem() {
         return clientSelectedMenuItem;
     }
@@ -175,34 +192,63 @@ public class ViewFactory {
         return profileDetailView;
     }
 
-    public AnchorPane getChangePasswordView() {
+    // Admin Views Section
+    public ObjectProperty<AdminMenuOptions> getAdminSelectedMenuItem() {
+        return adminSelectedMenuItem;
+    }
+
+    public BorderPane getAdminDashboardView() {
+        if (adminDashboardView == null) {
+            try {
+                adminDashboardView = new FXMLLoader(getClass().getResource("/resources/Fxml/Admin/AdminDashboard.fxml"))
+                        .load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return adminDashboardView;
+    }
+
+    public BorderPane getChangePasswordView() {
         if (changePasswordView == null) {
             try {
-                // Tải FXML và lưu vào changePasswordView chỉ một lần
                 changePasswordView = new FXMLLoader(
                         getClass().getResource("/resources/Fxml/Client/ChangePassword.fxml")).load();
             } catch (Exception e) {
                 e.printStackTrace();
-                // Xử lý khi không thể tải tệp FXML
-                return null; // Hoặc có thể ném ngoại lệ, tùy theo yêu cầu
+                return null;
             }
         }
         return changePasswordView;
     }
 
-    public AnchorPane getEditProfileView() {
+    public BorderPane getEditProfileView() {
         if (editProfileView == null) {
             try {
                 editProfileView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/EditProfile.fxml"))
                         .load();
             } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
         }
         return editProfileView;
     }
 
-    public AnchorPane getDeleteAccountView() {
+    public BorderPane getAdminProfileView() {
+        if (adminProfileView == null) {
+            try {
+                adminProfileView = new FXMLLoader(getClass().getResource("/resources/Fxml/Admin/AdminProfile.fxml"))
+                        .load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return adminProfileView;
+    }
+
+    public BorderPane getDeleteAccountView() {
+
         if (deleteAccountView == null) {
             try {
                 deleteAccountView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/DeleteAccount.fxml"))
@@ -214,10 +260,68 @@ public class ViewFactory {
         return deleteAccountView;
     }
 
+    public BorderPane getAdminBookBrowsingView() {
+        if (adminBookBrowsingView == null) {
+            try {
+                adminBookBrowsingView = new FXMLLoader(
+                        getClass().getResource("/resources/Fxml/Admin/BookBrowsing.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return adminBookBrowsingView;
+
+    }
+
+    public BorderPane getAdminClientsBrowsingView() {
+        if (adminClientsBrowsingView == null) {
+            try {
+                adminClientsBrowsingView = new FXMLLoader(
+                        getClass().getResource("/resources/Fxml/Admin/ClientBrowsing.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return adminClientsBrowsingView;
+    }
+
+    public BorderPane getAdminNotiView() {
+        if (adminNotiView == null) {
+            try {
+                adminNotiView = new FXMLLoader(getClass().getResource("/resources/Fxml/Admin/AdminNotification.fxml"))
+                        .load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return adminNotiView;
+    }
+
+    public BorderPane getAdminBookTransactionView() {
+        if (adminBookTransactionView == null) {
+            try {
+                adminBookTransactionView = new FXMLLoader(
+                        getClass().getResource("/resources/Fxml/Admin/AdminBookTransaction.fxml")).load();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return adminBookTransactionView;
+    }
+
+    // Show Windows based on the Role (Client or Admin)
     public void showClientWindow() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/Client.fxml"));
         ClientController clientController = new ClientController();
         loader.setController(clientController);
+        createStage(loader);
+    }
+
+    public void showAdminWindow() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Admin/Admin.fxml"));
+        AdminController adminController = new AdminController();
+        loader.setController(adminController);
         createStage(loader);
     }
 
@@ -281,6 +385,47 @@ public class ViewFactory {
         }).start();
     }
 
+    public void showResetPasswordWindow() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Forgotpassword.fxml"));
+        createStage(loader);
+    }
+
+    // Show loading screen with a task running in background
+    public void showLoading(Runnable task, AnchorPane anchorPane) {
+        StackPane loadingOverlay = new StackPane();
+        loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        loadingOverlay.setPrefSize(anchorPane.getWidth(), anchorPane.getHeight());
+
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        loadingOverlay.getChildren().add(progressIndicator);
+        StackPane.setAlignment(progressIndicator, Pos.CENTER);
+
+        Platform.runLater(() -> {
+            if (!anchorPane.getChildren().contains(loadingOverlay)) {
+                anchorPane.getChildren().add(loadingOverlay);
+            }
+        });
+
+        new Thread(() -> {
+            long startTime = System.currentTimeMillis();
+            task.run();
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            long minimumDisplayTime = 500; // Minimum display time (500ms)
+            long remainingTime = minimumDisplayTime - elapsedTime;
+
+            if (remainingTime > 0) {
+                try {
+                    Thread.sleep(remainingTime);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            Platform.runLater(() -> anchorPane.getChildren().remove(loadingOverlay));
+        }).start();
+    }
+
+    // Helper method to create a new stage (window)
     private void createStage(FXMLLoader loader) {
         Scene scene = null;
         try {
@@ -295,6 +440,7 @@ public class ViewFactory {
         stage.show();
     }
 
+    // Close the current stage (window)
     public void closeStage(Stage stage) {
         stage.close();
     }

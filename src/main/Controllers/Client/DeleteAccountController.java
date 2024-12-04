@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -25,52 +26,151 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import main.Models.Model;
 
+/**
+ * Controller for managing the account deletion process.
+ * This class handles the UI components and user actions for deleting an account, 
+ * including the password input field behavior and visibility toggle.
+ */
 public class DeleteAccountController implements Initializable {
+
+    @FXML
+    private HBox hBox0;
+
     @FXML
     private PasswordField passwordField0;
+
+    @FXML
+    private TextField textField0;
+
     @FXML
     private Button deleteButton;
 
+    @FXML
+    private Button toggleButton0;
+
+    @FXML
+    private Image eyeOpen;
+
+    @FXML
+    private Image eyeClosed;
+
+    @FXML
+    private ImageView imageView0;
+
+    @FXML
+    private AnchorPane anchorPane;
+
+    /**
+     * Initializes the controller after the root element has been processed.
+     * This method sets up the initial states for password fields, button actions,
+     * and image icons for the toggle password visibility feature.
+     * 
+     * @param url The location used to resolve relative paths for the root object,
+     *            or {@code null} if the location is not known.
+     * @param resourceBundle The resources used to localize the root object,
+     *                       or {@code null} if the resources are not required.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         passwordField_init();
     }
 
+    /**
+     * Initializes the password field and sets up the prompt text, 
+     * visibility toggle for password fields, and button actions.
+     */
     public void passwordField_init() {
+        // Set prompt text for the password fields
         setPromptText();
 
+        // Initialize password fields and text fields
+        initializePasswordAndTextFields(passwordField0, textField0, hBox0);
+
+        // Load eye icon images for showing/hiding passwords
+        eyeClosed = new Image(getClass().getResource("/resources/Images/hide-password.png").toExternalForm());
+        eyeOpen = new Image(getClass().getResource("/resources/Images/show-passwords.png").toExternalForm());
+
+        // Set initial icon state
+        imageView0.setImage(eyeClosed);
+
+        // Set toggle button actions
+        toggleButton0.setOnAction(event -> togglePasswordVisibility());
         deleteButton.setOnAction(event -> handleDeleteButton());
     }
 
-    // Helper method to set prompt text for all password fields
+    /**
+     * Helper method to set prompt text for the password fields.
+     */
     private void setPromptText() {
         passwordField0.setPromptText("Enter your current password");
+        textField0.setPromptText("Enter your current password");
     }
 
-    // Method to check current password
-    private boolean checkCurrentPassword(String username, String password) {
-        // Query database to get user's hashed password
-        String query = "SELECT * FROM client WHERE username = ?";
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+    /**
+     * Initializes the password field and text field visibility and management.
+     * Binds the text properties of the password field and text field.
+     * 
+     * @param passwordField The password field to be initialized.
+     * @param textField The text field to be initialized.
+     * @param hBox The HBox containing the password and text fields.
+     */
+    private void initializePasswordAndTextFields(PasswordField passwordField, TextField textField, HBox hBox) {
+        passwordField.setVisible(true);
+        passwordField.setManaged(true);
+        textField.setVisible(false);
+        textField.setManaged(false);
+        textField.textProperty().bindBidirectional(passwordField.textProperty());
 
-            // Check connection validity
-            if (connection == null || connection.isClosed()) {
-                System.err.println("Invalid database connection!");
-                return false;
+        // Add focus listeners
+        addPasswordFieldFocusListener(passwordField, hBox);
+        addTextFieldListener(textField, hBox);
+    }
+
+    /**
+     * Focus listener for the password field. Adds a style class when the password field gains focus
+     * and removes it when the field loses focus.
+     * 
+     * @param passwordField The password field whose focus changes are being tracked.
+     * @param hbox The HBox containing the password field, used to apply/remove the focus style.
+     */
+    private void addPasswordFieldFocusListener(PasswordField passwordField, HBox hbox) {
+        passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                hbox.getStyleClass().add("hbox_set-focused");
+            } else {
+                hbox.getStyleClass().remove("hbox_set-focused");
             }
+        });
+    }
 
-            // Set parameters for the query
-            preparedStatement.setString(1, username);
+    /**
+     * Focus listener for the text field. Adds a style class when the text field gains focus
+     * and removes it when the field loses focus.
+     * 
+     * @param textField The text field whose focus changes are being tracked.
+     * @param hbox The HBox containing the text field, used to apply/remove the focus style.
+     */
+    private void addTextFieldListener(TextField textField, HBox hbox) {
+        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                hbox.getStyleClass().add("hbox_set-focused");
+            } else {
+                hbox.getStyleClass().remove("hbox_set-focused");
+            }
+        });
+    }
 
-            // Execute the query
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            // If user is found, compare the password
-            if (resultSet.next()) {
+    /**
+     * Checks if the provided password matches the stored password for the given username.
+     * 
+     * @param username The username whose password is being verified.
+     * @param password The password entered by the user.
+     * @return {@code true} if the password matches the stored hash, {@code false} otherwise.
+     */
+    private boolean checkCurrentPassword(String username, String password) {
+        try (ResultSet resultSet = Model.getInstance().getDatabaseDriver().getClientData(username)) {
+            if (resultSet != null && resultSet.next()) {
                 String storedPasswordHash = resultSet.getString("password_hash");
-
-                // Verify password with hash
                 return verifyPassword(password, storedPasswordHash);
             }
         } catch (SQLException e) {
@@ -79,105 +179,114 @@ public class DeleteAccountController implements Initializable {
         return false;
     }
 
-    // Verify password with stored hash
+    /**
+     * Verifies the provided password against a stored password hash.
+     * 
+     * @param password The plain text password entered by the user.
+     * @param storedPasswordHash The stored password hash to compare against.
+     * @return {@code true} if the password matches the stored hash, {@code false} otherwise.
+     */
     private boolean verifyPassword(String password, String storedPasswordHash) {
         return BCrypt.checkpw(password, storedPasswordHash);
     }
 
+    /**
+     * Toggles the visibility of the password in the password field.
+     * If the password is currently visible, it hides the password, and vice versa.
+     * Updates the icon in the image view accordingly.
+     */
+    @FXML
+    private void togglePasswordVisibility() {
+        boolean isPasswordVisible = passwordField0.isVisible();
+        passwordField0.setVisible(!isPasswordVisible);
+        passwordField0.setManaged(!isPasswordVisible);
+        textField0.setVisible(isPasswordVisible);
+        textField0.setManaged(isPasswordVisible);
+        imageView0.setImage(isPasswordVisible ? eyeOpen : eyeClosed);
+    }
+
+
+    /**
+     * Handles the action when the delete button is pressed. This method verifies the user's current password,
+     * prompts the user for confirmation to delete the account, and performs the deletion if confirmed.
+     * 
+     * The method first checks if the entered password matches the stored password. If the password is correct,
+     * it shows a confirmation dialog asking the user to confirm the deletion. If the user confirms, the account
+     * is deleted from the database, and the application navigates to the login screen. If the user cancels or 
+     * the password is incorrect, appropriate messages are displayed.
+     */
     // Action when the delete button is pressed
     @FXML
     private void handleDeleteButton() {
         String username = Model.getInstance().getClient().getUsername(); // Replace with actual current username logic
         String password = passwordField0.getText();
 
-        // Verify password
-        if (checkCurrentPassword(username, password)) {
-            // Show confirmation dialog with Yes, No, and Cancel options
-            Alert alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Confirm Deletion");
-            alert.setHeaderText("Are you sure you want to delete your account?");
-            alert.setContentText("This action cannot be undone.");
+        // Tạo Task để kiểm tra mật khẩu
+        Task<Boolean> verifyPasswordTask = new Task<>() {
+            @Override
+            protected Boolean call() {
+                return checkCurrentPassword(username, password); // Hàm xác minh mật khẩu
+            }
+        };
 
-            // Add Yes, No, and Cancel buttons
-            alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+        // Xử lý kết quả kiểm tra mật khẩu
+        verifyPasswordTask.setOnSucceeded(event -> {
+            boolean isPasswordCorrect = verifyPasswordTask.getValue();
+            if (isPasswordCorrect) {
+                // Hiển thị hộp thoại xác nhận
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirm Deletion");
+                alert.setHeaderText("Are you sure you want to delete your account?");
+                alert.setContentText("This action cannot be undone.");
+                alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
 
-            // Wait for the user's response
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.YES) {
-                    // Delete account from database
-                    deleteAccount(username);
-                    Model.getInstance().getViewFactory().resetAllPanes();
-                    // Navigate to login screen
-                    Stage stage = (Stage) deleteButton.getScene().getWindow();
-                    Model.getInstance().getViewFactory().showLoading(() -> {
-                        // Giả lập thời gian chuẩn bị tài nguyên (độ trễ nhân tạo)
-                        try {
-                            Thread.sleep(500); // Thời gian chuẩn bị tài nguyên giả lập 500ms
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
+                // Chờ người dùng phản hồi
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == ButtonType.YES) {
+                        // Tạo Task để xóa tài khoản
+                        Task<Void> deleteAccountTask = new Task<>() {
+                            @Override
+                            protected Void call() {
+                                Model.getInstance().getDatabaseDriver().deleteAccount(username);
+                                return null;
+                            }
+                        };
 
-                        // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
-                        Platform.runLater(() -> {
-                            Model.getInstance().getViewFactory().showLoginWindow();
-                            Model.getInstance().getViewFactory().closeStage(stage);
+                        // Xử lý sau khi xóa tài khoản thành công
+                        deleteAccountTask.setOnSucceeded(deleteEvent -> {
+                            // Đặt lại các giao diện
+                            Model.getInstance().getViewFactory().resetAllPanes();
+                            Stage stage = (Stage) deleteButton.getScene().getWindow();
+
+                            // Hiển thị loading khi chuyển sang màn hình khác
+                            Model.getInstance().getViewFactory().showLoading(() -> {
+                                try {
+                                    Thread.sleep(500); // Mô phỏng chờ tài nguyên
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
+                                }
+                                Platform.runLater(() -> {
+                                    Model.getInstance().getViewFactory().showLoginWindow();
+                                    Model.getInstance().getViewFactory().closeStage(stage);
+                                });
+                            }, Model.getInstance().getViewFactory().getDeleteAccountView());
                         });
-                    }, Model.getInstance().getViewFactory().getDeleteAccountView());
-                } else if (response == ButtonType.CANCEL) {
-                    // Do nothing, simply close the alert
-                    alert.close();
-                }
-            });
-        } else {
-            // Show error if password is incorrect
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Incorrect password");
-            alert.setContentText("The entered password is incorrect.");
-            alert.showAndWait();
-        }
-    }
 
-    private void deleteAccount(String username) {
-        String deleteTransactionsQuery = "DELETE FROM borrowtransaction WHERE client_id = (SELECT client_id FROM client WHERE username = ?)";
-        String deleteNotificationRequestsQuery = "DELETE FROM notificationrequest WHERE client_id = (SELECT client_id FROM client WHERE username = ?)";
-        String deleteAccountQuery = "DELETE FROM client WHERE username = ?";
-
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-                PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsQuery);
-                PreparedStatement deleteNotificationRequestsStatement = connection
-                        .prepareStatement(deleteNotificationRequestsQuery);
-                PreparedStatement deleteAccountStatement = connection.prepareStatement(deleteAccountQuery)) {
-
-            // Check connection validity
-            if (connection == null || connection.isClosed()) {
-                System.err.println("Invalid database connection!");
-                return;
+                        // Chạy Task xóa tài khoản trên luồng riêng
+                        new Thread(deleteAccountTask).start();
+                    } else if (response == ButtonType.CANCEL) {
+                        alert.close();
+                    }
+                });
+            } else {
+                // Mật khẩu không đúng, hiển thị thông báo lỗi
+                Alert errorAlert = new Alert(AlertType.ERROR);
+                errorAlert.setTitle("Error");
+                errorAlert.setHeaderText("Incorrect password");
+                errorAlert.setContentText("The entered password is incorrect.");
+                errorAlert.showAndWait();
             }
-
-            // Step 1: Delete related borrow transactions
-            deleteTransactionsStatement.setString(1, username);
-            int rowsAffectedInTransactions = deleteTransactionsStatement.executeUpdate();
-            if (rowsAffectedInTransactions > 0) {
-                System.out.println("Related borrow transactions deleted successfully.");
-            }
-
-            // Step 2: Delete related notification requests
-            deleteNotificationRequestsStatement.setString(1, username);
-            int rowsAffectedInNotificationRequests = deleteNotificationRequestsStatement.executeUpdate();
-            if (rowsAffectedInNotificationRequests > 0) {
-                System.out.println("Related notification requests deleted successfully.");
-            }
-
-            // Step 3: Delete the account from the client table
-            deleteAccountStatement.setString(1, username);
-            int rowsAffectedInAccount = deleteAccountStatement.executeUpdate();
-            if (rowsAffectedInAccount > 0) {
-                System.out.println("Account deleted successfully.");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        });
+        new Thread(verifyPasswordTask).start();
     }
 }

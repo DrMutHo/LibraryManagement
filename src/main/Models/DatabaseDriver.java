@@ -1,6 +1,15 @@
 package main.Models;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,45 +19,87 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.Properties;
 
+import org.mindrot.jbcrypt.BCrypt;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javax.xml.crypto.Data;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 
+/**
+ * The DatabaseDriver class handles the configuration and management of the
+ * database connection pool using HikariCP. It provides utility methods for
+ * retrieving and closing database connections.
+ */
 public class DatabaseDriver {
+
+    /** DataSource instance managed by HikariCP */
     private HikariDataSource dataSource;
 
+    /**
+     * Gets the current DataSource instance.
+     * 
+     * @return the DataSource instance managed by HikariCP
+     */
     public HikariDataSource getDataSource() {
         return this.dataSource;
     }
 
+    /**
+     * Sets the DataSource instance.
+     * 
+     * @param dataSource the HikariDataSource to set
+     */
     public void setDataSource(HikariDataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Constructs a DatabaseDriver instance and initializes the HikariCP DataSource.
+     * Loads database configuration from environment variables using Dotenv.
+     */
     public DatabaseDriver() {
         try {
-            // Tải biến môi trường
+            // Load environment variables
             Dotenv dotenv = Dotenv.load();
             String url = "jdbc:mysql://localhost:3306/library_management";
             String username = dotenv.get("DB_USER");
             String password = dotenv.get("DB_PASSWORD");
 
-            // Cấu hình HikariCP
+            // Configure HikariCP
             HikariConfig config = new HikariConfig();
             config.setJdbcUrl(url);
             config.setUsername(username);
             config.setPassword(password);
-            config.setMaximumPoolSize(20); // Số lượng kết nối tối đa trong pool
-            config.setConnectionTimeout(60000); // Thời gian chờ kết nối (30 giây)
-            config.setIdleTimeout(600000); // Thời gian chờ kết nối không sử dụng (10 phút)
-            config.setMaxLifetime(1800000); // Thời gian sống tối đa của kết nối (30 phút)
+            config.setMaximumPoolSize(151); // Maximum connections in the pool
+            config.setConnectionTimeout(60000); // Connection timeout (60 seconds)
+            config.setIdleTimeout(600000); // Idle connection timeout (10 minutes)
+            config.setMaxLifetime(1800000); // Maximum connection lifetime (30 minutes)
 
-            // Tạo DataSource
+            // Create DataSource
             this.dataSource = new HikariDataSource(config);
             System.out.println("Connect to database successfully!");
 
@@ -57,16 +108,30 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Retrieves a connection from the HikariCP DataSource.
+     * 
+     * @return a Connection object from the connection pool
+     * @throws SQLException if a database access error occurs
+     */
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
 
+    /**
+     * Closes the HikariCP DataSource and releases all resources.
+     * Should be called during application shutdown to clean up resources.
+     */
     public void close() {
         if (dataSource != null) {
             dataSource.close();
         }
     }
 
+    /**
+     * 
+     * @return
+     */
     public ResultSet getAllAdminIDs() {
         ResultSet resultSet = null;
         String query = "SELECT admin_id FROM Admin";
@@ -83,6 +148,12 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves book data based on the copy ID.
+     * 
+     * @param copy_id the ID of the book copy to retrieve data for
+     * @return a ResultSet containing the book data
+     */
     public ResultSet getBookDataByCopyID(int copy_id) {
         ResultSet resultSet = null;
         String query = "SELECT Book.* FROM Book " +
@@ -102,6 +173,42 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    public String getBookTitleByCopyId(int copyId) {
+        String title = null;
+        String query = "SELECT b.title " +
+                "FROM Book b " +
+                "JOIN BookCopy bc ON b.book_id = bc.book_id " +
+                "WHERE bc.copy_id = ?";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            // Set the copyId parameter
+            pstmt.setInt(1, copyId);
+
+            // Execute the query and get the result set
+            ResultSet rs = pstmt.executeQuery();
+
+            // Check if the result set contains a title
+            if (rs.next()) {
+                title = rs.getString("title");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return title; // Will return null if no book found for the given copyId
+    }
+
+    /**
+     * Retrieves book data based on the copy ID.
+     *
+     * @param copy_id the ID of the book copy used to fetch the corresponding book
+     *                data.
+     * @return a ResultSet containing the book data. If no matching record is found,
+     *         the ResultSet will be empty.
+     * @throws SQLException if a database access error occurs.
+     */
     public ResultSet get1BookDataByCopyID(int copy_id) {
         ResultSet resultSet = null;
         String query = "SELECT Book.* FROM Book " +
@@ -122,6 +229,17 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves transaction details for a specific client based on their client ID.
+     *
+     * @param client_id the ID of the client whose transactions are to be retrieved.
+     * @return a ResultSet containing transaction details, including transaction ID,
+     *         book title,
+     *         copy ID, borrow date, return date, and status. If no transactions are
+     *         found, the ResultSet will be empty.
+     * @throws SQLException if a database access error occurs during the query
+     *                      execution.
+     */
     public ResultSet getTransactionByClientID(int client_id) {
         ResultSet resultSet = null;
         String query = "SELECT " +
@@ -147,6 +265,16 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves all borrow transactions from the database.
+     *
+     * @return a ResultSet containing details of all borrow transactions, including
+     *         transaction ID, client ID,
+     *         copy ID, borrow date, return date, and status. If no transactions are
+     *         present, the ResultSet will be empty.
+     * @throws SQLException if a database access error occurs during the query
+     *                      execution.
+     */
     public ResultSet getAllBorrowTransactions() {
         ResultSet resultSet = null;
         String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status FROM BorrowTransaction";
@@ -160,6 +288,15 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the list of books borrowed by a specific client.
+     *
+     * @param client_id the ID of the client whose borrowed books are to be
+     *                  retrieved
+     * @return a {@link ResultSet} containing details of the books borrowed by the
+     *         client,
+     *         or {@code null} if an error occurs
+     */
     public ResultSet getBookByClientID(int client_id) {
         ResultSet resultSet = null;
         String query = "SELECT " +
@@ -180,6 +317,53 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    public Book getBookByBookId(int bookId) {
+        String query = "SELECT * FROM Book WHERE book_id = ?";
+
+        try {
+            // Establish connection with the database
+            Connection connection = this.dataSource.getConnection();
+
+            // Prepare the SQL query
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            // Set the book_id parameter
+            preparedStatement.setInt(1, bookId);
+
+            // Execute the query
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // Check if resultSet has data
+            if (resultSet.next()) {
+                // Map the ResultSet to the Book object
+                return new Book(
+                        resultSet.getInt("book_id"),
+                        resultSet.getString("title"),
+                        resultSet.getString("author"),
+                        resultSet.getString("isbn"),
+                        resultSet.getString("genre"),
+                        resultSet.getString("language"),
+                        resultSet.getString("description"),
+                        resultSet.getInt("publication_year"),
+                        resultSet.getString("image_path"),
+                        resultSet.getDouble("average_rating"),
+                        resultSet.getInt("review_count"),
+                        1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return new Book();
+    }
+
+    /**
+     * Retrieves the wish list of a specific client.
+     *
+     * @param client_id the ID of the client whose wish list is to be retrieved
+     * @return a {@link ResultSet} containing details of the books in the wish list,
+     *         or {@code null} if an error occurs
+     */
     public ResultSet getWishList(int client_id) {
         ResultSet resultSet = null;
         String query = "SELECT " +
@@ -201,6 +385,15 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the details of the book currently being read by a specific client.
+     *
+     * @param client_id the ID of the client whose currently reading book is to be
+     *                  retrieved
+     * @return a {@link ResultSet} containing details of the book currently being
+     *         read,
+     *         or {@code null} if an error occurs
+     */
     public ResultSet getReadingBook(int client_id) {
         ResultSet resultSet = null;
         String query = "SELECT " +
@@ -222,6 +415,12 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the data of all books available in the library.
+     *
+     * @return a {@link ResultSet} containing details of all books,
+     *         or {@code null} if an error occurs
+     */
     public ResultSet getAllBookData() {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book";
@@ -237,6 +436,13 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Retrieves the title of a book by its ID.
+     *
+     * @param bookId the ID of the book whose title is to be retrieved
+     * @return the title of the book as a {@link String},
+     *         or {@code null} if the book is not found or an error occurs
+     */
     public String getBookTitleById(int bookId) {
         String query = "SELECT title FROM Book WHERE book_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -250,9 +456,14 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
         return null;
-
     }
 
+    /**
+     * Retrieves the top-rated books based on their average rating.
+     *
+     * @return a {@link ResultSet} containing details of the highest-rated books,
+     *         or {@code null} if an error occurs
+     */
     public ResultSet getHighestRatingBooks() {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book " +
@@ -269,22 +480,14 @@ public class DatabaseDriver {
         return resultSet;
     }
 
-    public ResultSet getHighestRatingBook() {
-        ResultSet resultSet = null;
-        String query = "SELECT * FROM Book " +
-                "ORDER BY average_rating DESC " +
-                "LIMIT 1";
-        try {
-            Connection connection = this.dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            resultSet = preparedStatement.executeQuery();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return resultSet;
-    }
-
+    /**
+     * Lấy danh sách 10 cuốn sách có đánh giá cao nhất theo thể loại.
+     *
+     * @param genre Thể loại của sách. Nếu là "TẤT CẢ" hoặc null, sẽ lấy sách từ mọi
+     *              thể loại.
+     * @return Một đối tượng ResultSet chứa danh sách sách được sắp xếp theo đánh
+     *         giá từ cao đến thấp.
+     */
     public ResultSet getHighestRatingBooksByGenre(String genre) {
         ResultSet resultSet = null;
         String query = "SELECT *, " +
@@ -314,6 +517,13 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Lấy dữ liệu khách hàng dựa trên tên người dùng.
+     *
+     * @param username Tên người dùng của khách hàng.
+     * @return Một đối tượng ResultSet chứa thông tin của khách hàng tương ứng với
+     *         tên người dùng.
+     */
     public ResultSet getClientData(String username) {
         Statement statement;
         ResultSet resultSet = null;
@@ -326,6 +536,13 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Lấy dữ liệu quản trị viên dựa trên tên người dùng.
+     *
+     * @param username Tên người dùng của quản trị viên.
+     * @return Một đối tượng ResultSet chứa thông tin của quản trị viên tương ứng
+     *         với tên người dùng.
+     */
     public ResultSet getAdminData(String username) {
         Statement statement;
         ResultSet resultSet = null;
@@ -338,6 +555,16 @@ public class DatabaseDriver {
         return resultSet;
     }
 
+    /**
+     * Tạo một khách hàng mới với các thông tin cung cấp.
+     *
+     * @param email         Địa chỉ email của khách hàng.
+     * @param phone_number  Số điện thoại của khách hàng.
+     * @param address       Địa chỉ của khách hàng.
+     * @param username      Tên người dùng của khách hàng.
+     * @param password_hash Mã hóa mật khẩu của khách hàng.
+     * @param name          Tên của khách hàng.
+     */
     public void createClient(String email, String phone_number, String address, String username, String password_hash,
             String name) {
         String newLibraryCardNum = null;
@@ -389,6 +616,12 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Lấy tên khách hàng dựa trên ID của khách hàng.
+     *
+     * @param clientId ID của khách hàng cần lấy tên.
+     * @return Tên của khách hàng nếu tìm thấy, ngược lại trả về null.
+     */
     public String getClientNameById(int clientId) {
         String query = "SELECT name FROM Client WHERE client_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -406,8 +639,20 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Lấy danh sách thông báo cho người nhận dựa trên ID, loại tài khoản và giới
+     * hạn số lượng.
+     *
+     * @param recipientId ID của người nhận thông báo.
+     * @param AccountType Loại tài khoản của người nhận (ví dụ: Client, Admin).
+     * @param limit       Số lượng thông báo tối đa cần lấy. Nếu nhỏ hơn hoặc bằng
+     *                    0, không giới hạn.
+     * @return Một đối tượng ResultSet chứa danh sách thông báo theo tiêu chí đã
+     *         cho, hoặc null nếu xảy ra lỗi.
+     */
     public ResultSet getNotifications(int recipientId, String AccountType, int limit) {
         String query = "SELECT * FROM Notification WHERE recipient_id = ? And recipient_type = ? ORDER BY is_read ASC, created_at DESC";
+
         if (limit > 0) {
             query += " LIMIT ?";
         }
@@ -417,7 +662,7 @@ public class DatabaseDriver {
             pstmt.setInt(1, recipientId);
             pstmt.setString(2, AccountType);
             if (limit > 0) {
-                pstmt.setInt(2, limit);
+                pstmt.setInt(3, limit);
             }
             return pstmt.executeQuery();
         } catch (SQLException e) {
@@ -426,6 +671,11 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Xóa một thông báo dựa trên ID của thông báo đó.
+     *
+     * @param notificationId ID của thông báo cần xóa.
+     */
     public void deleteNotification(int notificationId) {
         String query = "DELETE FROM Notification WHERE notification_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -437,6 +687,13 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Cập nhật trạng thái đọc của một thông báo dựa trên ID của thông báo đó.
+     *
+     * @param notificationId ID của thông báo cần cập nhật.
+     * @param isRead         Trạng thái đọc mới của thông báo. {@code true} nếu đã
+     *                       đọc, {@code false} nếu chưa đọc.
+     */
     public void updateNotification(int notificationId, boolean isRead) {
         String query = "UPDATE Notification SET is_read = ? WHERE notification_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -449,6 +706,13 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Chèn một thông báo mới vào cơ sở dữ liệu.
+     *
+     * @param notification Đối tượng {@link Notification} chứa thông tin thông báo
+     *                     cần chèn.
+     * @return {@code true} nếu chèn thành công, {@code false} nếu có lỗi xảy ra.
+     */
     public boolean insertNotification(Notification notification) {
         String query = "INSERT INTO Notification (recipient_id, recipient_type, notification_type, message, created_at, is_read) VALUES (?, ?, ?, ?, ?, ?);";
         try (Connection conn = dataSource.getConnection();
@@ -474,6 +738,13 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Lấy thông tin một thông báo dựa trên ID của thông báo đó.
+     *
+     * @param notificationId ID của thông báo cần lấy.
+     * @return Đối tượng {@link Notification} chứa thông tin của thông báo nếu tìm
+     *         thấy, ngược lại trả về {@code null}.
+     */
     public Notification getNotificationById(int notificationId) {
         String query = "SELECT * FROM Notification WHERE notification_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -496,6 +767,13 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Đếm số lượng thông báo chưa đọc cho một người nhận cụ thể.
+     *
+     * @param recipientId ID của người nhận thông báo.
+     * @param AccountType Loại tài khoản của người nhận (ví dụ: Client, Admin).
+     * @return Số lượng thông báo chưa đọc.
+     */
     public int countUnreadNotifications(int recipientId, String AccountType) {
         String query = "SELECT COUNT(*) AS unread_count FROM Notification WHERE recipient_id = ? AND recipient_type = ? AND is_read = false;";
         try (Connection conn = dataSource.getConnection();
@@ -512,6 +790,12 @@ public class DatabaseDriver {
         return 0;
     }
 
+    /**
+     * Đánh dấu tất cả các thông báo của một người nhận cụ thể là đã đọc.
+     *
+     * @param recipientId ID của người nhận thông báo.
+     * @param AccountType Loại tài khoản của người nhận (ví dụ: Client, Admin).
+     */
     public void markAllNotificationsAsRead(int recipientId, String AccountType) {
         String query = "UPDATE notification SET is_read = 1 WHERE recipient_id = ? AND recipient_type = ?";
         try (Connection conn = dataSource.getConnection();
@@ -524,6 +808,17 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Chèn một đánh giá sách mới vào cơ sở dữ liệu.
+     *
+     * @param bookId   ID của cuốn sách được đánh giá.
+     * @param clientId ID của khách hàng đánh giá.
+     * @param rating   Đánh giá số sao của sách. Có thể là {@code null} nếu không có
+     *                 đánh giá số.
+     * @param comment  Bình luận về sách. Có thể là {@code null} hoặc rỗng nếu không
+     *                 có bình luận.
+     * @return {@code true} nếu chèn thành công, {@code false} nếu có lỗi xảy ra.
+     */
     public boolean insertBookReview(int bookId, int clientId, Double rating, String comment) {
         String query = "INSERT INTO BookReview (book_id, client_id, rating, comment) VALUES (?, ?, ?, ?);";
         try (Connection conn = dataSource.getConnection();
@@ -552,6 +847,12 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Cập nhật trung bình đánh giá và số lượng đánh giá của một cuốn sách dựa trên
+     * các đánh giá hiện có.
+     *
+     * @param bookId ID của cuốn sách cần cập nhật đánh giá trung bình.
+     */
     private void updateBookAverageRating(int bookId) {
         String avgQuery = "SELECT AVG(rating) AS avg_rating, COUNT(*) AS review_count FROM BookReview WHERE book_id = ? AND rating IS NOT NULL;";
         String updateBookQuery = "UPDATE Book SET average_rating = ?, review_count = ? WHERE book_id = ?;";
@@ -577,6 +878,13 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Lấy danh sách tất cả các đánh giá cho một cuốn sách cụ thể.
+     *
+     * @param bookId ID của cuốn sách cần lấy đánh giá.
+     * @return Một đối tượng {@link ObservableList} chứa danh sách các đánh giá cho
+     *         cuốn sách, sắp xếp theo ngày đánh giá giảm dần.
+     */
     public ObservableList<BookReview> getAllReviewsForBook(int bookId) {
         ObservableList<BookReview> reviews = FXCollections.observableArrayList();
         String query = "SELECT review_id, book_id, client_id, rating, comment, review_date " +
@@ -602,6 +910,170 @@ public class DatabaseDriver {
         return reviews;
     }
 
+    public ResultSet getAllBorrowTransactions2() {
+        String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status " +
+                "FROM BorrowTransaction ORDER BY borrow_date DESC;";
+
+        try {
+            // Establish the database connection
+            Connection conn = dataSource.getConnection();
+
+            // Prepare the statement
+            PreparedStatement pstmt = conn.prepareStatement(query);
+
+            // Execute the query and return the ResultSet
+            return pstmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Return null if an exception occurs
+        return null;
+    }
+
+    public ObservableList<BorrowTransaction> getAllBorrowTransactionsList() {
+        ObservableList<BorrowTransaction> borrowTransactions = FXCollections.observableArrayList();
+        String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status " +
+                "FROM BorrowTransaction ORDER BY borrow_date DESC;";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            // Execute the query and get the result set
+            ResultSet rs = pstmt.executeQuery();
+
+            // Iterate over the result set and create BorrowTransaction objects
+            while (rs.next()) {
+                int transactionId = rs.getInt("transaction_id");
+                int clientId = rs.getInt("client_id");
+                int copyId = rs.getInt("copy_id");
+
+                LocalDate borrowDate = rs.getDate("borrow_date").toLocalDate();
+                LocalDate returnDate = rs.getDate("return_date") != null ? rs.getDate("return_date").toLocalDate()
+                        : null;
+                String status = rs.getString("status");
+                String title = Model.getInstance().getDatabaseDriver().getBookTitleByCopyId(copyId);
+
+                // Create a new BorrowTransaction object
+                BorrowTransaction transaction = new BorrowTransaction(transactionId,
+                        clientId, title, copyId, borrowDate,
+                        returnDate, status);
+                borrowTransactions.add(transaction);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return borrowTransactions;
+    }
+
+    public void exportAllBorrowTransactionsToExcel(String filePath) {
+        try {
+            ResultSet resultSet = Model.getInstance().getDatabaseDriver().getAllBorrowTransactions2();
+
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Transactions");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Transaction ID");
+            headerRow.createCell(1).setCellValue("Copy ID");
+            headerRow.createCell(2).setCellValue("Borrow Date");
+            headerRow.createCell(3).setCellValue("Return Date");
+            headerRow.createCell(4).setCellValue("Status");
+
+            int rowNum = 1;
+            while (resultSet.next()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(resultSet.getInt("transaction_id"));
+                row.createCell(1).setCellValue(resultSet.getInt("copy_id"));
+                row.createCell(2).setCellValue(resultSet.getDate("borrow_date").toString());
+                row.createCell(3).setCellValue(
+                        resultSet.getDate("return_date") != null ? resultSet.getDate("return_date").toString() : "");
+                row.createCell(4).setCellValue(resultSet.getString("status"));
+            }
+
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+
+            workbook.close();
+            resultSet.close();
+            System.out.println("Excel file generated successfully: " + filePath);
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ObservableList<Client> getAllClients() {
+        ObservableList<Client> clients = FXCollections.observableArrayList();
+        String query = "SELECT client_id, name, library_card_number, email, phone_number, address, " +
+                "registration_date, outstanding_fees, username, password_hash, avatar_image_path " +
+                "FROM Client ORDER BY name ASC;";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            // Execute the query and get the result set
+            ResultSet rs = pstmt.executeQuery();
+
+            // Iterate over the result set and create Client objects
+            while (rs.next()) {
+                int clientId = rs.getInt("client_id");
+                String name = rs.getString("name");
+                String libraryCardNumber = rs.getString("library_card_number");
+                String email = rs.getString("email");
+                String phoneNumber = rs.getString("phone_number");
+                String address = rs.getString("address");
+                Date registrationDate = rs.getDate("registration_date");
+                double outstandingFees = rs.getDouble("outstanding_fees");
+                String username = rs.getString("username");
+                String passwordHash = rs.getString("password_hash");
+                String avatarImagePath = rs.getString("avatar_image_path");
+
+                // Create a new Client object
+                Client client = new Client(clientId, name, libraryCardNumber, email, phoneNumber, address,
+                        registrationDate, outstandingFees, username, passwordHash, avatarImagePath);
+
+                // Add the client object to the list
+                clients.add(client);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return clients;
+    }
+
+    public ResultSet getAllClients2() {
+        String query = "SELECT client_id, name, library_card_number, email, phone_number, address, " +
+                "registration_date, outstanding_fees, username, password_hash, avatar_image_path " +
+                "FROM Client ORDER BY name ASC;";
+
+        try {
+            // Establish the database connection
+            Connection conn = dataSource.getConnection();
+
+            // Prepare the statement
+            PreparedStatement pstmt = conn.prepareStatement(query);
+
+            // Execute the query and return the ResultSet
+            return pstmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Return null if an exception occurs
+        return null;
+    }
+
+    /**
+     * Lấy đánh giá của một người dùng cụ thể cho một cuốn sách.
+     *
+     * @param bookId   ID của cuốn sách.
+     * @param clientId ID của khách hàng.
+     * @return Đối tượng {@link BookReview} chứa thông tin đánh giá nếu tìm thấy,
+     *         ngược lại trả về {@code null}.
+     */
     public BookReview getUserReview(int bookId, int clientId) {
         String query = "SELECT review_id, book_id, client_id, rating, comment, review_date FROM BookReview WHERE book_id = ? AND client_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -624,6 +1096,19 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Chèn một đánh giá sách mới hoặc cập nhật đánh giá hiện có của một khách hàng
+     * cho một cuốn sách.
+     *
+     * @param bookId   ID của cuốn sách được đánh giá.
+     * @param clientId ID của khách hàng đánh giá.
+     * @param rating   Đánh giá số sao của sách. Có thể là {@code null} nếu không có
+     *                 đánh giá số.
+     * @param comment  Bình luận về sách. Có thể là {@code null} hoặc rỗng nếu không
+     *                 có bình luận.
+     * @return {@code true} nếu chèn hoặc cập nhật thành công, {@code false} nếu có
+     *         lỗi xảy ra.
+     */
     public boolean upsertBookReview(int bookId, int clientId, Double rating, String comment) {
         BookReview existingReview = getUserReview(bookId, clientId);
 
@@ -634,6 +1119,17 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Cập nhật một đánh giá sách hiện có.
+     *
+     * @param reviewId ID của đánh giá cần cập nhật.
+     * @param rating   Đánh giá số sao mới. Có thể là {@code null} nếu không có đánh
+     *                 giá số mới.
+     * @param comment  Bình luận mới về sách. Có thể là {@code null} hoặc rỗng nếu
+     *                 không có bình luận mới.
+     * @return {@code true} nếu cập nhật thành công, {@code false} nếu có lỗi xảy
+     *         ra.
+     */
     public boolean updateBookReview(int reviewId, Double rating, String comment) {
         String query = "UPDATE BookReview SET rating = ?, comment = ?, review_date = ? WHERE review_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -670,6 +1166,12 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Lấy số lượng đánh giá cho một cuốn sách cụ thể.
+     *
+     * @param bookId ID của cuốn sách cần đếm số đánh giá.
+     * @return Số lượng đánh giá của cuốn sách.
+     */
     public int getReviewCount(int bookId) {
         String query = "SELECT COUNT(*) AS count FROM BookReview WHERE book_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -685,6 +1187,13 @@ public class DatabaseDriver {
         return 0;
     }
 
+    /**
+     * Lấy tổng số điểm đánh giá của một cuốn sách cụ thể.
+     *
+     * @param bookId ID của cuốn sách cần tính tổng điểm đánh giá.
+     * @return Tổng số điểm đánh giá của cuốn sách nếu tìm thấy, ngược lại trả về
+     *         0.0.
+     */
     public double getSumRatings(int bookId) {
         String query = "SELECT SUM(rating) AS sum FROM BookReview WHERE book_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -700,6 +1209,12 @@ public class DatabaseDriver {
         return 0.0;
     }
 
+    /**
+     * Lấy số lượng sách đã mượn của một khách hàng cụ thể.
+     *
+     * @param clientId ID của khách hàng cần đếm số lượng sách đã mượn.
+     * @return Số lượng sách đã mượn nếu tìm thấy, ngược lại trả về 0.
+     */
     public int getNumberOfBorrowedBooks(int clientId) {
         String query = "SELECT COUNT(*) AS count FROM BorrowTransaction WHERE client_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -715,6 +1230,13 @@ public class DatabaseDriver {
         return 0;
     }
 
+    /**
+     * Lấy cuốn sách yêu thích của một khách hàng dựa trên số lần mượn.
+     *
+     * @param clientId ID của khách hàng cần lấy cuốn sách yêu thích.
+     * @return Đối tượng {@link Book} là cuốn sách yêu thích nếu tìm thấy, ngược lại
+     *         trả về {@code null}.
+     */
     public Book getClientFavouriteBook(int clientId) {
         String query = "SELECT b.*, COUNT(bt.copy_id) AS borrow_count " +
                 "FROM BorrowTransaction bt " +
@@ -737,6 +1259,12 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Lấy thể loại sách yêu thích của một khách hàng dựa trên số lần mượn.
+     *
+     * @param clientId ID của khách hàng cần lấy thể loại yêu thích.
+     * @return Thể loại yêu thích nếu tìm thấy, ngược lại trả về {@code null}.
+     */
     public String getClientFavouriteGenre(int clientId) {
         String query = "SELECT b.genre, COUNT(b.genre) AS genre_count " +
                 "FROM BorrowTransaction bt " +
@@ -759,6 +1287,14 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Lấy danh sách các hoạt động gần đây của một khách hàng, bao gồm ngày mượn và
+     * tiêu đề sách.
+     *
+     * @param clientId ID của khách hàng cần lấy hoạt động.
+     * @param limit    Số lượng hoạt động gần đây cần lấy.
+     * @return Một danh sách {@link List} chứa các chuỗi mô tả hoạt động gần đây.
+     */
     public List<String> getClientRecentActivities(int clientId, int limit) {
         String query = "SELECT bt.borrow_date, b.title " +
                 "FROM BorrowTransaction bt " +
@@ -776,7 +1312,7 @@ public class DatabaseDriver {
             while (rs.next()) {
                 Date borrowDate = rs.getDate("borrow_date");
                 String title = rs.getString("title");
-                activities.add("Borrowed '" + title + "' on " + borrowDate.toString());
+                activities.add("Đã mượn '" + title + "' vào ngày " + borrowDate.toString());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -784,6 +1320,14 @@ public class DatabaseDriver {
         return activities;
     }
 
+    /**
+     * Lấy danh sách các cuốn sách hàng đầu mà khách hàng đã đánh giá cao nhất.
+     *
+     * @param clientId ID của khách hàng cần lấy danh sách sách.
+     * @param limit    Số lượng sách hàng đầu cần lấy.
+     * @return Chuỗi chứa thông tin các cuốn sách hàng đầu, mỗi cuốn sách được phân
+     *         tách bằng ký tự ngăn cách dòng.
+     */
     public String getTopBooksForClient(int clientId, int limit) {
         String query = "SELECT b.book_id, b.author, b.image_path, br.rating AS client_rating " +
                 "FROM BookReview br " +
@@ -815,6 +1359,13 @@ public class DatabaseDriver {
         return result.toString();
     }
 
+    /**
+     * Lấy xu hướng mượn sách hàng tháng của một khách hàng cụ thể.
+     *
+     * @param clientId ID của khách hàng cần lấy xu hướng mượn sách.
+     * @return Một {@link Map} chứa khóa là tháng (định dạng "YYYY-MM") và giá trị
+     *         là số lượng sách đã mượn trong tháng đó.
+     */
     public Map<String, Integer> getMonthlyBorrowingTrends(int clientId) {
         String query = "SELECT DATE_FORMAT(borrow_date, '%Y-%m') AS month, COUNT(*) AS borrow_count " +
                 "FROM BorrowTransaction " +
@@ -837,6 +1388,13 @@ public class DatabaseDriver {
         return trends;
     }
 
+    /**
+     * Lấy xu hướng mượn sách theo thể loại của một khách hàng cụ thể.
+     *
+     * @param clientId ID của khách hàng cần lấy xu hướng mượn sách theo thể loại.
+     * @return Một {@link Map} chứa khóa là thể loại sách và giá trị là số lượng
+     *         sách đã mượn thuộc thể loại đó.
+     */
     public Map<String, Integer> getBorrowingTrendsByCategory(int clientId) {
         String query = "SELECT b.genre, COUNT(*) AS borrow_count " +
                 "FROM BorrowTransaction bt " +
@@ -860,6 +1418,14 @@ public class DatabaseDriver {
         return trends;
     }
 
+    /**
+     * Trích xuất thông tin của một cuốn sách từ đối tượng {@link ResultSet}.
+     *
+     * @param rs Đối tượng {@link ResultSet} chứa dữ liệu của cuốn sách.
+     * @return Đối tượng {@link Book} được tạo từ dữ liệu trong {@link ResultSet}.
+     * @throws SQLException Nếu có lỗi xảy ra khi truy xuất dữ liệu từ
+     *                      {@link ResultSet}.
+     */
     private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
         int book_id = rs.getInt("book_id");
         String title = rs.getString("title");
@@ -879,6 +1445,13 @@ public class DatabaseDriver {
                 average_rating, review_count, quantity);
     }
 
+    /**
+     * Lấy một bản sao sách khả dụng của một cuốn sách cụ thể.
+     *
+     * @param bookId ID của cuốn sách cần lấy bản sao khả dụng.
+     * @return Đối tượng {@link BookCopy} là bản sao sách khả dụng nếu tìm thấy,
+     *         ngược lại trả về {@code null}.
+     */
     public BookCopy getAvailableBookCopy(int bookId) {
         String query = "SELECT * FROM BookCopy WHERE book_id = ? AND is_available = TRUE LIMIT 1";
         try (Connection conn = dataSource.getConnection();
@@ -898,6 +1471,12 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Lấy ID của cuốn sách dựa trên ID của bản sao sách.
+     *
+     * @param copyId ID của bản sao sách cần lấy ID cuốn sách.
+     * @return ID của cuốn sách nếu tìm thấy, ngược lại trả về -1.
+     */
     public int getBookIdByCopyId(int copyId) {
         int bookId = -1;
 
@@ -916,6 +1495,12 @@ public class DatabaseDriver {
         return bookId;
     }
 
+    /**
+     * Đếm số lượng bản sao sách khả dụng của một cuốn sách cụ thể.
+     *
+     * @param book_id ID của cuốn sách cần đếm bản sao.
+     * @return Số lượng bản sao sách khả dụng nếu tìm thấy, ngược lại trả về 0.
+     */
     public int countBookCopies(int book_id) {
         int count = 0;
         String query = "SELECT COUNT(*) AS count FROM BookCopy WHERE book_id = ? AND is_available = true";
@@ -932,6 +1517,254 @@ public class DatabaseDriver {
         return count;
     }
 
+    public void exportClientBorrowTransactionsToExcel(String filePath) {
+        try {
+            ResultSet resultSet = Model.getInstance().getDatabaseDriver().getAllClients2();
+
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Transactions");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Transaction ID");
+            headerRow.createCell(1).setCellValue("Copy ID");
+            headerRow.createCell(2).setCellValue("Borrow Date");
+            headerRow.createCell(3).setCellValue("Return Date");
+            headerRow.createCell(4).setCellValue("Status");
+
+            int rowNum = 1;
+            while (resultSet.next()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(resultSet.getInt("transaction_id"));
+                row.createCell(1).setCellValue(resultSet.getInt("copy_id"));
+                row.createCell(2).setCellValue(resultSet.getDate("borrow_date").toString());
+                row.createCell(3).setCellValue(
+                        resultSet.getDate("return_date") != null ? resultSet.getDate("return_date").toString() : "");
+                row.createCell(4).setCellValue(resultSet.getString("status"));
+            }
+
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+
+            workbook.close();
+            resultSet.close();
+            System.out.println("Excel file generated successfully: " + filePath);
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportClientsToExcel(String filePath) {
+        try {
+            // Retrieve the ResultSet for all clients
+            ResultSet resultSet = Model.getInstance().getDatabaseDriver().getAllClients2();
+
+            // Create a new workbook and sheet
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Clients");
+
+            // Create the header row
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Client ID");
+            headerRow.createCell(1).setCellValue("Name");
+            headerRow.createCell(2).setCellValue("Library Card Number");
+            headerRow.createCell(3).setCellValue("Email");
+            headerRow.createCell(4).setCellValue("Phone Number");
+            headerRow.createCell(5).setCellValue("Address");
+            headerRow.createCell(6).setCellValue("Registration Date");
+            headerRow.createCell(7).setCellValue("Outstanding Fees");
+            headerRow.createCell(8).setCellValue("Username");
+
+            // Write client data into the sheet
+            int rowNum = 1;
+            while (resultSet.next()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(resultSet.getInt("client_id"));
+                row.createCell(1).setCellValue(resultSet.getString("name"));
+                row.createCell(2).setCellValue(resultSet.getString("library_card_number"));
+                row.createCell(3).setCellValue(resultSet.getString("email"));
+                row.createCell(4).setCellValue(resultSet.getString("phone_number"));
+                row.createCell(5).setCellValue(resultSet.getString("address"));
+                row.createCell(6).setCellValue(resultSet.getDate("registration_date").toString());
+                row.createCell(7).setCellValue(resultSet.getDouble("outstanding_fees"));
+                row.createCell(8).setCellValue(resultSet.getString("username"));
+            }
+
+            // Save the workbook to the specified file path
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+
+            // Close resources
+            workbook.close();
+            resultSet.close();
+
+            System.out.println("Excel file generated successfully: " + filePath);
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int adjustBookCopies(int book_id, int quantity) {
+        int currentCopies = countBookCopies(book_id); // Get the current number of copies
+        int processedCopies = currentCopies; // Track the updated number of copies
+
+        String findQuery = "SELECT copy_id FROM BookCopy WHERE book_id = ? LIMIT 1";
+        String deleteQuery = "DELETE FROM BookCopy WHERE copy_id = ?";
+        String deleteTransactionQuery = "DELETE FROM BorrowTransaction WHERE copy_id = ?";
+        String checkTransactionStatusQuery = "SELECT status FROM BorrowTransaction WHERE copy_id = ?";
+        String insertQuery = "INSERT INTO BookCopy (book_id) VALUES (?)";
+        String deleteBookQuery = "DELETE FROM Book WHERE book_id = ?";
+        String deleteNotificationsQuery = "DELETE FROM NotificationRequest WHERE book_id = ?";
+        String deleteReviewsQuery = "DELETE FROM BookReview WHERE book_id = ?";
+
+        if (quantity == 0) {
+            // Delete the book and all its copies
+            try (Connection conn = dataSource.getConnection();
+                    PreparedStatement deleteBookStmt = conn.prepareStatement(deleteBookQuery);
+                    PreparedStatement findStmt = conn.prepareStatement(findQuery);
+                    PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
+                    PreparedStatement deleteTransStmt = conn.prepareStatement(deleteTransactionQuery);
+                    PreparedStatement checkStatusStmt = conn.prepareStatement(checkTransactionStatusQuery);
+                    PreparedStatement deleteNotificationsStmt = conn.prepareStatement(deleteNotificationsQuery);
+                    PreparedStatement deleteReviewsStmt = conn.prepareStatement(deleteReviewsQuery)) {
+
+                conn.setAutoCommit(false); // Start transaction
+
+                // Delete all book copies and associated borrow transactions
+                while (true) {
+                    findStmt.setInt(1, book_id);
+                    try (ResultSet rs = findStmt.executeQuery()) {
+                        if (rs.next()) {
+                            int copyId = rs.getInt("copy_id");
+
+                            // Check the status of the associated borrow transaction
+                            checkStatusStmt.setInt(1, copyId);
+                            try (ResultSet statusRs = checkStatusStmt.executeQuery()) {
+                                if (statusRs.next()) {
+                                    String status = statusRs.getString("status");
+                                    if ("processing".equalsIgnoreCase(status)) {
+                                        System.out.println("Cannot delete copy ID " + copyId
+                                                + ": Transaction is still processing.");
+                                        continue; // Skip deleting this copy
+                                    }
+                                }
+                            }
+
+                            // Delete associated borrow transaction (if any)
+                            deleteTransStmt.setInt(1, copyId);
+                            deleteTransStmt.executeUpdate();
+
+                            // Delete the book copy
+                            deleteStmt.setInt(1, copyId);
+                            deleteStmt.executeUpdate();
+                            processedCopies--; // Decrement the count of remaining copies
+                        } else {
+                            break; // No more copies to delete
+                        }
+                    }
+                }
+
+                // Delete associated notifications
+                deleteNotificationsStmt.setInt(1, book_id);
+                deleteNotificationsStmt.executeUpdate();
+
+                // Delete associated reviews
+                deleteReviewsStmt.setInt(1, book_id);
+                deleteReviewsStmt.executeUpdate();
+
+                // Delete the book itself if no copies are left
+                if (processedCopies == 0) {
+                    deleteBookStmt.setInt(1, book_id);
+                    deleteBookStmt.executeUpdate();
+                }
+
+                conn.commit(); // Commit the transaction
+                System.out.println("Book and all associated records deleted successfully.");
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("Error adjusting book copies.");
+            }
+        } else if (quantity > currentCopies) {
+            // Add more copies
+            try (Connection conn = dataSource.getConnection();
+                    PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+
+                for (int i = 0; i < quantity - currentCopies; i++) {
+                    insertStmt.setInt(1, book_id);
+                    insertStmt.executeUpdate();
+                    processedCopies++; // Increment the count of copies
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("Error adding book copies.");
+            }
+        } else if (quantity < currentCopies) {
+            // Remove copies
+            try (Connection conn = dataSource.getConnection();
+                    PreparedStatement findStmt = conn.prepareStatement(findQuery);
+                    PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
+                    PreparedStatement deleteTransStmt = conn.prepareStatement(deleteTransactionQuery);
+                    PreparedStatement checkStatusStmt = conn.prepareStatement(checkTransactionStatusQuery)) {
+
+                conn.setAutoCommit(false); // Start transaction
+
+                for (int i = 0; i < currentCopies - quantity; i++) {
+                    findStmt.setInt(1, book_id);
+                    try (ResultSet rs = findStmt.executeQuery()) {
+                        if (rs.next()) {
+                            int copyId = rs.getInt("copy_id");
+
+                            // Check the status of the associated borrow transaction
+                            checkStatusStmt.setInt(1, copyId);
+                            try (ResultSet statusRs = checkStatusStmt.executeQuery()) {
+                                if (statusRs.next()) {
+                                    String status = statusRs.getString("status");
+                                    if ("processing".equalsIgnoreCase(status)) {
+                                        System.out.println("Cannot delete copy ID " + copyId
+                                                + ": Transaction is still processing.");
+                                        continue; // Skip deleting this copy
+                                    }
+                                }
+                            }
+
+                            // Delete associated borrow transaction (if any)
+                            deleteTransStmt.setInt(1, copyId);
+                            deleteTransStmt.executeUpdate();
+
+                            // Delete the book copy
+                            deleteStmt.setInt(1, copyId);
+                            deleteStmt.executeUpdate();
+                            processedCopies--; // Decrement the count of remaining copies
+                        } else {
+                            break; // No more copies to delete
+                        }
+                    }
+                }
+
+                conn.commit(); // Commit the transaction
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("Error removing book copies.");
+            }
+        }
+
+        if (processedCopies < 0)
+            return 0;
+        return processedCopies; // Return the updated number of book copies
+    }
+
+    /**
+     * Tạo một giao dịch mượn sách mới cho một khách hàng cụ thể.
+     *
+     * @param clientId ID của khách hàng mượn sách.
+     * @param copyId   ID của bản sao sách được mượn.
+     * @return {@code true} nếu tạo giao dịch thành công, {@code false} nếu có lỗi
+     *         xảy ra.
+     */
     public boolean createBorrowTransaction(int clientId, int copyId) {
         String query = "INSERT INTO BorrowTransaction (client_id, copy_id, borrow_date, status) VALUES (?, ?, ?, 'Processing')";
         try (Connection conn = dataSource.getConnection();
@@ -947,6 +1780,15 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Cập nhật trạng thái khả dụng của một bản sao sách cụ thể.
+     *
+     * @param copyId      ID của bản sao sách cần cập nhật.
+     * @param isAvailable Trạng thái khả dụng mới của bản sao sách. {@code true} nếu
+     *                    bản sao đang có sẵn, {@code false} nếu không.
+     * @return {@code true} nếu cập nhật thành công, {@code false} nếu có lỗi xảy
+     *         ra.
+     */
     public boolean updateBookCopyAvailability(int copyId, boolean isAvailable) {
         String query = "UPDATE BookCopy SET is_available = ? WHERE copy_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -961,6 +1803,14 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Lấy danh sách các giao dịch mượn sách đang hoạt động (trạng thái
+     * 'Processing') của một khách hàng cụ thể.
+     *
+     * @param clientId ID của khách hàng cần lấy danh sách giao dịch.
+     * @return Một {@link List} chứa các đối tượng {@link BorrowTransaction} đang
+     *         hoạt động, hoặc danh sách rỗng nếu không có giao dịch nào.
+     */
     public List<BorrowTransaction> getActiveBorrowTransactions(int clientId) {
         List<BorrowTransaction> transactions = new ArrayList<>();
         String query = "SELECT * FROM BorrowTransaction WHERE client_id = ? AND status = 'Processing'";
@@ -987,6 +1837,13 @@ public class DatabaseDriver {
         return transactions;
     }
 
+    /**
+     * Lấy danh sách tất cả các giao dịch mượn sách đang hoạt động (trạng thái
+     * 'Processing').
+     *
+     * @return Một {@link List} chứa các đối tượng {@link BorrowTransaction} đang
+     *         hoạt động, hoặc danh sách rỗng nếu không có giao dịch nào.
+     */
     public List<BorrowTransaction> getActiveBorrowTransactions() {
         String query = "SELECT * FROM BorrowTransaction WHERE status = 'Processing'";
         List<BorrowTransaction> activeTransactions = new ArrayList<>();
@@ -1010,6 +1867,14 @@ public class DatabaseDriver {
         return activeTransactions;
     }
 
+    /**
+     * Tạo một yêu cầu thông báo mới cho một khách hàng cụ thể về một cuốn sách.
+     *
+     * @param clientId ID của khách hàng tạo yêu cầu.
+     * @param bookId   ID của cuốn sách mà khách hàng yêu cầu thông báo khi có sẵn.
+     * @return {@code true} nếu tạo yêu cầu thành công, {@code false} nếu có lỗi xảy
+     *         ra.
+     */
     public boolean createNotificationRequest(int clientId, int bookId) {
         String query = "INSERT INTO NotificationRequest (client_id, book_id, request_date) VALUES (?, ?, ?)";
         try (Connection conn = dataSource.getConnection();
@@ -1025,6 +1890,15 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Kiểm tra xem một khách hàng có bất kỳ giao dịch mượn sách đang hoạt động nào
+     * cho một cuốn sách cụ thể hay không.
+     *
+     * @param clientId ID của khách hàng cần kiểm tra.
+     * @param bookId   ID của cuốn sách cần kiểm tra.
+     * @return {@code true} nếu khách hàng có ít nhất một giao dịch mượn đang hoạt
+     *         động cho cuốn sách đó, {@code false} ngược lại.
+     */
     public boolean hasActiveBorrowForBook(int clientId, int bookId) {
         String query = "SELECT COUNT(*) AS count FROM BorrowTransaction bt " +
                 "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
@@ -1043,6 +1917,14 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Lấy yêu cầu thông báo của một khách hàng cụ thể cho một cuốn sách.
+     *
+     * @param clientId ID của khách hàng.
+     * @param bookId   ID của cuốn sách.
+     * @return Đối tượng {@link NotificationRequest} nếu tìm thấy, ngược lại trả về
+     *         {@code null}.
+     */
     public NotificationRequest getNotificationRequest(int clientId, int bookId) {
         String query = "SELECT * FROM NotificationRequest WHERE client_id = ? AND book_id = ?;";
         try (Connection conn = dataSource.getConnection();
@@ -1063,6 +1945,13 @@ public class DatabaseDriver {
         return null;
     }
 
+    /**
+     * Lấy danh sách tất cả các yêu cầu thông báo cho một cuốn sách cụ thể.
+     *
+     * @param bookId ID của cuốn sách cần lấy danh sách yêu cầu.
+     * @return Một {@link List} chứa các đối tượng {@link NotificationRequest} nếu
+     *         có, ngược lại trả về danh sách rỗng.
+     */
     public List<NotificationRequest> getNotificationRequestsForBook(int bookId) {
         List<NotificationRequest> requests = new ArrayList<>();
         String query = "SELECT * FROM NotificationRequest WHERE book_id = ?";
@@ -1084,6 +1973,12 @@ public class DatabaseDriver {
         return requests;
     }
 
+    /**
+     * Xóa một yêu cầu thông báo dựa trên ID của yêu cầu đó.
+     *
+     * @param requestId ID của yêu cầu thông báo cần xóa.
+     * @return {@code true} nếu xóa thành công, {@code false} nếu có lỗi xảy ra.
+     */
     public boolean deleteNotificationRequest(int requestId) {
         String query = "DELETE FROM NotificationRequest WHERE request_id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -1097,6 +1992,18 @@ public class DatabaseDriver {
         return false;
     }
 
+    /**
+     * Xử lý việc trả sách cho một giao dịch mượn cụ thể.
+     *
+     * <p>
+     * Phương thức này sẽ cập nhật trạng thái giao dịch thành 'Returned', cập nhật
+     * lại trạng thái khả dụng của bản sao sách,
+     * và gửi thông báo cho các yêu cầu thông báo liên quan đến cuốn sách đó.
+     * </p>
+     *
+     * @param transactionId ID của giao dịch mượn cần xử lý.
+     * @return {@code true} nếu xử lý thành công, {@code false} nếu có lỗi xảy ra.
+     */
     public boolean processBookReturn(int transactionId) {
         String updateTransaction = "UPDATE BorrowTransaction SET status = 'Returned', return_date = ? WHERE transaction_id = ?";
         String getCopyIdQuery = "SELECT copy_id, book_id FROM BorrowTransaction WHERE transaction_id = ?";
@@ -1140,7 +2047,7 @@ public class DatabaseDriver {
                 int recipientId = request.getClientId();
                 RecipientType recipientType = RecipientType.Client;
                 NotificationType notificationType = NotificationType.BookAvailable;
-                String message = "Một bản sao của cuốn sách" + bookTitle + "bạn đã đăng ký đang có sẵn để mượn.";
+                String message = "Một bản sao của cuốn sách '" + bookTitle + "' bạn đã đăng ký đang có sẵn để mượn.";
 
                 Notification notification = new Notification(recipientId, recipientType, notificationType, message);
 
@@ -1158,6 +2065,15 @@ public class DatabaseDriver {
         }
     }
 
+    /**
+     * Kiểm tra xem một giao dịch mượn có được gửi nhắc nhở trả sách hay không dựa
+     * trên số ngày đã mượn.
+     *
+     * @param transactionId ID của giao dịch mượn cần kiểm tra.
+     * @param dayBorrowed   Số ngày đã mượn.
+     * @return {@code true} nếu đã gửi nhắc nhở trả sách trong ngày mượn tương ứng,
+     *         {@code false} ngược lại.
+     */
     public boolean hasReturnReminder(int transactionId, long dayBorrowed) {
         String query = "";
         if (dayBorrowed == 5) {
@@ -1183,9 +2099,14 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
         return false;
-
     }
 
+    /**
+     * Đặt hình đại diện (avatar) cho một khách hàng cụ thể.
+     *
+     * @param clientId ID của khách hàng cần đặt hình đại diện.
+     * @param fileURI  Đường dẫn URI đến tệp hình ảnh avatar.
+     */
     public void setClientAvatar(int clientId, String fileURI) {
         String query = "UPDATE Client SET avatar_image_path = ? WHERE client_id = ?";
         try (Connection conn = dataSource.getConnection();

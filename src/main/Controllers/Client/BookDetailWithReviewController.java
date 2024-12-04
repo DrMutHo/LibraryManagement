@@ -1,7 +1,6 @@
 package main.Controllers.Client;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,7 +17,6 @@ import main.Models.BookReview;
 import main.Models.Model;
 import main.Models.Notification;
 import main.Models.NotificationRequest;
-import main.Views.ClientMenuOptions;
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 import main.Models.BookCopy;
@@ -452,23 +450,6 @@ public class BookDetailWithReviewController {
 
     @FXML
     private void onBackButtonClick() {
-        ObjectProperty<ClientMenuOptions> selectedMenuItem = Model.getInstance().getViewFactory()
-                .getClientSelectedMenuItem();
-
-        if (selectedMenuItem != null && selectedMenuItem.get() != null) {
-            ClientMenuOptions selectedOption = selectedMenuItem.get();
-
-            if (selectedOption == ClientMenuOptions.BROWSING) {
-                Model.getInstance().getClientController().goBackToBrowsing();
-            } else if (selectedOption == ClientMenuOptions.BORROWTRANSACTION) {
-                Model.getInstance().getClientController().goBackToTransaction();
-            } else if (selectedOption == ClientMenuOptions.HOME) {
-                Model.getInstance().getClientController().goBackToHome();
-            } else {
-                System.out.println("Unknown selected option");
-            }
-        } else {
-            System.out.println("No option selected or invalid selection");
-        }
+        Model.getInstance().getClientController().goBackToBrowsing();
     }
 }

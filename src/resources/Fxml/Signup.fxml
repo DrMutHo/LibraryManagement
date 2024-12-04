@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="signup_anchorpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="850.0" styleClass="signup_anchorpane" stylesheets="@../Styles/Signup.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.SignupController">
+<AnchorPane fx:id="signup_anchorpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="signup_anchorpane" stylesheets="@../Styles/Signup.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.SignupController">
    <children>
-      <ImageView fitHeight="750.0" fitWidth="850.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="750.0" fitWidth="850.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../Images/112-library-wallpaper-kids-room-mural-modern-design.png" />
          </image>
@@ -31,7 +31,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <AnchorPane layoutX="209.0" layoutY="95.0" prefHeight="594.0" prefWidth="421.0" styleClass="signup_inner_anchorpane">
+      <AnchorPane layoutX="235.0" layoutY="100.0" styleClass="signup_inner_anchorpane" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="220.0">
          <children>
             <HBox fx:id="signup_hbox4" alignment="CENTER" layoutX="89.0" layoutY="246.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
@@ -120,13 +120,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <Label layoutX="113.0" layoutY="33.0" styleClass="signup_label" stylesheets="@../Styles/Signup.css" text="Sign Up" />
-            <ImageView fx:id="signup_imageErrorIcon" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="146.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon1" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon2" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="255.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon3" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="307.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon4" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="359.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="signup_imageErrorIcon5" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="409.0" pickOnBounds="true" preserveRatio="true" />
+            <Label layoutX="193.0" layoutY="62.0" styleClass="signup_label" stylesheets="@../Styles/Signup.css" />
             <HBox fx:id="signup_hbox6" alignment="CENTER" layoutX="89.0" layoutY="456.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="250.0" styleClass="signup_hbox_set">
                <children>
                   <TextField fx:id="signup_name" nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" prefWidth="214.0" styleClass="signup_passwordField" HBox.hgrow="NEVER" />
@@ -148,7 +142,11 @@
                   <Text layoutX="214.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="alert_notice" text="Please return to login page for siging in!" wrappingWidth="168.0" />
                </children>
             </AnchorPane>
-            <ImageView fx:id="signup_imageErrorIcon6" fitHeight="22.0" fitWidth="22.0" layoutX="341.0" layoutY="465.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fitHeight="110.0" fitWidth="150.0" layoutX="150.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/signup.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
    </children>

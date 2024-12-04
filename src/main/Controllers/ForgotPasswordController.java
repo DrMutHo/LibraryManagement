@@ -37,11 +37,11 @@ public class ForgotPasswordController implements Initializable {
     private AnchorPane outerAnchorPane;
     @FXML
     private ImageView imageView;
-    @FXML 
+    @FXML
     private ImageView libImage;
     @FXML
     private Button resetPasswordButton;
-    @FXML 
+    @FXML
     private ChoiceBox<AccountType> acc_selector;
     @FXML
     private HBox hBox0;
@@ -62,7 +62,7 @@ public class ForgotPasswordController implements Initializable {
     @FXML
     private AnchorPane innerAnchorPane;
 
-     @Override
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         acc_selector_init();
         username_password_promptext_init();
@@ -93,15 +93,16 @@ public class ForgotPasswordController implements Initializable {
     }
 
     public static String generateRandomString(int length) {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // Tất cả các ký tự có thể chọn
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // Tất cả các ký tự có thể
+                                                                                              // chọn
         Random random = new Random();
         StringBuilder result = new StringBuilder();
-        
+
         for (int i = 0; i < length; i++) {
             int index = random.nextInt(characters.length()); // Lấy chỉ số ngẫu nhiên
             result.append(characters.charAt(index)); // Thêm ký tự vào chuỗi kết quả
         }
-        
+
         return result.toString();
     }
 
@@ -115,7 +116,7 @@ public class ForgotPasswordController implements Initializable {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            
+
             // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
             Platform.runLater(() -> {
                 Model.getInstance().getViewFactory().showLoginWindow();
@@ -134,7 +135,7 @@ public class ForgotPasswordController implements Initializable {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            
+
             // Công việc chính: Mở cửa sổ Sign Up và đóng cửa sổ hiện tại
             Platform.runLater(() -> {
                 Model.getInstance().getViewFactory().showLoginWindow();
@@ -157,11 +158,10 @@ public class ForgotPasswordController implements Initializable {
                 for (javafx.scene.Node stackNode : stackPane.getChildren()) {
                     if (stackNode instanceof AnchorPane && ((AnchorPane) stackNode).getId() != null &&
                             ((AnchorPane) stackNode).getId().equals("failedNotification")) {
-                        continue; 
+                        continue;
                     }
                 }
-            }
-            else {
+            } else {
                 node.setDisable(false);
             }
         }
@@ -174,11 +174,10 @@ public class ForgotPasswordController implements Initializable {
                 for (javafx.scene.Node stackNode : stackPane.getChildren()) {
                     if (stackNode instanceof AnchorPane && ((AnchorPane) stackNode).getId() != null &&
                             ((AnchorPane) stackNode).getId().equals("failedNotification")) {
-                        continue; 
+                        continue;
                     }
                 }
-            }
-            else {
+            } else {
                 node.setDisable(true);
             }
         }
@@ -211,9 +210,9 @@ public class ForgotPasswordController implements Initializable {
         String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
         String query = "UPDATE client SET password_hash = ? WHERE username = ?";
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, hashedPassword); 
-            preparedStatement.setString(2, username);       
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, hashedPassword);
+            preparedStatement.setString(2, username);
             int rowsUpdated = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -222,9 +221,9 @@ public class ForgotPasswordController implements Initializable {
 
     private String getEmailByUsername(String username) {
         String query = "SELECT email FROM client WHERE username = ?";
-    
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -239,15 +238,15 @@ public class ForgotPasswordController implements Initializable {
 
     public void sendNewPassword(String recipientEmail, String newPassword) throws MessagingException {
         String smtpHost = "smtp.gmail.com";
-        String smtpPort = "587"; 
-        String senderEmail = "thuha25121976@gmail.com"; 
+        String smtpPort = "587";
+        String senderEmail = "thuha25121976@gmail.com";
         String senderPassword = "bbjh xcbp oxtj qozz";
-    
+
         Properties properties = new Properties();
         properties.put("mail.smtp.host", smtpHost);
         properties.put("mail.smtp.port", smtpPort);
         properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true"); 
+        properties.put("mail.smtp.starttls.enable", "true");
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -258,9 +257,9 @@ public class ForgotPasswordController implements Initializable {
         message.setFrom(new InternetAddress(senderEmail));
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
         message.setSubject("Your New Password");
-        message.setText("Dear customer,\n\nYour new password is: " + newPassword + "\n\nPlease log in and change your password as soon as possible.\n\nThank you.");
+        message.setText("Dear customer,\n\nYour new password is: " + newPassword
+                + "\n\nPlease log in and change your password as soon as possible.\n\nThank you.");
         Transport.send(message);
         System.out.println("Email sent successfully to " + recipientEmail);
     }
 }
-
