@@ -1,6 +1,9 @@
 package main.Controllers.Admin;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.awt.Checkbox;
 import javafx.beans.property.BooleanProperty;
@@ -16,20 +19,26 @@ import javafx.fxml.FXML;
 import javafx.stage.DirectoryChooser;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import main.Models.BorrowTransaction;
 import main.Models.Model;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.util.Callback;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
  * Controller class for managing borrow transactions in the admin panel.
- * Handles displaying and searching, and processing the return of borrowed books.
+ * Handles displaying and searching, and processing the return of borrowed
+ * books.
  */
 public class AminBorrowTransactionController implements Initializable {
 
@@ -65,7 +74,7 @@ public class AminBorrowTransactionController implements Initializable {
     private Button returnButton;
 
     /** ChoiceBox for selecting actions */
-    @FXML 
+    @FXML
     private ChoiceBox actionChoiceBox;
 
     /** FilteredList for searching transactions */
@@ -74,10 +83,12 @@ public class AminBorrowTransactionController implements Initializable {
     private SortedList<BorrowTransaction> sortedData;
 
     /**
-     * Initializes the controller after its root element has been completely processed.
+     * Initializes the controller after its root element has been completely
+     * processed.
      * Sets up the table columns, loads data, and initializes search functionality.
      *
-     * @param url The location used to resolve relative paths for the root object
+     * @param url            The location used to resolve relative paths for the
+     *                       root object
      * @param resourceBundle The resources used to localize the root object
      */
     @Override
@@ -109,9 +120,9 @@ public class AminBorrowTransactionController implements Initializable {
                 String clientid = String.valueOf(transaction.getClientId());
 
                 if (transaction.getTitle().toLowerCase().contains(lowerCaseFilter)
-                    || transaction.getStatus().toLowerCase().contains(lowerCaseFilter)
-                    || transactionid.contains(lowerCaseFilter)
-                    || clientid.contains(lowerCaseFilter)) {
+                        || transaction.getStatus().toLowerCase().contains(lowerCaseFilter)
+                        || transactionid.contains(lowerCaseFilter)
+                        || clientid.contains(lowerCaseFilter)) {
                     return true;
                 }
                 return false;
@@ -129,7 +140,8 @@ public class AminBorrowTransactionController implements Initializable {
 
     /**
      * Handles the search action (if needed).
-     * Currently, search logic is handled by the textProperty listener on searchField.
+     * Currently, search logic is handled by the textProperty listener on
+     * searchField.
      */
     @FXML
     private void onSearch() {
@@ -143,19 +155,62 @@ public class AminBorrowTransactionController implements Initializable {
      */
     @FXML
     private void onReturnButtonClick() {
+        int processedCount = 0;
+        List<Integer> failedTransactions = new ArrayList<>();
 
         for (BorrowTransaction transaction : sortedData) {
-            // Get the checkbox state from the model's selectedProperty
-
             if (transaction.getSelected().isSelected()) {
-                // Update the status of selected rows to "Done"
-                transaction.setStatus("Done");
-                Model.getInstance().getDatabaseDriver()
-                        .ProcessReturnBook(transaction.getTransactionId());
+                if (transaction.getStatus().equals("Processing")) {
+                    transaction.setStatus("Done");
+                    transaction.setReturnDate(LocalDate.now());
+
+                    boolean success = Model.getInstance()
+                            .getDatabaseDriver()
+                            .processBookReturn(transaction.getTransactionId());
+
+                    if (success) {
+                        processedCount++;
+                    } else {
+                        failedTransactions.add(transaction.getTransactionId());
+                    }
+                }
             }
         }
-        // Refresh the table to reflect the changes
+
         bookTable.refresh();
+
+        // Prepare alert content based on the results
+        if (processedCount > 0 || !failedTransactions.isEmpty()) {
+            StringBuilder alertContent = new StringBuilder();
+
+            if (processedCount > 0) {
+                alertContent.append(processedCount)
+                        .append(processedCount == 1 ? " book has " : " books have ")
+                        .append("been returned successfully.\n");
+            }
+
+            if (!failedTransactions.isEmpty()) {
+                alertContent.append("Failed to return the following transaction ID(s): ")
+                        .append(failedTransactions)
+                        .append(".");
+            }
+
+            notifyReturnBookCreated();
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Return Books");
+            alert.setHeaderText(null);
+            alert.setContentText(alertContent.toString());
+            alert.showAndWait();
+
+        } else {
+            // No transactions were processed
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Return Books");
+            alert.setHeaderText(null);
+            alert.setContentText("No books were selected for return or no transactions are in 'Processing' status.");
+
+            alert.showAndWait();
+        }
     }
 
     /**
@@ -167,7 +222,7 @@ public class AminBorrowTransactionController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
         alert.showAndWait();
     }
-    
+
     /**
      * Exports borrow transactions data to an Excel file.
      * Opens a directory chooser for the user to select the save location.
@@ -194,5 +249,9 @@ public class AminBorrowTransactionController implements Initializable {
         } else {
             System.out.println("No directory selected.");
         }
+    }
+
+    public void notifyReturnBookCreated() {
+        Model.getInstance().notifyBookReturnProcessedEvent();
     }
 }

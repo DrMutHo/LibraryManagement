@@ -31,7 +31,7 @@ import javafx.scene.text.Text;
  * Handles the initialization and functionality of the admin dashboard view,
  * including displaying statistics and charts.
  */
-public class AdminDashboardController implements Initializable {
+public class AdminDashboardController implements Initializable, Model.ModelListenerAdmin {
 
     /** Label for displaying the header subtitle */
     @FXML
@@ -71,16 +71,21 @@ public class AdminDashboardController implements Initializable {
     private Admin admin;
 
     /**
-     * Initializes the controller after its root element has been completely processed.
+     * Initializes the controller after its root element has been completely
+     * processed.
      * Sets up labels and loads charts data.
      *
-     * @param location  The location used to resolve relative paths for the root object
+     * @param location  The location used to resolve relative paths for the root
+     *                  object
      * @param resources The resources used to localize the root object
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         admin = Model.getInstance().getAdmin();
+        initializeBookTable();
+    }
 
+    public void initializeBookTable() {
         headerSubtitle.setText("Welcome, " + admin.getUsername() + "!");
 
         int books = Model.getInstance().getDatabaseDriver().getTotalNumberOfBooks();
@@ -98,6 +103,20 @@ public class AdminDashboardController implements Initializable {
         loadBorrowingTrends();
 
         loadTotalFeesOverTime();
+    }
+
+    @Override
+    public void onBookReturnProcessed() {
+        initializeBookTable();
+    }
+
+    /**
+     * Callback method when a book is added.
+     * Refreshes the book table.
+     */
+    @Override
+    public void onAddBook() {
+        initializeBookTable();
     }
 
     /**
@@ -137,44 +156,48 @@ public class AdminDashboardController implements Initializable {
     }
 
     // /**
-    //  * Loads the genre trends data into the borrowingTrendsBarChart.
-    //  * Fetches borrowing trends by category from the database and populates the chart.
-    //  */
+    // * Loads the genre trends data into the borrowingTrendsBarChart.
+    // * Fetches borrowing trends by category from the database and populates the
+    // chart.
+    // */
     // private void loadGenreTrends() {
-    //     Map<String, Integer> genreTrends = Model.getInstance().getDatabaseDriver()
-    //             .getBorrowingTrendsByCategoryForAllUsers();
+    // Map<String, Integer> genreTrends = Model.getInstance().getDatabaseDriver()
+    // .getBorrowingTrendsByCategoryForAllUsers();
 
-    //     XYChart.Series<String, Number> barSeries = new XYChart.Series<>();
-    //     barSeries.setName("Books Borrowed");
+    // XYChart.Series<String, Number> barSeries = new XYChart.Series<>();
+    // barSeries.setName("Books Borrowed");
 
-    //     for (Map.Entry<String, Integer> entry : genreTrends.entrySet()) {
-    //         barSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-    //     }
-
-    //     borrowingTrendsBarChart.getData().add(barSeries);
+    // for (Map.Entry<String, Integer> entry : genreTrends.entrySet()) {
+    // barSeries.getData().add(new XYChart.Data<>(entry.getKey(),
+    // entry.getValue()));
     // }
-    
+
+    // borrowingTrendsBarChart.getData().add(barSeries);
+    // }
+
     // /**
-    //  * Loads recent activities into the recentActivityList.
-    //  * Fetches recent activities from the database and populates the list.
-    //  */
+    // * Loads recent activities into the recentActivityList.
+    // * Fetches recent activities from the database and populates the list.
+    // */
     // private void loadRecentActivities() {
-    //     List<String> recentActivities = Model.getInstance().getDatabaseDriver()
-    //             .getClientRecentActivities(client.getClientId(), 10);
+    // List<String> recentActivities = Model.getInstance().getDatabaseDriver()
+    // .getClientRecentActivities(client.getClientId(), 10);
 
-    //     System.out.println("Recent Activities: " + recentActivities);
-    //     System.out.println("Is recentActivityList null? " + (recentActivityList == null));
+    // System.out.println("Recent Activities: " + recentActivities);
+    // System.out.println("Is recentActivityList null? " + (recentActivityList ==
+    // null));
 
-    //     if (recentActivityList != null) {
-    //         if (recentActivities != null && !recentActivities.isEmpty()) {
-    //             ObservableList<String> activities =
-    //                     FXCollections.observableArrayList(recentActivities);
-    //             recentActivityList.setItems(activities);
-    //         } else {
-    //             recentActivityList.setItems(FXCollections.observableArrayList("No recent activities."));
-    //         }
-    //     } else {
-    //         System.out.println("Error: recentActivityList is null.");
-    //     }
+    // if (recentActivityList != null) {
+    // if (recentActivities != null && !recentActivities.isEmpty()) {
+    // ObservableList<String> activities =
+    // FXCollections.observableArrayList(recentActivities);
+    // recentActivityList.setItems(activities);
+    // } else {
+    // recentActivityList.setItems(FXCollections.observableArrayList("No recent
+    // activities."));
+    // }
+    // } else {
+    // System.out.println("Error: recentActivityList is null.");
+    // }
     // }
 }

@@ -237,7 +237,6 @@ public class LoginController implements Initializable {
                         Platform.runLater(() -> {
                             Model.getInstance().getViewFactory().showClientWindow();
                             Model.getInstance().getViewFactory().closeStage(stage);
-                            reset();
                         });
                     }, outer_pane);
                 } else {
@@ -261,7 +260,6 @@ public class LoginController implements Initializable {
                         Platform.runLater(() -> {
                             Model.getInstance().getViewFactory().showAdminWindow();
                             Model.getInstance().getViewFactory().closeStage(stage);
-                            reset();
                         });
                     }, outer_pane);
                 } else {

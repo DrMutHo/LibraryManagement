@@ -72,7 +72,6 @@ public class ViewFactory {
         clientSelectedMenuItem.set(null);
         profileSelectedMenuItem.set(null);
         adminSelectedMenuItem.set(null);
-        loginAccountType = AccountType.CLIENT;
     }
 
     // Admin Views

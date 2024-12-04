@@ -65,7 +65,7 @@ public class AdminBorrowTransactionController implements Initializable {
     private Button returnButton;
 
     /** ChoiceBox for selecting actions */
-    @FXML 
+    @FXML
     private ChoiceBox actionChoiceBox;
 
     /** FilteredList for searching transactions */
@@ -74,10 +74,12 @@ public class AdminBorrowTransactionController implements Initializable {
     private SortedList<BorrowTransaction> sortedData;
 
     /**
-     * Initializes the controller after its root element has been completely processed.
+     * Initializes the controller after its root element has been completely
+     * processed.
      * Sets up the table columns, loads data, and initializes search functionality.
      *
-     * @param url The location used to resolve relative paths for the root object
+     * @param url            The location used to resolve relative paths for the
+     *                       root object
      * @param resourceBundle The resources used to localize the root object
      */
     @Override
@@ -109,16 +111,17 @@ public class AdminBorrowTransactionController implements Initializable {
                 String clientid = String.valueOf(transaction.getClientId());
 
                 if (transaction.getTitle().toLowerCase().contains(lowerCaseFilter)
-                    || transaction.getStatus().toLowerCase().contains(lowerCaseFilter)
-                    || transactionid.contains(lowerCaseFilter)
-                    || clientid.contains(lowerCaseFilter)) {
+                        || transaction.getStatus().toLowerCase().contains(lowerCaseFilter)
+                        || transactionid.contains(lowerCaseFilter)
+                        || clientid.contains(lowerCaseFilter)) {
                     return true;
                 }
                 return false;
             });
         });
 
-        filteredData = new FilteredList<>(Model.getInstance().getDatabaseDriver().getAllBorrowTransactions(), p -> true);
+        filteredData = new FilteredList<>(Model.getInstance().getDatabaseDriver().getAllBorrowTransactionsList(),
+                p -> true);
 
         // Enable sorting
         sortedData = new SortedList<>(filteredData);
@@ -128,11 +131,13 @@ public class AdminBorrowTransactionController implements Initializable {
 
     /**
      * Handles the search action (if needed).
-     * Currently, search logic is handled by the textProperty listener on searchField.
+     * Currently, search logic is handled by the textProperty listener on
+     * searchField.
      */
     @FXML
     private void onSearch() {
-        // No changes required here, search logic already handled in textProperty listener
+        // No changes required here, search logic already handled in textProperty
+        // listener
     }
 
     /**
@@ -141,19 +146,18 @@ public class AdminBorrowTransactionController implements Initializable {
      */
     @FXML
     private void onReturnButtonClick() {
-        
+
         for (BorrowTransaction transaction : sortedData) {
-            // Get the checkbox state from the model's selectedProperty
 
             if (transaction.getSelected().isSelected()) {
-                // Update the status of selected rows to "Done"
-                transaction.setStatus("Done");
-                Model.getInstance().getDatabaseDriver()
-                        .ProcessReturnBook(transaction.getTransactionId());
+                if (transaction.getStatus().equals("Processing")) {
+                    transaction.setStatus("Done");
+                    transaction.setReturnDate(LocalDate.now());
+                    Model.getInstance().getDatabaseDriver()
+                            .processBookReturn(transaction.getTransactionId());
+                }
             }
         }
-        // Refresh the table to reflect the changes
-        bookTable.refresh();
     }
 
     /**
@@ -165,7 +169,7 @@ public class AdminBorrowTransactionController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
         alert.showAndWait();
     }
-    
+
     /**
      * Exports borrow transactions data to an Excel file.
      * Opens a directory chooser for the user to select the save location.

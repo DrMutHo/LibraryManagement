@@ -71,6 +71,7 @@ public class HomeController implements Initializable {
         // Set the appearance of the book's image rectangle
         rec.setArcWidth(20);
         rec.setArcHeight(20);
+        System.out.println(readingBook.getImagePath());
         ImagePattern pattern = new ImagePattern(new Image(readingBook.getImagePath()));
         rec.setFill(pattern);
         rec.setStroke(Color.TRANSPARENT);

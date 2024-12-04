@@ -1,5 +1,6 @@
 package main.Controllers.Admin;
 
+import javafx.scene.Parent;
 import java.awt.Button;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
@@ -26,7 +27,8 @@ import java.util.ResourceBundle;
 
 /**
  * Controller class for browsing books in the admin panel.
- * Manages the display and interaction with the list of books, including searching, editing, and adding books.
+ * Manages the display and interaction with the list of books, including
+ * searching, editing, and adding books.
  */
 public class BookBrowsingController implements Initializable, Model.ModelListenerAdmin {
 
@@ -46,7 +48,7 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
     @FXML
     private TableColumn<Book, Double> colRating;
 
-    /** ImageView to display the selected book's image */
+    /** ImageView to displays the selected book's image */
     @FXML
     private ImageView bookImageView;
 
@@ -76,9 +78,11 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
     private Button addBookButton;
 
     /**
-     * Initializes the controller after its root element has been completely processed.
+     * Initializes the controller after its root element has been completely
+     * processed.
      *
-     * @param url The location used to resolve relative paths for the root object
+     * @param url            The location used to resolve relative paths for the
+     *                       root object
      * @param resourceBundle The resources used to localize the root object
      */
     @Override
@@ -90,10 +94,6 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
      * Callback method when a borrow transaction is created.
      * Refreshes the book table.
      */
-    @Override
-    public void onBorrowTransactionAdminCreated() {
-        initializeBookTable();
-    }
 
     /**
      * Callback method when a book return is processed.
@@ -114,7 +114,8 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
     }
 
     /**
-     * Initializes the book table with data and sets up cell factories and listeners.
+     * Initializes the book table with data and sets up cell factories and
+     * listeners.
      */
     public void initializeBookTable() {
         Model.getInstance().setAllBook();
@@ -165,7 +166,8 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
     }
 
     /**
-     * Initializes the rating stars display based on the selected book's average rating.
+     * Initializes the rating stars display based on the selected book's average
+     * rating.
      */
     private void initializeRatingStars() {
         ratingStars.getChildren().clear();
@@ -200,7 +202,8 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
 
     /**
      * Handles the search action.
-     * Currently, search logic is handled by the textProperty listener on searchField.
+     * Currently, search logic is handled by the textProperty listener on
+     * searchField.
      */
     @FXML
     private void onSearch() {
@@ -276,7 +279,7 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
         labelTitle.textProperty().bind(Bindings.concat("Title: ", book.titleProperty()));
         labelAuthor.textProperty().bind(Bindings.concat("Author: ", book.authorProperty()));
         labelGenre.textProperty().bind(Bindings.concat("Genre: ", book.genreProperty()));
-        textDescription.setText(book.getDescription());
+        textDescription.textProperty().bind(Bindings.concat(book.descriptionProperty()));
 
         if (book.getImagePath() != null && !book.getImagePath().isEmpty()) {
             try {
@@ -305,7 +308,33 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
             alert.showAndWait();
             return;
         }
-        Model.getInstance().setSelectedBook(selectedBook);
+
+        try {
+            // Load the FXML file
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/resources/Fxml/Admin/BookDetailWithReview.fxml"));
+            Parent root = loader.load();
+
+            // Pass the selectedBook to the controller
+            BookDetailWithReviewController controller = loader.getController();
+            controller.setBook(selectedBook); // Assume this method exists in the controller
+
+            // Create a new Stage for the modal window
+            Stage stage = new Stage();
+            stage.setTitle("Chi Tiết Sách");
+            stage.initModality(Modality.APPLICATION_MODAL); // Set modality to make it a modal window
+            stage.setScene(new Scene(root));
+
+            // Show the modal window
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Lỗi");
+            alert.setHeaderText(null);
+            alert.setContentText("Không thể mở cửa sổ chi tiết sách.");
+            alert.showAndWait();
+        }
     }
 
     /**
