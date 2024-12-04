@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import main.Models.Book;
 import main.Models.Model;
+import main.Views.ClientMenuOptions;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -34,7 +35,8 @@ public class BrowsingController implements Initializable {
 
     /**
      * Initializes the controller by setting up table columns, applying filters,
-     * sorting the books, and setting event listeners for the table and search field.
+     * sorting the books, and setting event listeners for the table and search
+     * field.
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -59,8 +61,8 @@ public class BrowsingController implements Initializable {
                 }
                 String lowerCaseFilter = newValue.toLowerCase();
                 // Filter by book title or author
-                return book.getTitle().toLowerCase().contains(lowerCaseFilter) || 
-                       book.getAuthor().toLowerCase().contains(lowerCaseFilter);
+                return book.getTitle().toLowerCase().contains(lowerCaseFilter) ||
+                        book.getAuthor().toLowerCase().contains(lowerCaseFilter);
             });
         });
 
@@ -97,7 +99,8 @@ public class BrowsingController implements Initializable {
 
     /**
      * Opens a new window or view to display the details of the selected book.
-     * If no book is selected, an alert is shown to prompt the user to select a book.
+     * If no book is selected, an alert is shown to prompt the user to select a
+     * book.
      */
     @FXML
     private void onViewDetails() {
@@ -111,5 +114,6 @@ public class BrowsingController implements Initializable {
         }
         // Set the selected book to be viewed in another part of the application
         Model.getInstance().setSelectedBook(selectedBook);
+        Model.getInstance().setPrevMenu(ClientMenuOptions.BROWSING);
     }
 }

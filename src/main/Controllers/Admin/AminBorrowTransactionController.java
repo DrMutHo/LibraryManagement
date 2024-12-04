@@ -118,7 +118,8 @@ public class AminBorrowTransactionController implements Initializable {
             });
         });
 
-        filteredData = new FilteredList<>(Model.getInstance().getDatabaseDriver().getAllBorrowTransactions(), p -> true);
+        filteredData = new FilteredList<>(Model.getInstance().getDatabaseDriver().getAllBorrowTransactionsList(),
+                p -> true);
 
         // Enable sorting
         sortedData = new SortedList<>(filteredData);
@@ -132,7 +133,8 @@ public class AminBorrowTransactionController implements Initializable {
      */
     @FXML
     private void onSearch() {
-        // No changes required here, search logic already handled in textProperty listener
+        // No changes required here, search logic already handled in textProperty
+        // listener
     }
 
     /**
@@ -141,7 +143,7 @@ public class AminBorrowTransactionController implements Initializable {
      */
     @FXML
     private void onReturnButtonClick() {
-        
+
         for (BorrowTransaction transaction : sortedData) {
             // Get the checkbox state from the model's selectedProperty
 

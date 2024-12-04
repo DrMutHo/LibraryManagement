@@ -91,6 +91,13 @@ public class LoginController implements Initializable {
         setButtonActions();
     }
 
+    public void reset() {
+        acc_selector_init();
+        username_password_promptext_init();
+        initializePasswordField();
+        setButtonActions();
+    }
+
     private void setButtonActions() {
         loginButton.setOnAction(event -> onLogin());
         createnewaccountButton.setOnAction(event -> onsignUp());
@@ -207,7 +214,7 @@ public class LoginController implements Initializable {
                 return isValidClientCredentials(username, password);
             }
         };
-        
+
         Task<Boolean> task1 = new Task<>() {
             @Override
             protected Boolean call() throws Exception {
@@ -215,7 +222,7 @@ public class LoginController implements Initializable {
                 return isValidAdminCredentials(username, password);
             }
         };
-       
+
         if (Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT) {
             new Thread(task0).start();
             task0.setOnSucceeded(event -> {
@@ -230,16 +237,17 @@ public class LoginController implements Initializable {
                         Platform.runLater(() -> {
                             Model.getInstance().getViewFactory().showClientWindow();
                             Model.getInstance().getViewFactory().closeStage(stage);
+                            reset();
                         });
                     }, outer_pane);
                 } else {
                     lib_image.setVisible(false);
                     notificationPane.setVisible(true);
                     disableAllComponents(inner_pane);
-                    passwordField.clear(); 
+                    passwordField.clear();
                 }
             });
-        }  else {
+        } else {
             new Thread(task1).start();
             task1.setOnSucceeded(event -> {
                 if (task1.getValue()) {
@@ -251,15 +259,16 @@ public class LoginController implements Initializable {
                             Thread.currentThread().interrupt();
                         }
                         Platform.runLater(() -> {
-                            Model.getInstance().getViewFactory().showClientWindow();
+                            Model.getInstance().getViewFactory().showAdminWindow();
                             Model.getInstance().getViewFactory().closeStage(stage);
+                            reset();
                         });
                     }, outer_pane);
                 } else {
                     lib_image.setVisible(false);
                     notificationPane.setVisible(true);
                     disableAllComponents(inner_pane);
-                    passwordField.clear(); 
+                    passwordField.clear();
                 }
             });
 
