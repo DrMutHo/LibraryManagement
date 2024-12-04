@@ -1,4 +1,5 @@
 package main.Controllers.Admin;
+
 import java.io.File;
 
 import java.awt.Checkbox;
@@ -26,7 +27,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
-
 public class AminBorrowTransactionController implements Initializable {
 
     @FXML
@@ -35,7 +35,7 @@ public class AminBorrowTransactionController implements Initializable {
     @FXML
     private TableView<BorrowTransaction> bookTable;
 
-     // Checkbox column
+    // Checkbox column
     @FXML
     private TableColumn<BorrowTransaction, Integer> transactionIdColumn;
     @FXML
@@ -52,7 +52,7 @@ public class AminBorrowTransactionController implements Initializable {
     @FXML
     private Button returnButton;
 
-    @FXML 
+    @FXML
     private ChoiceBox actionChoiceBox;
 
     private FilteredList<BorrowTransaction> filteredData;
@@ -71,9 +71,7 @@ public class AminBorrowTransactionController implements Initializable {
         returnDateColumn.setCellValueFactory(new PropertyValueFactory<>("returnDate"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-
         TableColumn selectColumn = new TableColumn<>(" ");
-
 
         bookTable.getColumns().add(selectColumn);
 
@@ -84,17 +82,18 @@ public class AminBorrowTransactionController implements Initializable {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
-            String lowerCaseFilter = newValue.toLowerCase();
+                String lowerCaseFilter = newValue.toLowerCase();
 
-            if (transaction.getTitle().toLowerCase().contains(lowerCaseFilter)
-                || transaction.getStatus().toLowerCase().contains(lowerCaseFilter)) {
-                return true;
-            }
-            return false;
+                if (transaction.getTitle().toLowerCase().contains(lowerCaseFilter)
+                        || transaction.getStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
             });
         });
 
-        filteredData = new FilteredList<>(Model.getInstance().getDatabaseDriver().getAllBorrowTransactions(), p -> true);
+        filteredData = new FilteredList<>(Model.getInstance().getDatabaseDriver().getAllBorrowTransactionsList(),
+                p -> true);
 
         // Enable sorting
         sortedData = new SortedList<>(filteredData);
@@ -105,13 +104,14 @@ public class AminBorrowTransactionController implements Initializable {
     // This method is used to handle search action (if needed)
     @FXML
     private void onSearch() {
-        // No changes required here, search logic already handled in textProperty listener
+        // No changes required here, search logic already handled in textProperty
+        // listener
     }
 
     // Handle the return button click event
     @FXML
     private void onReturnButtonClick() {
-        
+
         for (BorrowTransaction transaction : sortedData) {
             // Get the checkbox state from the model's selectedPropert
 
@@ -130,8 +130,7 @@ public class AminBorrowTransactionController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
         alert.showAndWait();
     }
-    
-  
+
     @FXML
     private void ExporttoExcel() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -156,4 +155,3 @@ public class AminBorrowTransactionController implements Initializable {
         }
     }
 }
-

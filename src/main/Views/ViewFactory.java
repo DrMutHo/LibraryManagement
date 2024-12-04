@@ -58,7 +58,6 @@ public class ViewFactory {
         profileView = null;
         browsingView = null;
         notiView = null;
-        booktransactionView = null;
         bookDetailsView = null;
         BorrowTransactionView = null;
         profileDetailView = null;
@@ -210,7 +209,7 @@ public class ViewFactory {
         return adminDashboardView;
     }
 
-    public AnchorPane getChangePasswordView() {
+    public BorderPane getChangePasswordView() {
         if (changePasswordView == null) {
             try {
                 changePasswordView = new FXMLLoader(
@@ -248,7 +247,7 @@ public class ViewFactory {
         return adminProfileView;
     }
 
-    public AnchorPane getDeleteAccountView() {
+    public BorderPane getDeleteAccountView() {
 
         if (deleteAccountView == null) {
             try {

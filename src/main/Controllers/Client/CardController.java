@@ -55,7 +55,7 @@ public class CardController implements Initializable {
         // Set the image with rounded corners
         imageView.setArcWidth(20);
         imageView.setArcHeight(20);
-        imageView.setFill(new ImagePattern(new Image(book.getImage_path())));
+        imageView.setFill(new ImagePattern(new Image(book.getImagePath())));
         imageView.setStroke(Color.TRANSPARENT);
 
         // Set the title and author labels
