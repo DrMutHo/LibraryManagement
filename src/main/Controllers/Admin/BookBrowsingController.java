@@ -1,5 +1,5 @@
 package main.Controllers.Admin;
-
+import javafx.scene.Parent;
 import java.awt.Button;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
@@ -305,8 +305,35 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
             alert.showAndWait();
             return;
         }
-        Model.getInstance().setSelectedBook(selectedBook);
+   
+        try {
+            // Load the FXML file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/Fxml/Admin/BookDetailWithReview.fxml"));
+            Parent root = loader.load();
+   
+            // Pass the selectedBook to the controller
+            BookDetailWithReviewController controller = loader.getController();
+            controller.setBook(selectedBook); // Assume this method exists in the controller
+   
+            // Create a new Stage for the modal window
+            Stage stage = new Stage();
+            stage.setTitle("Chi Tiết Sách");
+            stage.initModality(Modality.APPLICATION_MODAL); // Set modality to make it a modal window
+            stage.setScene(new Scene(root));
+   
+            // Show the modal window
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Lỗi");
+            alert.setHeaderText(null);
+            alert.setContentText("Không thể mở cửa sổ chi tiết sách.");
+            alert.showAndWait();
+        }
     }
+   
+
 
     /**
      * Opens the window to add a new book.
