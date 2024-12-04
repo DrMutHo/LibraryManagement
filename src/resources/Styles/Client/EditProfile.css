@@ -35,7 +35,7 @@
 
 /* Label của các trường nhập */
 .form-label {
-    -fx-font-size: 16px;
+    -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-text-fill: #555;
     -fx-padding-right: 10px;
@@ -61,8 +61,8 @@
 
 /* Các nút button */
 .form-button {
-    -fx-font-size: 14px;
-    -fx-padding: 12px 20px;
+    -fx-font-size: 13px;
+    -fx-padding: 10px 10px;
     -fx-background-color: #4CAF50;
     -fx-text-fill: white;
     -fx-border: none;
@@ -70,6 +70,7 @@
     -fx-cursor: pointer;
     -fx-transition: background-color 0.3s ease;
     -fx-margin-left: 20px;
+    -fx-cursor: hand;
 }
 
 .form-button:hover {

@@ -38,9 +38,9 @@ public class ViewFactory {
     private BorderPane bookDetailsView;
     private BorderPane BorrowTransactionView;
     private BorderPane profileDetailView;
-    private AnchorPane changePasswordView;
-    private AnchorPane editProfileView;
-    private AnchorPane deleteAccountView;
+    private BorderPane changePasswordView;
+    private BorderPane editProfileView;
+    private BorderPane deleteAccountView;
 
     public void resetAllPanes() {
         dashboardView = null;
@@ -175,7 +175,7 @@ public class ViewFactory {
         return profileDetailView;
     }
 
-    public AnchorPane getChangePasswordView() {
+    public BorderPane getChangePasswordView() {
         if (changePasswordView == null) {
             try {
                 // Tải FXML và lưu vào changePasswordView chỉ một lần
@@ -190,7 +190,7 @@ public class ViewFactory {
         return changePasswordView;
     }
 
-    public AnchorPane getEditProfileView() {
+    public BorderPane getEditProfileView() {
         if (editProfileView == null) {
             try {
                 editProfileView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/EditProfile.fxml"))
@@ -202,7 +202,7 @@ public class ViewFactory {
         return editProfileView;
     }
 
-    public AnchorPane getDeleteAccountView() {
+    public BorderPane getDeleteAccountView() {
         if (deleteAccountView == null) {
             try {
                 deleteAccountView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/DeleteAccount.fxml"))
