@@ -27,64 +27,141 @@ import main.Views.ViewFactory;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.Parent;
 
+/**
+ * Controller class for the Change Password view.
+ * Handles functionality for changing the user's password, including toggling password visibility
+ * and validating new password inputs.
+ */
 public class ChangePasswordController implements Initializable {
+
+    /**
+     * Current password field.
+     */
     @FXML
-    private PasswordField passwordField0; // Current password
+    private PasswordField passwordField0;
+
+    /**
+     * New password field.
+     */
     @FXML
-    private PasswordField passwordField1; // New password
+    private PasswordField passwordField1;
+
+    /**
+     * Retype new password field.
+     */
     @FXML
-    private PasswordField passwordField2; // Retype new password
+    private PasswordField passwordField2;
+
+    /**
+     * TextField for showing current password when visibility is toggled.
+     */
     @FXML
     private TextField textField0;
+
+    /**
+     * TextField for showing new password when visibility is toggled.
+     */
     @FXML
     private TextField textField1;
+
+    /**
+     * TextField for showing retyped new password when visibility is toggled.
+     */
     @FXML
     private TextField textField2;
+
+    /**
+     * Button to toggle visibility for current password field.
+     */
     @FXML
-    private Button toggleButton0; // Button to toggle visibility for passwordField0
+    private Button toggleButton0;
+
+    /**
+     * Button to toggle visibility for new password field.
+     */
     @FXML
-    private Button toggleButton1; // Button to toggle visibility for passwordField1
+    private Button toggleButton1;
+
+    /**
+     * Button to toggle visibility for retyped new password field.
+     */
     @FXML
-    private Button toggleButton2; // Button to toggle visibility for passwordField2
+    private Button toggleButton2;
+
+    /**
+     * Button to save the password changes.
+     */
     @FXML
     private Button saveChangesButton;
+
+    /**
+     * ImageView for the visibility icon in the current password field.
+     */
     @FXML
     private ImageView imageView0;
+
+    /**
+     * ImageView for the visibility icon in the new password field.
+     */
     @FXML
     private ImageView imageView1;
+
+    /**
+     * ImageView for the visibility icon in the retyped new password field.
+     */
     @FXML
     private ImageView imageView2;
+
+    /**
+     * Icon for hiding password (eye closed).
+     */
     @FXML
     private Image eyeOpen;
+
+    /**
+     * Icon for showing password (eye open).
+     */
     @FXML
     private Image eyeClosed;
+
+    /**
+     * HBox container for current password field and toggle button.
+     */
     @FXML
     private HBox hBox0;
+
+    /**
+     * HBox container for new password field and toggle button.
+     */
     @FXML
     private HBox hBox1;
+
+    /**
+     * HBox container for retyped new password field and toggle button.
+     */
     @FXML
     private HBox hBox2;
-    @FXML
-    private ImageView warning0;
-    @FXML
-    private ImageView warning1;
-    @FXML
-    private ImageView warning2;
 
-    // Flags to track visibility of each password field
-    private boolean passwordVisible0 = false;
-    private boolean passwordVisible1 = false;
-    private boolean passwordVisible2 = false;
-
+    /**
+     * Initializes the controller class.
+     * Sets up the password fields and toggle buttons.
+     *
+     * @param url The location used to resolve relative paths for the root object.
+     * @param resourceBundle The resources used to localize the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         passwordField_init();
     }
 
+    /**
+     * Initializes the password fields and their corresponding text fields.
+     * Sets up visibility toggling and loads the appropriate icons.
+     */
     public void passwordField_init() {
-        // Set prompt text for the password fields
-        setPromptText();
 
         // Initialize password fields and text fields
         initializePasswordAndTextFields(passwordField0, textField0, hBox0);
@@ -106,17 +183,14 @@ public class ChangePasswordController implements Initializable {
         toggleButton2.setOnAction(event -> togglePasswordVisibility(passwordField2, textField2, imageView2));
     }
 
-    // Helper method to set prompt text for all password fields
-    private void setPromptText() {
-        passwordField0.setPromptText("Enter your current password");
-        passwordField1.setPromptText("Your new password must be over 6 letters");
-        passwordField2.setPromptText("Retype your new password");
-        textField0.setPromptText("Enter your current password");
-        textField1.setPromptText("Your new password must be over 6 letters");
-        textField2.setPromptText("Retype your new password");
-    }
-
-    // Helper method to initialize password fields and text fields
+    /**
+     * Helper method to initialize password fields and text fields.
+     * Sets visibility and binds text properties for synchronization.
+     *
+     * @param passwordField The PasswordField to initialize.
+     * @param textField The TextField corresponding to the PasswordField.
+     * @param hBox The HBox container holding the field and its toggle button.
+     */
     private void initializePasswordAndTextFields(PasswordField passwordField, TextField textField, HBox hBox) {
         passwordField.setVisible(true);
         passwordField.setManaged(true);
@@ -129,7 +203,12 @@ public class ChangePasswordController implements Initializable {
         addTextFieldListener(textField, hBox);
     }
 
-    // Focus listener for password fields
+    /**
+     * Adds a focus listener to the PasswordField to update the HBox style based on focus state.
+     *
+     * @param passwordField The PasswordField to add the listener to.
+     * @param hBox The HBox container holding the field and its toggle button.
+     */
     private void addPasswordFieldFocusListener(PasswordField passwordField, HBox hbox) {
         passwordField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -140,7 +219,12 @@ public class ChangePasswordController implements Initializable {
         });
     }
 
-    // Focus listener for text fields
+    /**
+     * Adds a focus listener to the TextField to update the HBox style based on focus state.
+     *
+     * @param textField The TextField to add the listener to.
+     * @param hBox The HBox container holding the field and its toggle button.
+     */
     private void addTextFieldListener(TextField textField, HBox hbox) {
         textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
@@ -151,7 +235,14 @@ public class ChangePasswordController implements Initializable {
         });
     }
 
-    // Toggle password visibility for each field
+    /**
+     * Toggles the visibility of the password fields between PasswordField and TextField.
+     * Also updates the visibility icon accordingly.
+     *
+     * @param passwordField The PasswordField to toggle.
+     * @param textField The TextField corresponding to the PasswordField.
+     * @param imageView The ImageView displaying the visibility icon.
+     */
     private void togglePasswordVisibility(PasswordField passwordField, TextField textField, ImageView imageView) {
         if (passwordField.isVisible()) {
             // Hide PasswordField, show TextField
@@ -170,156 +261,180 @@ public class ChangePasswordController implements Initializable {
         }
     }
 
+    /**
+     * Handles the process of changing the password. This method retrieves input values, validates them,
+     * highlights errors, and updates the password if all conditions are met.
+     *
+     * <p>Steps:</p>
+     * <ul>
+     *   <li>Retrieves the current password, new password, and confirmation password from the input fields.</li>
+     *   <li>Validates the inputs using appropriate validation methods:
+     *     <ul>
+     *       <li>{@code isValidCurrentPassword(String)} for the current password.</li>
+     *       <li>{@code isValidNewPassword(String)} for the new password.</li>
+     *       <li>{@code isValidConfirmPassword(String)} for the confirmation password.</li>
+     *     </ul>
+     *   </li>
+     *   <li>Highlights any fields with errors using {@code highlightField(HBox, Label)}.</li>
+     *   <li>Checks the current password against the database using {@code checkCurrentPassword(String, String)}.</li>
+     *   <li>If all conditions are valid, updates the password in the database using {@code updatePassword(String, String)}.</li>
+     *   <li>Displays appropriate alerts based on the outcome of the process.</li>
+     * </ul>
+     *
+     * @implNote This method assumes the existence of helper methods such as:
+     *           {@code highlightField(HBox, Label)}, {@code resetField(HBox, Label)},
+     *           {@code isValidCurrentPassword(String)}, {@code isValidNewPassword(String)},
+     *           {@code isValidConfirmPassword(String)}, {@code checkCurrentPassword(String, String)},
+     *           and {@code updatePassword(String, String)}.
+     */
     @FXML
     private void changePassword() {
-        // Lấy giá trị từ các trường nhập liệu
+        // Retrieve values from input fields
         String currentPassword = passwordField0.getText();
         String newPassword = passwordField1.getText();
         String confirmPassword = passwordField2.getText();
         boolean canUpdate = true;
+        String errorMessage = "";
 
-        // Kiểm tra các điều kiện đầu vào và highlight các trường hợp lỗi
+        // Validate input conditions and accumulate error messages
         if (!isValidCurrentPassword(currentPassword)) {
-            highlightField(hBox0, warning0);
+            errorMessage += "Current password is required.\n";
             canUpdate = false;
-        } else {
-            resetField(hBox0, warning0);
         }
 
         if (!isValidNewPassword(newPassword)) {
-            highlightField(hBox1, warning1);
+            errorMessage += "New password must be at least 6 characters.\n";
             canUpdate = false;
-        } else {
-            resetField(hBox1, warning1);
         }
 
         if (!isValidConfirmPassword(confirmPassword)) {
-            highlightField(hBox2, warning2);
+            errorMessage += "Confirmation password is required and should match new password.\n";
             canUpdate = false;
-        } else {
-            resetField(hBox2, warning2);
         }
 
-        // Kiểm tra mật khẩu hiện tại từ cơ sở dữ liệu
+        // Check if the current password matches the one in the database
         if (!checkCurrentPassword(Model.getInstance().getClient().getUsername(), currentPassword)) {
-            highlightField(hBox0, warning0);
+            errorMessage += "Current password is incorrect.\n";
             canUpdate = false;
         }
 
-        // Kiểm tra nếu tất cả các điều kiện đều hợp lệ
+        // If all initial validations pass
         if (canUpdate) {
-            // Cập nhật mật khẩu mới vào cơ sở dữ liệu
-            if (updatePassword(Model.getInstance().getClient().getUsername(), newPassword)) {
-                showAlert("Password changed successfully!", Alert.AlertType.INFORMATION);
-            } else {
-                showAlert("Error updating password.", Alert.AlertType.ERROR);
+            // Check if new password and confirmation match
+            if (!newPassword.equals(confirmPassword)) {
+                errorMessage += "New password and confirmation do not match.\n";
+                canUpdate = false;
             }
-        } else {
-            showAlert("Please correct the highlighted errors.", Alert.AlertType.ERROR);
+
+            // If confirmation matches, attempt to update the password in the database
+            if (canUpdate) {
+                if (updatePassword(Model.getInstance().getClient().getUsername(), newPassword)) {
+                    showAlert("Password changed successfully!", Alert.AlertType.INFORMATION);
+                } else {
+                    showAlert("Error updating password. Please try again.", Alert.AlertType.ERROR);
+                }
+            }
+        }
+
+        // If there are any validation errors, display them to the user
+        if (!canUpdate) {
+            showAlert("Please correct the following errors:\n" + errorMessage, Alert.AlertType.ERROR);
         }
     }
 
-    // Phương thức kiểm tra mật khẩu hiện tại
+    /**
+     * Validates the current password to ensure it is not empty.
+     * This is a basic check to ensure that the user has entered a value for the current password.
+     *
+     * @param currentPassword the current password entered by the user
+     * @return {@code true} if the current password is not empty, {@code false} otherwise
+     */
     private boolean isValidCurrentPassword(String currentPassword) {
         return !currentPassword.isEmpty();
     }
 
-    // Phương thức kiểm tra mật khẩu mới
+    /**
+     * Validates the new password to ensure it is not empty and has a minimum length of 6 characters.
+     *
+     * @param newPassword the new password entered by the user
+     * @return {@code true} if the new password is valid (non-empty and at least 6 characters), {@code false} otherwise
+     */
     private boolean isValidNewPassword(String newPassword) {
         return !newPassword.isEmpty() && newPassword.length() >= 6;
     }
 
-    // Phương thức kiểm tra mật khẩu xác nhận
+    /**
+     * Validates the confirm password to ensure it is not empty and has a minimum length of 6 characters.
+     *
+     * @param confirmPassword the confirm password entered by the user
+     * @return {@code true} if the confirm password is valid (non-empty and at least 6 characters), {@code false} otherwise
+     */
     private boolean isValidConfirmPassword(String confirmPassword) {
         return !confirmPassword.isEmpty() && confirmPassword.length() >= 6;
     }
 
-    // Phương thức highlight các trường có lỗi
-    private void highlightField(HBox hbox, ImageView icon) {
-        hbox.getStyleClass().add("hbox_set-error");
-        icon.setImage(new Image(getClass().getResource("/resources/Images/warning-icon.png").toExternalForm()));
-    }
-
-    // Phương thức reset lại các trường hợp không có lỗi
-    private void resetField(HBox hbox, ImageView icon) {
-        hbox.getStyleClass().remove("hbox_set-error");
-        icon.setImage(null);
-    }
-
+    /**
+     * Displays an alert with the given message and alert type.
+     * The alert will have a title of "Notification" and the provided message as the content.
+     * The header text is left null, but can be customized if needed.
+     *
+     * @param message the message to be displayed in the alert
+     * @param alertType the type of alert (e.g., INFORMATION, ERROR)
+     */
     private void showAlert(String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle("Notification");
-        alert.setHeaderText(null); // Có thể bỏ trống hoặc thiết lập header nếu cần
+        alert.setHeaderText(null); // Can be left empty or set as needed
         alert.setContentText(message);
-        alert.showAndWait(); // Chờ người dùng đóng thông báo trước khi tiếp tục
+        alert.showAndWait(); // Wait for user to close the alert before continuing
     }
 
+    /**
+     * Checks if the provided current password matches the stored password hash in the database.
+     *
+     * @param username the username of the client whose password is being checked
+     * @param password the current password entered by the user
+     * @return {@code true} if the password is valid, {@code false} otherwise
+     */
     private boolean checkCurrentPassword(String username, String password) {
-        // Truy vấn cơ sở dữ liệu để lấy mật khẩu hash của người dùng
-        String query = "SELECT * FROM client WHERE username = ?";
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            // Kiểm tra kết nối
-            if (connection == null || connection.isClosed()) {
-                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
-                return false;
-            }
-
-            // Cài đặt tham số vào câu truy vấn
-            preparedStatement.setString(1, username);
-
-            // Thực thi truy vấn
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            // Nếu tìm thấy người dùng, so sánh mật khẩu
-            if (resultSet.next()) {
-                String storedPasswordHash = resultSet.getString("password_hash"); // Mật khẩu đã được hash trong DB
-
-                // Kiểm tra mật khẩu đầu vào với mật khẩu đã lưu (bằng cách xác minh hash)
+        try (ResultSet resultSet = Model.getInstance().getDatabaseDriver().getClientData(username)) {
+            if (resultSet != null && resultSet.next()) {
+                String storedPasswordHash = resultSet.getString("password_hash");
                 return verifyPassword(password, storedPasswordHash);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false; // Nếu không tìm thấy người dùng hoặc có lỗi, trả về false
+        return false;
     }
 
-    // Hàm kiểm tra mật khẩu bằng cách so sánh với hash
+    /**
+     * Verifies the password by comparing it with the stored password hash.
+     * Assumes the use of a hashing library like BCrypt or PBKDF2.
+     *
+     * @param password the password entered by the user
+     * @param storedPasswordHash the stored hash of the password in the database
+     * @return {@code true} if the password matches the hash, {@code false} otherwise
+     */
     private boolean verifyPassword(String password, String storedPasswordHash) {
-        // Giả sử bạn dùng thư viện bcrypt hoặc PBKDF2 để so sánh hash
-        // Ví dụ sử dụng BCrypt để xác thực mật khẩu
+        // Assuming you are using a hashing library like BCrypt or PBKDF2 to compare hashes
+        // Example using BCrypt to verify password
         return BCrypt.checkpw(password, storedPasswordHash);
     }
 
+    /**
+     * Updates the password of the given user in the database.
+     *
+     * @param username the username of the client whose password is being updated
+     * @param newPassword the new password to set
+     * @return {@code true} if the password update was successful, {@code false} otherwise
+     */
     private boolean updatePassword(String username, String newPassword) {
-        // Câu truy vấn để cập nhật mật khẩu
-        String updateQuery = "UPDATE client SET password_hash = ? WHERE username = ?";
-
-        // Mã hóa mật khẩu mới (nếu bạn sử dụng BCrypt, ví dụ)
-        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt()); // Mã hóa mật khẩu mới
-
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
-
-            // Kiểm tra kết nối
-            if (connection == null || connection.isClosed()) {
-                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
-                return false;
-            }
-
-            // Cài đặt tham số vào câu truy vấn
-            preparedStatement.setString(1, hashedPassword); // Đặt mật khẩu đã mã hóa
-            preparedStatement.setString(2, username); // Đặt tên người dùng
-
-            // Thực thi câu lệnh update
-            int rowsUpdated = preparedStatement.executeUpdate();
-
-            // Nếu có ít nhất một dòng bị ảnh hưởng, tức là mật khẩu đã được cập nhật
-            return rowsUpdated > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (Model.getInstance().getDatabaseDriver().updatePassword(username, newPassword) > 0) {
+            return true;
+        } else {
+            return false;
         }
-        return false; // Trả về false nếu có lỗi hoặc không có dòng nào bị cập nhật
     }
 }
+

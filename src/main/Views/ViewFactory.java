@@ -48,9 +48,24 @@ public class ViewFactory {
     private BorderPane bookDetailsView;
     private BorderPane BorrowTransactionView;
     private BorderPane profileDetailView;
-    private AnchorPane changePasswordView;
-    private AnchorPane editProfileView;
-    private AnchorPane deleteAccountView;
+    private BorderPane changePasswordView;
+    private BorderPane editProfileView;
+    private BorderPane deleteAccountView;
+
+    public void resetAllPanes() {
+        dashboardView = null;
+        homeView = null;
+        profileView = null;
+        browsingView = null;
+        notiView = null;
+        booktransactionView = null;
+        bookDetailsView = null;
+        BorrowTransactionView = null;
+        profileDetailView = null;
+        changePasswordView = null;
+        editProfileView = null;
+        deleteAccountView = null;
+    }
 
     // Admin Views
     private BorderPane adminDashboardView;
@@ -208,7 +223,7 @@ public class ViewFactory {
         return changePasswordView;
     }
 
-    public AnchorPane getEditProfileView() {
+    public BorderPane getEditProfileView() {
         if (editProfileView == null) {
             try {
                 editProfileView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/EditProfile.fxml"))
@@ -234,6 +249,7 @@ public class ViewFactory {
     }
 
     public AnchorPane getDeleteAccountView() {
+
         if (deleteAccountView == null) {
             try {
                 deleteAccountView = new FXMLLoader(getClass().getResource("/resources/Fxml/Client/DeleteAccount.fxml"))

@@ -59,7 +59,7 @@
 
                     <VBox alignment="CENTER" spacing="10">
                         <Button onAction="#openDetailWindow" styleClass="action-button" text="📄 View Details" />
-                        <Button onAction="#exportExcel" styleClass="action-button" text="✍ Write Review" />
+                        <Button onAction="#exportExcel" styleClass="action-button" text="📤 Export Excel File" />
                     </VBox>
 
                     <VBox alignment="CENTER" spacing="10">

@@ -1,52 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Rectangle2D?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="591.0" styleClass="anchorPane" stylesheets="@../../Styles/Client/DeleteAccount.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.DeleteAccountController">
-   <children>
-      <ImageView fitHeight="129.0" fitWidth="122.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../Images/deleteAcc.png" />
-         </image>
-      </ImageView>
-      <Text layoutX="152.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="tiltle_text" text="Delete your OnlineLibrary Account" wrappingWidth="316.71099853515625" />
-      <Text fill="DIMGRAY" layoutX="50.0" layoutY="161.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="small_text" text="&quot;You can permanently delete your Google account and all your services and data, like email and photos.&quot; " wrappingWidth="522.9503784179688" />
-      <Line endX="10.60003662109375" endY="0.27442169189453125" layoutX="263.0" layoutY="126.0" startX="-111.00001525878906" startY="0.27442169189453125" />
-      <Line endX="199.79998779296875" endY="-0.47362518310546875" layoutX="260.0" layoutY="94.0" startX="-108.00001525878906" startY="0.27442169189453125" />
-      <HBox fx:id="hBox0" alignment="CENTER" blendMode="SRC_ATOP" layoutX="151.0" layoutY="244.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="39.0" prefWidth="319.0" styleClass="hbox_set">
-         <children>
-            <Button fx:id="toggleButton0" alignment="CENTER" blendMode="SRC_ATOP" graphicTextGap="0.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" styleClass="button_showHide" HBox.hgrow="NEVER">
-               <graphic>
-                  <ImageView fx:id="imageView0" fitHeight="26.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
-               </graphic>
-            </Button>
-            <StackPane prefHeight="150.0" prefWidth="200.0">
+<BorderPane stylesheets="@../../Styles/Client/DeleteAccount.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Client.DeleteAccountController">
+   <center>
+        <VBox alignment="CENTER" spacing="20.0">
+            <HBox alignment="CENTER" spacing="10.0">
+                <ImageView fitHeight="50.0" fitWidth="50.0">
+                    <image>
+                        <Image url="@../../Images/deleteAcc.png" />
+                    </image>
+                </ImageView>
+                <Label styleClass="title-label" text="Delete your OnlineLibrary Account" underline="true" />
+            </HBox>
+            <Label styleClass="info-label" text="You can permanently delete your Google account and all your services and data, like email and photos." wrapText="true" />
+            <Label styleClass="prompt-label" text="PLEASE ENTER YOUR PASSWORD TO CONFIRM THAT IT IS YOU REQUESTING TO DELETE YOUR ACCOUNT!" wrapText="true" />
+            <HBox fx:id="hBox0" alignment="CENTER" fillHeight="false" spacing="5.0" styleClass="hbox_set">
+                <ImageView fitHeight="20.0" fitWidth="20.0" styleClass="image-view_small">
+                    <image>
+                        <Image url="@../../Images/password.png" />
+                    </image>
+                </ImageView>
+            <StackPane>
                <children>
-                  <PasswordField fx:id="passwordField0" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="260.0" styleClass="password-field" />
-                  <TextField fx:id="textField0" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="260.0" styleClass="password-field" />
+                      <PasswordField fx:id="passwordField0" styleClass="form-input" />
+                  <TextField fx:id="textField0" styleClass="form-input" />
                </children>
             </StackPane>
-            <ImageView fitHeight="27.0" fitWidth="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view" HBox.hgrow="NEVER">
-               <image>
-                  <Image url="@../../Images/password.png" />
-               </image>
-               <viewport>
-                  <Rectangle2D />
-               </viewport>
-            </ImageView>
-         </children>
-      </HBox>
-      <Button fx:id="deleteButton" layoutX="232.0" layoutY="297.0" mnemonicParsing="false" onAction="#handleDeleteButton" prefHeight="30.0" prefWidth="158.0" styleClass="button_changePassword" text="DELETE ACCOUNT" />
-      <Text fill="DIMGRAY" layoutX="55.0" layoutY="211.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="small_text" text="PLEASE ENTER YOUR PASSWORD TO CONFIRM THAT IT IS YOU REQUESTING TO DELETE YOUR ACCOUNT!" wrappingWidth="501.42071533203125" />
-   </children>
-</AnchorPane>
+            <Button fx:id="toggleButton0" mnemonicParsing="false" styleClass="button_showHide">
+               <graphic>
+                  <ImageView fx:id="imageView0" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" styleClass="button_showHide" />
+               </graphic>
+            </Button>
+            <padding>
+               <Insets bottom="5.0" top="5.0" />
+            </padding>
+            <VBox.margin>
+               <Insets left="150.0" right="150.0" />
+            </VBox.margin>
+            </HBox>
+            <Button fx:id="deleteButton" onAction="#handleDeleteButton" styleClass="delete-button" text="DELETE ACCOUNT">
+            <VBox.margin>
+               <Insets bottom="10.0" />
+            </VBox.margin>
+         </Button>
+        </VBox>
+   </center>
+</BorderPane>
