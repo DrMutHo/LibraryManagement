@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane prefHeight="700.0" prefWidth="850.0" stylesheets="@../../Styles/Client/BookDetailWithReview.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Admin.BookDetailWithReviewController">
-<!-- Top Section -->
+<!-- Top Section - -->
     <top>
         <HBox alignment="CENTER" spacing="20" styleClass="header-bar">
             <Label styleClass="header-title" text="Book Details" />

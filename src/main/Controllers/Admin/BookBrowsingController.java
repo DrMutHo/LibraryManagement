@@ -46,7 +46,7 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
     @FXML
     private TableColumn<Book, Double> colRating;
 
-    /** ImageView to display the selected book's image */
+    /** ImageView to displays the selected book's image */
     @FXML
     private ImageView bookImageView;
 
