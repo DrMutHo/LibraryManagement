@@ -18,6 +18,7 @@ import main.Models.Notification;
 import java.net.URL;
 
 /**
+ * 
  * Controller class for the admin menu.
  * Manages navigation between different admin views and updates notification icons.
  */

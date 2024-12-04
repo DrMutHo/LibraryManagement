@@ -26,6 +26,7 @@ public class AdminProfile implements Initializable {
      * Initializes the controller after its root element has been completely processed.
      * Sets up a clock that updates the time label every second.
      *
+     * 
      * @param url            The location used to resolve relative paths for the root object.
      * @param resourceBundle The resources used to localize the root object.
      */

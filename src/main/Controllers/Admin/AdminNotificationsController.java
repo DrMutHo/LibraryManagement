@@ -94,6 +94,7 @@ public class AdminNotificationsController implements Initializable {
     /**
      * Updates the unread notifications count and displays it in the label.
      *
+     * 
      * @param recipientId The ID of the recipient (admin) whose unread notifications are to be counted.
      */
     private void updateUnreadCount(int recipientId) {

@@ -153,6 +153,7 @@ public class AdminDashboardController implements Initializable {
 
     //     borrowingTrendsBarChart.getData().add(barSeries);
     // }
+    
 
     // /**
     //  * Loads recent activities into the recentActivityList.
