@@ -1,6 +1,5 @@
 package main.Controllers.Admin;
 
-import com.sun.jdi.IntegerType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import java.util.ResourceBundle;
@@ -20,28 +19,54 @@ import main.Models.Book;
 import java.net.URL;
 import main.Models.Model;
 
+/**
+ * Controller class for the card view used in the admin panel.
+ * Manages the display and interaction of book information within a card UI component.
+ */
 public class CardController2 implements Initializable {
 
+    /** Label for the book title */
     @FXML
     private Label titleLabel;
+
+    /** ImageView for the book image */
     @FXML
     private ImageView bookImage;
+
+    /** Label for the book ISBN */
     @FXML
     private Label isbnLabel;
+
+    /** Button to add the book */
     @FXML
     private Button AddBook;
+
+    /** TextField to input the quantity of books to add */
     @FXML
     private TextField Quantity;
+
+    /** VBox containing ISBN and title labels */
     @FXML
     private VBox vBoxIsbnAndTitle;
 
+    /** VBox containing quantity field and add button */
     @FXML
     private VBox vBoxQuantityAndButton;
 
+    /** HBox representing the card layout */
     @FXML
     private HBox card;
+
+    /** The current book associated with this card */
     private Book currentBook;
 
+    /**
+     * Initializes the controller after its root element has been completely processed.
+     * Sets up layout properties and initializes the current book.
+     *
+     * @param url The location used to resolve relative paths for the root object
+     * @param resourceBundle The resources used to localize the root object
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         HBox.setHgrow(vBoxIsbnAndTitle, Priority.ALWAYS);
@@ -50,6 +75,11 @@ public class CardController2 implements Initializable {
         currentBook = new Book();
     }
 
+    /**
+     * Sets the book data to be displayed in the card.
+     *
+     * @param book The book whose data is to be displayed
+     */
     public void setBookData(Book book) {
         this.currentBook = book;
         String imagePath = book.getImagePath();
@@ -68,46 +98,65 @@ public class CardController2 implements Initializable {
         }
     }
 
+    /**
+     * Handles the action of adding the book with the specified quantity.
+     * Parses the quantity input, updates the model, and shows success or error messages.
+     */
     public void AddBookCTL() {
         try {
-            // Lấy số lượng từ trường Quantity
+            // Get the quantity from the Quantity text field
             int quantity = Integer.parseInt(Quantity.getText());
 
-            if(quantity == 0) {
-                showError("quantity must be greater than 0");
+            if (quantity <= 0) {
+                showError("Quantity must be greater than 0.");
                 return;
             }
 
-            // Gọi phương thức trong Model để thêm sách và số lượng
+            // Call the method in Model to add the book with the specified quantity
             Model.getInstance().AddBookCTL(currentBook, quantity);
 
-            // Gọi phương thức notify để thông báo thêm sách
+            // Notify the model to inform about the addition of the book
             Model.getInstance().notifyAddBookEvent();
 
-            // Hiển thị thông báo thành công
+            // Display success message
             showSuccess("Book added successfully with " + quantity + " copies.");
         } catch (NumberFormatException e) {
-            // Xử lý nếu số lượng nhập vào không phải là số hợp lệ
+            // Handle the case where the input quantity is not a valid number
             showError("Please enter a valid quantity.");
         } catch (Exception e) {
-            // Xử lý các lỗi khác
+            // Handle other exceptions
             e.printStackTrace();
             showError("An error occurred while adding the book.");
         }
     }
 
+    /**
+     * Displays a success message in an alert dialog.
+     *
+     * @param message The success message to display
+     */
     private void showSuccess(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
         alert.setTitle("Success");
         alert.showAndWait();
     }
 
+    /**
+     * Displays an error message in an alert dialog.
+     *
+     * @param message The error message to display
+     */
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
         alert.setTitle("Error");
         alert.showAndWait();
     }
 
+    /**
+     * Returns the HBox representing the card.
+     *
+     * @return The card HBox
+     */
     public HBox getCard() {
         return card;
     }

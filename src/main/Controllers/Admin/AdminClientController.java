@@ -18,46 +18,69 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
+/**
+ * Controller class for managing clients in the admin panel.
+ * Handles displaying, searching, and exporting client data.
+ */
 public class AdminClientController implements Initializable {
 
+    /** TableView to display clients */
     @FXML
     private TableView<Client> clientTable;
 
+    /** TableColumn for client ID */
     @FXML
     private TableColumn<Client, Integer> clientIdColumn;
 
+    /** TableColumn for client name */
     @FXML
     private TableColumn<Client, String> nameColumn;
 
+    /** TableColumn for library card number */
     @FXML
     private TableColumn<Client, String> libraryCardNumberColumn;
 
+    /** TableColumn for email */
     @FXML
     private TableColumn<Client, String> emailColumn;
 
+    /** TableColumn for phone number */
     @FXML
     private TableColumn<Client, String> phoneNumberColumn;
 
+    /** TableColumn for address */
     @FXML
     private TableColumn<Client, String> addressColumn;
 
+    /** TableColumn for registration date */
     @FXML
     private TableColumn<Client, LocalDate> registrationDateColumn;
 
+    /** TableColumn for outstanding fees */
     @FXML
     private TableColumn<Client, Double> outstandingFeesColumn;
 
+    /** TableColumn for username */
     @FXML
     private TableColumn<Client, String> usernameColumn;
 
+    /** TextField for searching clients */
     @FXML
     private TextField searchField;
 
+    /** ObservableList containing client data */
     private ObservableList<Client> clients;
 
+    /** FilteredList for client search functionality */
     private FilteredList<Client> filteredData;
     private SortedList<Client> sortedData;
 
+    /**
+     * Initializes the controller after its root element has been completely processed.
+     *
+     * @param url            The location used to resolve relative paths for the root object.
+     * @param resourceBundle The resources used to localize the root object.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Set up the columns in the table
@@ -107,21 +130,24 @@ public class AdminClientController implements Initializable {
         });
     }
 
-
+    /**
+     * Exports client data to an Excel file.
+     * Opens a directory chooser for the user to select the save location.
+     */
     @FXML
     private void Excell() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Chọn Thư Mục Lưu Tệp");
+        directoryChooser.setTitle("Select Directory to Save File");
 
-        // Mở cửa sổ chọn thư mục và lấy thư mục người dùng chọn
+        // Open the directory chooser and get the selected directory
         File selectedDirectory = directoryChooser.showDialog(null);
 
         if (selectedDirectory != null) {
             try {
-                // Tạo đường dẫn tệp (tên tệp có thể cố định hoặc lấy từ dữ liệu)
+                // Create the file path (file name can be fixed or derived from data)
                 String filePath = selectedDirectory.getAbsolutePath() + "/clients.xlsx";
 
-                // Gọi hàm export dữ liệu vào file đã chọn
+                // Call method to export data to the selected file
                 Model.getInstance().getDatabaseDriver().exportClientsToExcel(filePath);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -132,7 +158,14 @@ public class AdminClientController implements Initializable {
         }
     }
 
-
+    /**
+     * Displays an alert dialog with the specified information.
+     *
+     * @param alertType The type of alert.
+     * @param title     The title of the alert dialog.
+     * @param header    The header text.
+     * @param content   The content text.
+     */
     private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
