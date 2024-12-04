@@ -1,7 +1,10 @@
 package main.Controllers.Admin;
+import java.awt.Dialog;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -32,7 +35,10 @@ public class BookEdit {
     @FXML
     private Label labelPublicationYear;
     @FXML
+    private Label originalquantity;
+    @FXML
     private TextArea textDescription;
+
 
     // Fields for editing book details
     @FXML
@@ -49,6 +55,8 @@ public class BookEdit {
     private TextField textLanguage1;
     @FXML
     private TextField textPublicationYear1;
+    @FXML
+    private TextField Quantity;
     @FXML
     private TextField imageurl;
 
@@ -76,6 +84,9 @@ public class BookEdit {
         labelLanguage.textProperty().bind(Bindings.concat("Language: ", currentBook.languageProperty()));
         labelPublicationYear.textProperty()
                 .bind(Bindings.concat("Publication Year: ", currentBook.publication_yearProperty().asString()));
+
+        originalquantity.textProperty()
+                .bind(Bindings.concat("Quantity: ", currentBook.quantityProperty().asString()));
        
         if (currentBook.getImagePath() != null && !currentBook.getImagePath().isEmpty()) {
             try {
@@ -102,6 +113,7 @@ public class BookEdit {
         String publicationYear = textPublicationYear1.getText();
         String description = textDescription.getText();
         String urls = imageurl.getText();
+        String quantity = Quantity.getText();
 
         String imagePath = currentBook.getImagePath();
         if (imagePath != null && !imagePath.isEmpty()) {
@@ -145,12 +157,25 @@ public class BookEdit {
             currentBook.setDescription(description);
         }
 
-        Model.getInstance().getDatabaseDriver().updateBook(currentBook);
+        int quantityint = Integer.parseInt(quantity);
+        
+        if(!quantity.isEmpty()){
+            int bookleft = Model.getInstance().getDatabaseDriver().adjustBookCopies(currentBook.getBook_id(), quantityint);
+            currentBook.setQuantity(bookleft);
+        }
 
+        Model.getInstance().getDatabaseDriver().updateBook(currentBook);
+        
+        showSuccess("Changes Saved");
         // Here you can also save the changes to a database, or a file, or process the data
         System.out.println("Changes Saved: " + title + ", " + author);
     }
 
+    private void showSuccess(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+        alert.setTitle("Success");
+        alert.showAndWait();
+    }
     // Method to handle canceling changes
     @FXML
     public void onCancel() {

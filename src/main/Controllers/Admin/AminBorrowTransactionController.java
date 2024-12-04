@@ -1,4 +1,5 @@
 package main.Controllers.Admin;
+import java.io.File;
 
 import java.awt.Checkbox;
 import javafx.beans.property.BooleanProperty;
@@ -11,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.stage.DirectoryChooser;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -24,7 +26,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
-import main.Views.BorrowTransactionCheckBoxValueFactory;
 
 public class AminBorrowTransactionController implements Initializable {
 
@@ -50,8 +51,9 @@ public class AminBorrowTransactionController implements Initializable {
 
     @FXML
     private Button returnButton;
-    private Button returnButton2;
-    private Button ExportButton;
+
+    @FXML 
+    private ChoiceBox actionChoiceBox;
 
     private FilteredList<BorrowTransaction> filteredData;
     private SortedList<BorrowTransaction> sortedData;
@@ -71,7 +73,6 @@ public class AminBorrowTransactionController implements Initializable {
 
 
         TableColumn selectColumn = new TableColumn<>(" ");
-        TableColumn conditonColumn = new TableColumn<>("Condition");
 
 
         bookTable.getColumns().add(selectColumn);
@@ -130,8 +131,29 @@ public class AminBorrowTransactionController implements Initializable {
         alert.showAndWait();
     }
     
-    @FXML 
-    private void ExporttoExcel(){
+  
+    @FXML
+    private void ExporttoExcel() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Chọn Thư Mục Lưu Tệp");
 
+        // Mở cửa sổ chọn thư mục và lấy thư mục người dùng chọn
+        File selectedDirectory = directoryChooser.showDialog(null);
+
+        if (selectedDirectory != null) {
+            try {
+                // Tạo đường dẫn tệp (tên tệp có thể cố định hoặc lấy từ dữ liệu)
+                String filePath = selectedDirectory.getAbsolutePath() + "/borrow_transactions.xlsx";
+
+                // Gọi hàm export dữ liệu vào file đã chọn
+                Model.getInstance().getDatabaseDriver().exportAllBorrowTransactionsToExcel(filePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error exporting to Excel: " + e.getMessage());
+            }
+        } else {
+            System.out.println("No directory selected.");
+        }
     }
 }
+

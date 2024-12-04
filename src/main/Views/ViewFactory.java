@@ -263,7 +263,7 @@ public class ViewFactory {
         if (adminClientsBrowsingView == null) {
             try {
                 adminClientsBrowsingView = new FXMLLoader(
-                        getClass().getResource("/resources/Fxml/Admin/ClientsBrowsing.fxml")).load();
+                        getClass().getResource("/resources/Fxml/Admin/ClientBrowsing.fxml")).load();
             } catch (Exception e) {
                 e.printStackTrace();
             }

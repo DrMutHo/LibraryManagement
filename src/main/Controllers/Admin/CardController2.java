@@ -73,6 +73,11 @@ public class CardController2 implements Initializable {
             // Lấy số lượng từ trường Quantity
             int quantity = Integer.parseInt(Quantity.getText());
 
+            if(quantity == 0) {
+                showError("quantity must be greater than 0");
+                return;
+            }
+
             // Gọi phương thức trong Model để thêm sách và số lượng
             Model.getInstance().AddBookCTL(currentBook, quantity);
 

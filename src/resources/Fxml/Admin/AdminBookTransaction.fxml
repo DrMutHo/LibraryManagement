@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -14,7 +13,7 @@
     <center>
         <VBox spacing="15" styleClass="main-panel">
             <HBox alignment="CENTER" spacing="15" styleClass="search-bar-container">
-                <TextField fx:id="searchField" promptText="Search books by title or author..." styleClass="search-bar" />
+                <TextField fx:id="searchField" promptText="Search transaction..." styleClass="search-bar" />
                 <Button onAction="#onSearch" styleClass="search-button" text="🔍 Search" />
             </HBox>
 
@@ -42,6 +41,7 @@
                 <!-- Return Button -->
                 <HBox alignment="CENTER" spacing="15">
                     <Button fx:id="returnButton" onAction="#onReturnButtonClick" prefHeight="61.0" prefWidth="97.0" styleClass="action-button" text="📖 Return" />
+               <Button onAction="#ExporttoExcel" prefHeight="61.0" prefWidth="97.0" styleClass="action-button" text="📖 Export" />
                 </HBox>
             </VBox>
 

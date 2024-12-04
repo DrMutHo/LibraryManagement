@@ -22,6 +22,7 @@
                 <Label fx:id="labelGenre" text="Genre" />
                 <Label fx:id="labelLanguage" text="Language" />
                 <Label fx:id="labelPublicationYear" text="Publication Year" />
+            <Label fx:id="originalquantity" layoutX="10.0" layoutY="284.0" text="Quantity" />
             </VBox>
 
             <VBox spacing="20" styleClass="center-section">
@@ -45,6 +46,7 @@
                         <TextField fx:id="textGenre1" editable="true" promptText="Genre" />
                         <TextField fx:id="textLanguage1" editable="true" promptText="Language" />
                         <TextField fx:id="textPublicationYear1" editable="true" promptText="Publication Year" />
+                        <TextField fx:id="Quantity" editable="true" layoutX="10.0" layoutY="158.0" promptText="Quantity:" />
                      </children>
                   </VBox>
                         <HBox spacing="20">

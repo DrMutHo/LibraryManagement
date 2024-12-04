@@ -168,7 +168,7 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Chưa Chọn Sách");
             alert.setHeaderText(null);
-            alert.setContentText("Vui lòng chọn một cuốn sách để xem danh sách người mượn.");
+            alert.setContentText("Please choose a book to edit.");
             alert.showAndWait();
             return;
         }
@@ -196,7 +196,7 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Lỗi");
             alert.setHeaderText(null);
-            alert.setContentText("Không thể mở cửa sổ danh sách người mượn sách.");
+            alert.setContentText("Can't open book editor.");
             alert.showAndWait();
         }
     }
@@ -230,29 +230,8 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
             alert.showAndWait();
             return;
         }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/resources/Fxml/Admin/BookDetailWithReview.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Chi Tiết Sách");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(loader.load()));
-
-            BookDetailWithReviewController controller = loader.getController();
-            controller.setBook(selectedBook);
-
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Lỗi");
-            alert.setHeaderText(null);
-            alert.setContentText("Không thể mở cửa sổ chi tiết sách.");
-            alert.showAndWait();
-        }
+        Model.getInstance().setSelectedBook(selectedBook);
     }
-
     @FXML
     private void addBook() {
         try {

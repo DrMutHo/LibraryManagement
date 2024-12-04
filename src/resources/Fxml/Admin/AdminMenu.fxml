@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -89,16 +88,7 @@
             </graphic>
          </Button>
          <Line endX="120.0" />
-         <Button fx:id="profile_btn" mnemonicParsing="false" styleClass="alt_menu_btn" text="Profile">
-            <graphic>
-               <ImageView fitHeight="27.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                     <Image url="@../../Images/profile-user.png" />
-                  </image>
-               </ImageView>
-            </graphic>
-         </Button>
-         <Button fx:id="logout_btn" mnemonicParsing="false" styleClass="alt_menu_btn" text="Logout">
+         <Button fx:id="logout_btn" mnemonicParsing="false" onAction="#onLogout" styleClass="alt_menu_btn" text="Logout">
             <graphic>
                <ImageView fitHeight="22.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                   <image>
@@ -107,11 +97,6 @@
                </ImageView>
             </graphic>
          </Button>
-      </VBox>
-      <VBox layoutX="9.0" layoutY="596.0" prefHeight="120.0" prefWidth="136.0" styleClass="report_container" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="8.600000000000023">
-         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Report Suggestion/Bug?" />
-         <Label text="Use this to report any errors or suggestions." />
-         <Button fx:id="report_btn" mnemonicParsing="false" text="Report" />
       </VBox>
    </AnchorPane>
 </VBox>

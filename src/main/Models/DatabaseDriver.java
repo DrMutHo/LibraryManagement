@@ -1,4 +1,8 @@
 package main.Models;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -11,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.io.BufferedWriter;
@@ -21,6 +26,10 @@ import io.github.cdimascio.dotenv.Dotenv;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javax.xml.crypto.Data;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 
@@ -40,8 +49,8 @@ public class DatabaseDriver {
             config.setJdbcUrl(url);
             config.setUsername(username);
             config.setPassword(password);
-            config.setMaximumPoolSize(10); // Số lượng kết nối tối đa trong pool
-            config.setConnectionTimeout(30000); // Thời gian chờ kết nối (30 giây)
+            config.setMaximumPoolSize(151); // Số lượng kết nối tối đa trong pool
+            config.setConnectionTimeout(50000); // Thời gian chờ kết nối (30 giây)
             config.setIdleTimeout(600000); // Thời gian chờ kết nối không sử dụng (10 phút)
             config.setMaxLifetime(1800000); // Thời gian sống tối đa của kết nối (30 phút)
 
@@ -191,6 +200,48 @@ public class DatabaseDriver {
 
         return resultSet;
     }
+
+    public Book getBookByBookId(int bookId) {
+        String query = "SELECT * FROM Book WHERE book_id = ?";
+        
+        try {
+            // Establish connection with the database
+            Connection connection = this.dataSource.getConnection();
+            
+            // Prepare the SQL query
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            
+            // Set the book_id parameter
+            preparedStatement.setInt(1, bookId);
+            
+            // Execute the query
+            ResultSet resultSet = preparedStatement.executeQuery();
+            
+            // Check if resultSet has data
+            if (resultSet.next()) {
+                // Map the ResultSet to the Book object
+                return new Book(
+                    resultSet.getInt("book_id"),
+                    resultSet.getString("title"),
+                    resultSet.getString("author"),
+                    resultSet.getString("isbn"),
+                    resultSet.getString("genre"),
+                    resultSet.getString("language"),
+                    resultSet.getString("description"),
+                    resultSet.getInt("publication_year"),
+                    resultSet.getString("image_path"),
+                    resultSet.getDouble("average_rating"),
+                    resultSet.getInt("review_count"),
+                    1
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return new Book();
+    }
+    
 
     public ResultSet getWishList(int client_id) {
         ResultSet resultSet = null;
@@ -615,8 +666,27 @@ public class DatabaseDriver {
         return reviews;
     }
 
-
-
+    public ResultSet getAllBorrowTransactions2() {
+        String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status " +
+                       "FROM BorrowTransaction ORDER BY borrow_date DESC;";
+    
+        try {
+            // Establish the database connection
+            Connection conn = dataSource.getConnection();
+    
+            // Prepare the statement
+            PreparedStatement pstmt = conn.prepareStatement(query);
+    
+            // Execute the query and return the ResultSet
+            return pstmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        // Return null if an exception occurs
+        return null;
+    }
+    
     public ObservableList<BorrowTransaction> getAllBorrowTransactions() {
         ObservableList<BorrowTransaction> borrowTransactions = FXCollections.observableArrayList();
         String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status " +
@@ -648,6 +718,106 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
         return borrowTransactions;
+    }
+
+    public void exportAllBorrowTransactionsToExcel(String filePath) {
+        try {
+            ResultSet resultSet = Model.getInstance().getDatabaseDriver().getAllBorrowTransactions2();
+
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Transactions");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Transaction ID");
+            headerRow.createCell(1).setCellValue("Copy ID");
+            headerRow.createCell(2).setCellValue("Borrow Date");
+            headerRow.createCell(3).setCellValue("Return Date");
+            headerRow.createCell(4).setCellValue("Status");
+
+            int rowNum = 1;
+            while (resultSet.next()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(resultSet.getInt("transaction_id"));
+                row.createCell(1).setCellValue(resultSet.getInt("copy_id"));
+                row.createCell(2).setCellValue(resultSet.getDate("borrow_date").toString());
+                row.createCell(3).setCellValue(
+                        resultSet.getDate("return_date") != null ? resultSet.getDate("return_date").toString() : "");
+                row.createCell(4).setCellValue(resultSet.getString("status"));
+            }
+
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+
+            workbook.close();
+            resultSet.close();
+            System.out.println("Excel file generated successfully: " + filePath);
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public ObservableList<Client> getAllClients() {
+        ObservableList<Client> clients = FXCollections.observableArrayList();
+        String query = "SELECT client_id, name, library_card_number, email, phone_number, address, " +
+                       "registration_date, outstanding_fees, username, password_hash, avatar_image_path " +
+                       "FROM Client ORDER BY name ASC;";
+    
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+    
+            // Execute the query and get the result set
+            ResultSet rs = pstmt.executeQuery();
+    
+            // Iterate over the result set and create Client objects
+            while (rs.next()) {
+                int clientId = rs.getInt("client_id");
+                String name = rs.getString("name");
+                String libraryCardNumber = rs.getString("library_card_number");
+                String email = rs.getString("email");
+                String phoneNumber = rs.getString("phone_number");
+                String address = rs.getString("address");
+                Date registrationDate = rs.getDate("registration_date");
+                double outstandingFees = rs.getDouble("outstanding_fees");
+                String username = rs.getString("username");
+                String passwordHash = rs.getString("password_hash");
+                String avatarImagePath = rs.getString("avatar_image_path");
+    
+                // Create a new Client object
+                Client client = new Client(clientId, name, libraryCardNumber, email, phoneNumber, address,
+                        registrationDate, outstandingFees, username, passwordHash, avatarImagePath);
+    
+                // Add the client object to the list
+                clients.add(client);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return clients;
+    }
+    
+    public ResultSet getAllClients2() {
+        String query = "SELECT client_id, name, library_card_number, email, phone_number, address, " +
+                       "registration_date, outstanding_fees, username, password_hash, avatar_image_path " +
+                       "FROM Client ORDER BY name ASC;";
+        
+        try {
+            // Establish the database connection
+            Connection conn = dataSource.getConnection();
+    
+            // Prepare the statement
+            PreparedStatement pstmt = conn.prepareStatement(query);
+    
+            // Execute the query and return the ResultSet
+            return pstmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        // Return null if an exception occurs
+        return null;
     }
     
 
@@ -983,6 +1153,246 @@ public class DatabaseDriver {
         return count;
     }
 
+    public void exportClientBorrowTransactionsToExcel(String filePath) {
+        try {
+            ResultSet resultSet = Model.getInstance().getDatabaseDriver().getAllClients2();
+
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Transactions");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Transaction ID");
+            headerRow.createCell(1).setCellValue("Copy ID");
+            headerRow.createCell(2).setCellValue("Borrow Date");
+            headerRow.createCell(3).setCellValue("Return Date");
+            headerRow.createCell(4).setCellValue("Status");
+
+            int rowNum = 1;
+            while (resultSet.next()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(resultSet.getInt("transaction_id"));
+                row.createCell(1).setCellValue(resultSet.getInt("copy_id"));
+                row.createCell(2).setCellValue(resultSet.getDate("borrow_date").toString());
+                row.createCell(3).setCellValue(
+                        resultSet.getDate("return_date") != null ? resultSet.getDate("return_date").toString() : "");
+                row.createCell(4).setCellValue(resultSet.getString("status"));
+            }
+
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+
+            workbook.close();
+            resultSet.close();
+            System.out.println("Excel file generated successfully: " + filePath);
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportClientsToExcel(String filePath) {
+        try {
+            // Retrieve the ResultSet for all clients
+            ResultSet resultSet = Model.getInstance().getDatabaseDriver().getAllClients2();
+    
+            // Create a new workbook and sheet
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            XSSFSheet sheet = workbook.createSheet("Clients");
+    
+            // Create the header row
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Client ID");
+            headerRow.createCell(1).setCellValue("Name");
+            headerRow.createCell(2).setCellValue("Library Card Number");
+            headerRow.createCell(3).setCellValue("Email");
+            headerRow.createCell(4).setCellValue("Phone Number");
+            headerRow.createCell(5).setCellValue("Address");
+            headerRow.createCell(6).setCellValue("Registration Date");
+            headerRow.createCell(7).setCellValue("Outstanding Fees");
+            headerRow.createCell(8).setCellValue("Username");
+    
+            // Write client data into the sheet
+            int rowNum = 1;
+            while (resultSet.next()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(resultSet.getInt("client_id"));
+                row.createCell(1).setCellValue(resultSet.getString("name"));
+                row.createCell(2).setCellValue(resultSet.getString("library_card_number"));
+                row.createCell(3).setCellValue(resultSet.getString("email"));
+                row.createCell(4).setCellValue(resultSet.getString("phone_number"));
+                row.createCell(5).setCellValue(resultSet.getString("address"));
+                row.createCell(6).setCellValue(resultSet.getDate("registration_date").toString());
+                row.createCell(7).setCellValue(resultSet.getDouble("outstanding_fees"));
+                row.createCell(8).setCellValue(resultSet.getString("username"));
+            }
+    
+            // Save the workbook to the specified file path
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+    
+            // Close resources
+            workbook.close();
+            resultSet.close();
+    
+            System.out.println("Excel file generated successfully: " + filePath);
+    
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+ 
+    public int adjustBookCopies(int book_id, int quantity) {
+        int currentCopies = countBookCopies(book_id); // Get the current number of copies
+        int processedCopies = currentCopies; // Track the updated number of copies
+    
+        String findQuery = "SELECT copy_id FROM BookCopy WHERE book_id = ? LIMIT 1";
+        String deleteQuery = "DELETE FROM BookCopy WHERE copy_id = ?";
+        String deleteTransactionQuery = "DELETE FROM BorrowTransaction WHERE copy_id = ?";
+        String checkTransactionStatusQuery = "SELECT status FROM BorrowTransaction WHERE copy_id = ?";
+        String insertQuery = "INSERT INTO BookCopy (book_id) VALUES (?)";
+        String deleteBookQuery = "DELETE FROM Book WHERE book_id = ?";
+        String deleteNotificationsQuery = "DELETE FROM NotificationRequest WHERE book_id = ?";
+        String deleteReviewsQuery = "DELETE FROM BookReview WHERE book_id = ?";
+    
+        if (quantity == 0) {
+            // Delete the book and all its copies
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement deleteBookStmt = conn.prepareStatement(deleteBookQuery);
+                 PreparedStatement findStmt = conn.prepareStatement(findQuery);
+                 PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
+                 PreparedStatement deleteTransStmt = conn.prepareStatement(deleteTransactionQuery);
+                 PreparedStatement checkStatusStmt = conn.prepareStatement(checkTransactionStatusQuery);
+                 PreparedStatement deleteNotificationsStmt = conn.prepareStatement(deleteNotificationsQuery);
+                 PreparedStatement deleteReviewsStmt = conn.prepareStatement(deleteReviewsQuery)) {
+    
+                conn.setAutoCommit(false); // Start transaction
+    
+                // Delete all book copies and associated borrow transactions
+                while (true) {
+                    findStmt.setInt(1, book_id);
+                    try (ResultSet rs = findStmt.executeQuery()) {
+                        if (rs.next()) {
+                            int copyId = rs.getInt("copy_id");
+    
+                            // Check the status of the associated borrow transaction
+                            checkStatusStmt.setInt(1, copyId);
+                            try (ResultSet statusRs = checkStatusStmt.executeQuery()) {
+                                if (statusRs.next()) {
+                                    String status = statusRs.getString("status");
+                                    if ("processing".equalsIgnoreCase(status)) {
+                                        System.out.println("Cannot delete copy ID " + copyId + ": Transaction is still processing.");
+                                        continue; // Skip deleting this copy
+                                    }
+                                }
+                            }
+    
+                            // Delete associated borrow transaction (if any)
+                            deleteTransStmt.setInt(1, copyId);
+                            deleteTransStmt.executeUpdate();
+    
+                            // Delete the book copy
+                            deleteStmt.setInt(1, copyId);
+                            deleteStmt.executeUpdate();
+                            processedCopies--; // Decrement the count of remaining copies
+                        } else {
+                            break; // No more copies to delete
+                        }
+                    }
+                }
+    
+                // Delete associated notifications
+                deleteNotificationsStmt.setInt(1, book_id);
+                deleteNotificationsStmt.executeUpdate();
+    
+                // Delete associated reviews
+                deleteReviewsStmt.setInt(1, book_id);
+                deleteReviewsStmt.executeUpdate();
+    
+                // Delete the book itself if no copies are left
+                if (processedCopies == 0) {
+                    deleteBookStmt.setInt(1, book_id);
+                    deleteBookStmt.executeUpdate();
+                }
+    
+                conn.commit(); // Commit the transaction
+                System.out.println("Book and all associated records deleted successfully.");
+    
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("Error adjusting book copies.");
+            }
+        } else if (quantity > currentCopies) {
+            // Add more copies
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+    
+                for (int i = 0; i < quantity - currentCopies; i++) {
+                    insertStmt.setInt(1, book_id);
+                    insertStmt.executeUpdate();
+                    processedCopies++; // Increment the count of copies
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("Error adding book copies.");
+            }
+        } else if (quantity < currentCopies) {
+            // Remove copies
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement findStmt = conn.prepareStatement(findQuery);
+                 PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
+                 PreparedStatement deleteTransStmt = conn.prepareStatement(deleteTransactionQuery);
+                 PreparedStatement checkStatusStmt = conn.prepareStatement(checkTransactionStatusQuery)) {
+    
+                conn.setAutoCommit(false); // Start transaction
+    
+                for (int i = 0; i < currentCopies - quantity; i++) {
+                    findStmt.setInt(1, book_id);
+                    try (ResultSet rs = findStmt.executeQuery()) {
+                        if (rs.next()) {
+                            int copyId = rs.getInt("copy_id");
+    
+                            // Check the status of the associated borrow transaction
+                            checkStatusStmt.setInt(1, copyId);
+                            try (ResultSet statusRs = checkStatusStmt.executeQuery()) {
+                                if (statusRs.next()) {
+                                    String status = statusRs.getString("status");
+                                    if ("processing".equalsIgnoreCase(status)) {
+                                        System.out.println("Cannot delete copy ID " + copyId + ": Transaction is still processing.");
+                                        continue; // Skip deleting this copy
+                                    }
+                                }
+                            }
+    
+                            // Delete associated borrow transaction (if any)
+                            deleteTransStmt.setInt(1, copyId);
+                            deleteTransStmt.executeUpdate();
+    
+                            // Delete the book copy
+                            deleteStmt.setInt(1, copyId);
+                            deleteStmt.executeUpdate();
+                            processedCopies--; // Decrement the count of remaining copies
+                        } else {
+                            break; // No more copies to delete
+                        }
+                    }
+                }
+    
+                conn.commit(); // Commit the transaction
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("Error removing book copies.");
+            }
+        }
+
+        if(processedCopies < 0) return 0;
+        return processedCopies; // Return the updated number of book copies
+    }
+    
+    
+    
     public boolean createBorrowTransaction(int clientId, int copyId) {
         String query = "INSERT INTO BorrowTransaction (client_id, copy_id, borrow_date, status) VALUES (?, ?, ?, 'Processing')";
         try (Connection conn = dataSource.getConnection();
@@ -1602,6 +2012,10 @@ public class DatabaseDriver {
 
         return resultMap;
     }
+
+   
+
+
 
 //     CREATE TABLE IF NOT EXISTS BookCopy (
 //     copy_id INT AUTO_INCREMENT PRIMARY KEY,           -- Unique ID for each physical book copy

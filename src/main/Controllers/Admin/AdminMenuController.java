@@ -5,10 +5,13 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 
 import javax.swing.plaf.ButtonUI;
+
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import main.Models.Model;
 import main.Views.AccountType;
 import main.Views.AdminMenuOptions;
@@ -20,12 +23,15 @@ import java.net.URL;
 public class AdminMenuController implements Initializable {
 
     public Button dashboard_btn;
-    public Button profile_btn;
+    // public Button profile_btn;
     public Button browsing_book_btn;
     public Button browsing_client_btn;
     public Button noti_btn;
     public Button transaction_btn;
     public ImageView noti_img;
+    public Button logout_btn;
+
+
 
     private final Image defaultNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_off.png"));
     private final Image activeNotiIcon = new Image(getClass().getResourceAsStream("/resources/Images/noti_on.png"));
@@ -40,7 +46,7 @@ public class AdminMenuController implements Initializable {
     private void addListeners() {
         dashboard_btn.setOnAction(event -> onDashboard());
         browsing_book_btn.setOnAction(event -> onBookBrowsing());
-        profile_btn.setOnAction(event -> onProfile());
+        // profile_btn.setOnAction(event -> onProfile());
         browsing_client_btn.setOnAction(event -> onCLientBrowsing());
         noti_btn.setOnAction(event -> onNotification());
         transaction_btn.setOnAction(event -> onTransaction());
@@ -75,9 +81,9 @@ public class AdminMenuController implements Initializable {
         Model.getInstance().getViewFactory().getAdminSelectedMenuItem().set(AdminMenuOptions.BOOKBROWSING);
     }
 
-    private void onProfile() {
-        Model.getInstance().getViewFactory().getAdminSelectedMenuItem().set(AdminMenuOptions.PROFILE);
-    }
+    // private void onProfile() {
+    //     Model.getInstance().getViewFactory().getAdminSelectedMenuItem().set(AdminMenuOptions.PROFILE);
+    // }
 
     private void onCLientBrowsing() {
         Model.getInstance().getViewFactory().getAdminSelectedMenuItem().set(AdminMenuOptions.CLIENTSBROWSING);
@@ -109,5 +115,12 @@ public class AdminMenuController implements Initializable {
         }
     }
 
+    @FXML
+    private void onLogout() {
+        Stage stage = (Stage) dashboard_btn.getScene().getWindow();
+        Model.getInstance().getViewFactory().closeStage(stage);
+        Model.getInstance().getViewFactory().showLoginWindow();
+        Model.getInstance().setClientLoginSuccessFlag(false);
+    }
 
 }
