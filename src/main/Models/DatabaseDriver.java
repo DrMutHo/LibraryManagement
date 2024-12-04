@@ -94,7 +94,7 @@ public class DatabaseDriver {
             config.setJdbcUrl(url);
             config.setUsername(username);
             config.setPassword(password);
-            config.setMaximumPoolSize(151); // Maximum connections in the pool
+            config.setMaximumPoolSize(3000); // Maximum connections in the pool
             config.setConnectionTimeout(60000); // Connection timeout (60 seconds)
             config.setIdleTimeout(600000); // Idle connection timeout (10 minutes)
             config.setMaxLifetime(1800000); // Maximum connection lifetime (30 minutes)

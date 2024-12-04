@@ -47,7 +47,7 @@ import main.Views.ViewFactory;
  */
 public class Model {
     private static Model model;
-    private final ViewFactory viewFactory;
+    private ViewFactory viewFactory;
     private boolean clientLoginSuccessFlag;
     private boolean adminLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;

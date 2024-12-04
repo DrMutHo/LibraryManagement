@@ -26,7 +26,7 @@
             <Rectangle2D height="750.0" width="850.0" />
          </viewport>
       </ImageView>
-      <VBox fx:id="inner_pane" layoutX="231.0" layoutY="83.0" styleClass="AnchorPane_login">
+      <VBox fx:id="inner_pane" layoutX="220.0" layoutY="82.0" styleClass="AnchorPane_login">
          <children>
             <ImageView fx:id="lib_image" fitHeight="333.0" fitWidth="289.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
                <image>
