@@ -66,6 +66,15 @@ public class ViewFactory {
         deleteAccountView = null;
     }
 
+    public void reset() {
+        resetAllPanes();
+
+        clientSelectedMenuItem.set(null);
+        profileSelectedMenuItem.set(null);
+        adminSelectedMenuItem.set(null);
+        loginAccountType = AccountType.CLIENT;
+    }
+
     // Admin Views
     private BorderPane adminDashboardView;
     private BorderPane adminProfileView;

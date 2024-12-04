@@ -21,6 +21,7 @@ import main.Models.Book;
 import main.Models.BookReview;
 import main.Models.BorrowTransaction;
 import main.Models.Model;
+import main.Views.ClientMenuOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -512,5 +513,6 @@ public class BorrowTransactionController implements Initializable {
 
         // Set the selected book for further processing
         Model.getInstance().setSelectedBook(selectedBook);
+        Model.getInstance().setPrevMenu(ClientMenuOptions.BORROWTRANSACTION);
     }
 }

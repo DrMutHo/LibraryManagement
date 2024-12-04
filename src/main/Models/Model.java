@@ -35,6 +35,7 @@ import javafx.collections.ObservableList;
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 import main.Views.ViewFactory;
+import main.Views.ClientMenuOptions;
 
 /**
  * Represents the central model of the library system, managing the data and
@@ -61,6 +62,7 @@ public class Model {
     private final List<ModelListenerAdmin> listenersAdmin;
     private ClientController clientController;
     private ObjectProperty<Book> selectedBook;
+    private ClientMenuOptions prvMenu;
     private final Client client;
     private final Admin admin;
 
@@ -84,6 +86,7 @@ public class Model {
         this.recentlyAddBook = FXCollections.observableArrayList();
         selectedBook = new SimpleObjectProperty<>(null);
         this.BorrowTransactions = FXCollections.observableArrayList();
+        this.prvMenu = null;
 
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "", "");
         this.admin = new Admin(0, "", "", "");
@@ -103,7 +106,8 @@ public class Model {
         this.listenersClient.clear();
         this.listenersAdmin.clear();
         this.selectedBook.set(null);
-        this.viewFactory = new ViewFactory();
+        this.viewFactory.reset();
+        this.prvMenu = null;
     }
 
     /**
@@ -225,6 +229,14 @@ public class Model {
      */
     public Client getClient() {
         return client;
+    }
+
+    public ClientMenuOptions getPrevMenu() {
+        return prvMenu;
+    }
+
+    public void setPrevMenu(ClientMenuOptions menu) {
+        this.prvMenu = menu;
     }
 
     /**
@@ -606,7 +618,7 @@ public class Model {
      */
     public Book getReadingBook() {
         // Attempt to retrieve the book currently being read by the client
-        ResultSet resultSet = databaseDriver.get1BookDataByCopyID(Model.getInstance().getClient().getClientId());
+        ResultSet resultSet = databaseDriver.getReadingBook(Model.getInstance().getClient().getClientId());
         Book res = new Book();
 
         // If no book is being read, fallback to retrieving the highest-rated book
