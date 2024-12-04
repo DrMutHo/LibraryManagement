@@ -188,79 +188,34 @@ public class ForgotPasswordController implements Initializable {
     private void onSendingEmailAndUpdate() throws MessagingException {
         String username = usernameField.getText();
         String newPassword = generateRandomString(6);
-        if (getEmailByUsername(username) == null) {
-            libImage.setVisible(false);
-            failedNotification.setVisible(true);
-            disableAllComponents(innerAnchorPane);
-        } else {
-            Model.getInstance().getViewFactory().showLoading(() -> {
+        Task<String> task1 = new Task<>() {
+            @Override
+            protected String call() throws Exception {
+                // Thực hiện công việc trong nền (background)
+                return Model.getInstance().getDatabaseDriver().getEmailByUsername(username);
+            }
+        };
+        new Thread(task1).start();
+        task1.setOnSucceeded(event -> {
+            if (task1.getValue() == null) {
+                libImage.setVisible(false);
+                failedNotification.setVisible(true);
+                disableAllComponents(innerAnchorPane);
+            } else {
+                Model.getInstance().getViewFactory().showLoading(() -> {
                 try {
-                    sendNewPassword(getEmailByUsername(username), newPassword);
+                    Model.getInstance().getDatabaseDriver().sendNewPassword(
+                    Model.getInstance().getDatabaseDriver().getEmailByUsername(username), newPassword);
                 } catch (MessagingException e) {
                     e.printStackTrace();
                 }
                 Platform.runLater(() -> {
                     successNotification.setVisible(true);
-                    updatePassword(username, newPassword);
+                    Model.getInstance().getDatabaseDriver().updatePassword(username, newPassword);
                 });
             }, outerAnchorPane);
         }
-    }
-
-    public void updatePassword(String username, String newPassword) {
-        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-        String query = "UPDATE client SET password_hash = ? WHERE username = ?";
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, hashedPassword); 
-            preparedStatement.setString(2, username);       
-            int rowsUpdated = preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String getEmailByUsername(String username) {
-        String query = "SELECT email FROM client WHERE username = ?";
-    
-        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection(); 
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, username);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getString("email");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void sendNewPassword(String recipientEmail, String newPassword) throws MessagingException {
-        String smtpHost = "smtp.gmail.com";
-        String smtpPort = "587"; 
-        String senderEmail = "thuha25121976@gmail.com"; 
-        String senderPassword = "bbjh xcbp oxtj qozz";
-    
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", smtpHost);
-        properties.put("mail.smtp.port", smtpPort);
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true"); 
-        Session session = Session.getInstance(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(senderEmail, senderPassword);
-            }
         });
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(senderEmail));
-        message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
-        message.setSubject("Your New Password");
-        message.setText("Dear customer,\n\nYour new password is: " + newPassword + "\n\nPlease log in and change your password as soon as possible.\n\nThank you.");
-        Transport.send(message);
-        System.out.println("Email sent successfully to " + recipientEmail);
     }
 }
 

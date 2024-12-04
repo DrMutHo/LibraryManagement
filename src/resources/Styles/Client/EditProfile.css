@@ -1,90 +1,131 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Modak&family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
-
-.anchorPane {
-    -fx-background-color: WHITE;
-    -fx-border-radius: 15;
-    -fx-background-radius: 15;
-    -fx-border-width: 2;
+/* Cài đặt chung cho giao diện */
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #f7f7f7;
+    -fx-padding: 25px;
 }
 
-.small_label {
-    font-family: "Ubuntu", sans-serif;
-    -fx-font-size: 11;
-}
-
-.label {
-    font-family: "Ubuntu", sans-serif;
-    -fx-font-size: 20;
+/* Tiêu đề */
+.title-label {
+    -fx-font-size: 24px;
     -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-effect: dropshadow(gaussian, #ffffff, 5, 0, 0, 5);
 }
 
-.medium_label {
-    font-family: "Ubuntu", sans-serif;
-    -fx-font-size: 15;
-    -fx-font-weight: bold;
+/* Mô tả phụ */
+.subtitle-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #777;
+    -fx-padding: 15px 0;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 5px;
+    -fx-text-alignment: center;
 }
 
-.hbox_set {
-    -fx-background-color: white;
-    -fx-background-radius: 15px;
-    -fx-border-color: black;
-    -fx-border-radius: 15px;
+/* Các phần tử HBox */
+.form-section {
+    -fx-padding: 15px 0;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-style: solid;
+    -fx-border-color: #e0e0e0;
+    -fx-spacing: 10px;
+    -fx-alignment: center;
 }
 
-.hbox_set-focused {
-    -fx-border-color: blue;
-    -fx-border-width: 2;
-}
-
-.hbox_set-error {
-    -fx-border-color: red;
-    /* Màu viền khi có lỗi */
-}
-
-.password-field {
-    -fx-background-color: white;
-    -fx-border-color: transparent;
-    -fx-border-radius: 15px;
-    -fx-background-radius: 15px;
-    -fx-padding: 5px;
-    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
-    -fx-font-size: 11px;
-    font-family: "Ubuntu", sans-serif;
-    -fx-text-fill: black;
-}
-
-.button_changePassword {
-    -fx-text-fill: white;
-    -fx-background-color: #E26F3C;
+/* Label của các trường nhập */
+.form-label {
     -fx-font-size: 13px;
-    -fx-font-family: "Ubuntu", sans-serif;
+    -fx-font-weight: bold;
+    -fx-text-fill: #555;
+    -fx-padding-right: 10px;
+    -fx-width: 150px;
 }
 
-.button_changePassword:hover {
+/* Các TextField */
+.form-input {
+    -fx-font-size: 14px;
+    -fx-padding: 12px 15px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5px;
+    -fx-width: 250px;
+    -fx-transition: border-color 0.3s ease-in-out;
+}
+
+/* Hiệu ứng khi focus vào các TextField */
+.form-input:focused {
+    -fx-border-color: #4CAF50;
+    -fx-outline: none;
+}
+
+/* Các nút button */
+.form-button {
+    -fx-font-size: 13px;
+    -fx-padding: 10px 10px;
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-border: none;
+    -fx-border-radius: 5px;
+    -fx-cursor: pointer;
+    -fx-transition: background-color 0.3s ease;
+    -fx-margin-left: 20px;
     -fx-cursor: hand;
-    -fx-background-color: #B63F0F;
 }
 
-.button_changePassword:pressed {
-    -fx-border-color: #B63F0F;
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
-
+.form-button:hover {
+    -fx-background-color: #45a049;
 }
 
-.button_close {
-    -fx-cursor: hand;
-    -fx-background-color: transparent;
+.form-button:focused {
+    -fx-outline: none;
 }
 
-.button_showHide {
-    -fx-cursor: hand;
-    -fx-background-color: transparent;
+/* Hiệu ứng hover cho các HBox */
+.form-section HBox:hover {
+    -fx-background-color: #f9f9f9;
+    -fx-border-radius: 5px;
 }
 
-.dashed-line {
-    -fx-stroke: black;
-    -fx-stroke-width: 2;
-    -fx-stroke-dash-array: 10 5;
-    /* 10px vạch, 5px khoảng trống */
+/* Các ImageView */
+.image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
+    -fx-border-radius: 50%;
+}
+
+/* Hiệu ứng cho dòng phân cách */
+.separator {
+    -fx-border-color: #ddd;
+    -fx-margin: 20px 0;
+}
+
+/* Padding cho các phần tử bên trong HBox */
+.hbox {
+    -fx-padding: 10px 0;
+}
+
+/* Cải tiến các dòng input và button */
+.text-field,
+.password-field,
+.form-input {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 4px;
+    -fx-padding: 10px;
+}
+
+.text-field:focused,
+.password-field:focused,
+.form-input:focused {
+    -fx-border-color: #ff5722;
+}
+
+/* Các phần tử con trong HBox tạo khoảng cách đẹp */
+.hbox>* {
+    -fx-margin-right: 15px;
+}
+
+/* Phần padding cho phần đầu trang */
+.title-label {
+    -fx-margin-bottom: 20px;
 }

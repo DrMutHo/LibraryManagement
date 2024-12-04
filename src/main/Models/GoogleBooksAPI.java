@@ -14,11 +14,34 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+/**
+ * The {@code GoogleBooksAPI} class provides functionality to search for books
+ * using the Google Books API based on an ISBN number. It handles API requests,
+ * response processing, and implements retry logic with exponential backoff
+ * in case of rate limiting.
+ */
 public class GoogleBooksAPI {
-    // Thay YOUR_GOOGLE_API_KEY bằng key API thật của bạn.
+    /**
+     * Loads environment variables from a .env file.
+     */
     static Dotenv dotenv = Dotenv.load();
+
+    /**
+     * The API key used to authenticate requests to the Google Books API.
+     */
     private static final String API_KEY = dotenv.get("API_KEY");
 
+  /**
+     * Searches for a book by its ISBN using the Google Books API.
+     * <p>
+     * This method constructs the appropriate API request URL, handles the HTTP
+     * connection, processes the response, and implements retry logic with
+     * exponential backoff in case of rate limiting (HTTP 429).
+     * </p>
+     *
+     * @param isbn The ISBN number of the book to search for. Must not be null or empty.
+     * @throws RuntimeException if the HTTP GET request fails with an error code other than 429.
+     */
     public static StringBuilder searchBook(String token) {
         int retryCount = 0;
         int maxRetries = 5;
