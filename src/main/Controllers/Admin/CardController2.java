@@ -153,7 +153,7 @@ public class CardController2 implements Initializable {
     }
 
     /**
-     * Returns the HBox representing the card.
+     * Return the HBox representing the card.
      *
      * @return The card HBox
      */

@@ -17,7 +17,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 /**
- * 
  * Controller class for the admin notification cell.
  * Handles the display and interaction of individual notifications in the admin panel.
  */

@@ -268,7 +268,7 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
     }
 
     /**
-     * Displays the details of the selected book.
+     * Display the details of the selected book.
      *
      * @param book The book whose details are to be displayed
      */
@@ -292,8 +292,8 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
     }
 
     /**
-     * Opens the detail window for the selected book.
-     * If no book is selected, shows a warning alert.
+     * Open the detail window for the selected book.
+     * If zero book is selected, shows a warning alert.
      */
     @FXML
     private void openDetailWindow() {

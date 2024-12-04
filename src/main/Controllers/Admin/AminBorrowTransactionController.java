@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 
 /**
  * Controller class for managing borrow transactions in the admin panel.
- * Handles displaying, searching, and processing the return of borrowed books.
+ * Handles displaying and searching, and processing the return of borrowed books.
  */
 public class AminBorrowTransactionController implements Initializable {
 

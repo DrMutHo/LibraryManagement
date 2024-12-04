@@ -252,7 +252,7 @@ public class BookEdit {
     }
 
     /**
-     * Handles the action when the cancel button is clicked.
+     * Handle the action when the cancel button is clicked.
      * Clears the input fields and resets any changes.
      */
     @FXML
