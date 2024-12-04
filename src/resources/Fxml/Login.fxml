@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="outer_pane" styleClass="root" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
+<AnchorPane fx:id="outer_pane" styleClass="root" stylesheets="@../Styles/Login.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.LoginController">
    <children>
       <ImageView fitHeight="761.0" fitWidth="850.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-11.0" AnchorPane.topAnchor="0.0">
          <image>
@@ -26,7 +26,7 @@
             <Rectangle2D height="750.0" width="850.0" />
          </viewport>
       </ImageView>
-      <VBox layoutX="220.0" layoutY="82.0" styleClass="AnchorPane_login">
+      <VBox layoutX="231.0" layoutY="83.0" styleClass="AnchorPane_login">
          <children>
             <ImageView fx:id="lib_image" fitHeight="333.0" fitWidth="289.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
                <image>
