@@ -47,7 +47,7 @@ import main.Views.ViewFactory;
  */
 public class Model {
     private static Model model;
-    private final ViewFactory viewFactory;
+    private ViewFactory viewFactory;
     private boolean clientLoginSuccessFlag;
     private boolean adminLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
@@ -605,18 +605,13 @@ public class Model {
      *         empty {@link Book} object is returned.
      */
     public Book getReadingBook() {
-        // Attempt to retrieve the book currently being read by the client
         ResultSet resultSet = databaseDriver.get1BookDataByCopyID(Model.getInstance().getClient().getClientId());
         Book res = new Book();
-
-        // If no book is being read, fallback to retrieving the highest-rated book
         if (resultSet == null) {
             resultSet = databaseDriver.getHighestRatingBooks();
         }
-
         try {
             while (resultSet.next()) {
-                // Extract book details from the result set
                 int book_id = resultSet.getInt("book_id");
                 String title = resultSet.getString("title");
                 String author = resultSet.getString("author");
@@ -629,19 +624,16 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
-                // Count the available copies of the book
                 int quantity = databaseDriver.countBookCopies(book_id);
 
-                // Create a new Book object and assign it to the result
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count, quantity);
-                res = book; // Set the result book
+                res = book;
+
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // Return the retrieved book or an empty book if no result
         return res;
     }
 

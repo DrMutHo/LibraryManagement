@@ -60,34 +60,25 @@ public class HomeController implements Initializable {
      * @param resourceBundle the resources used for localization.
      */
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Get the currently reading book from the model
+        Model.getInstance().setAllBooksAverageRating();
         Book readingBook = Model.getInstance().getReadingBook();
-
-        // Set the title and description of the currently reading book
         bookTitle.setText(readingBook.getTitle());
         description.setText(readingBook.getDescription());
-
-        // Set the appearance of the book's image rectangle
         rec.setArcWidth(20);
         rec.setArcHeight(20);
-        ImagePattern pattern = new ImagePattern(new Image(readingBook.getImagePath()));
+        ImagePattern pattern = new ImagePattern(
+                new Image(readingBook.getImagePath()));
         rec.setFill(pattern);
         rec.setStroke(Color.TRANSPARENT);
-
-        // Populate the genre combo box with a list of possible genres
         ObservableList<String> genres = FXCollections.observableArrayList(
                 "All", "Fiction", "Dystopian", "Romance", "Adventure", "Historical", "Fantasy", "Philosophical", "Epic",
                 "Modernist", "Gothic", "Magic Realism", "Existential", "Literature", "War", "Science Fiction");
         genreComboBox.setItems(genres);
 
-        // Set the default value of the combo box to "All"
         genreComboBox.setValue("All");
 
-        // Update the highest rated books based on the default genre "All"
         updateHighestRatedBooks("All");
 
-        // Add a listener to update the highest rated books when the genre selection
-        // changes
         genreComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             updateHighestRatedBooks(newValue);
         });

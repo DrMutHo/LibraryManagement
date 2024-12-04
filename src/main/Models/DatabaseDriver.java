@@ -468,7 +468,7 @@ public class DatabaseDriver {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book " +
                 "ORDER BY average_rating DESC " +
-                "LIMIT 10";
+                "LIMIT 6";
         try {
             Connection connection = this.dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -2119,6 +2119,698 @@ public class DatabaseDriver {
         }
     }
 
+    public int getTotalNumberOfEmployees() {
+        int totalEmployees = 0;
+        String query = "SELECT COUNT(*) AS total FROM Admin";
+
+        try (Connection connection = this.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                totalEmployees = resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalEmployees;
+    }
+
+    public int getTotalNumberOfBooks() {
+        int totalClients = 0;
+        String query = "SELECT COUNT(*) AS total FROM Book";
+
+        try (Connection connection = this.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                totalClients = resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalClients;
+    }
+
+    public int getTotalNumberOfClients() {
+        int totalClients = 0;
+        String query = "SELECT COUNT(*) AS total FROM Client";
+
+        try (Connection connection = this.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                totalClients = resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalClients;
+    }
+
+    public int getTotalNumberOfCurrentlyBorrowedBooks() {
+        int totalCurrentlyBorrowedBooks = 0;
+        String query = "SELECT COUNT(*) AS total FROM BorrowTransaction WHERE status = 'Processing'";
+
+        try (Connection connection = this.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                totalCurrentlyBorrowedBooks = resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalCurrentlyBorrowedBooks;
+    }
+
+    public Map<String, Integer> getMonthlyBorrowingTrendsForAllUsers() {
+        Map<String, Integer> trends = new LinkedHashMap<>();
+
+        // Query to get monthly borrowing trends across all users
+        String query = "SELECT MONTH(borrow_date) AS month, COUNT(*) AS borrow_count " +
+                "FROM BorrowTransaction " +
+                "WHERE YEAR(borrow_date) = YEAR(CURRENT_DATE) " + // Filter by the current year
+                "GROUP BY MONTH(borrow_date)";
+
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String month = resultSet.getString("month");
+                int count = resultSet.getInt("borrow_count");
+                trends.put(month, count);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return trends;
+    }
+
+    /**
+     * Gửi yêu cầu API để xác minh địa chỉ email.
+     *
+     * @param email Địa chỉ email cần xác minh.
+     * @return Phản hồi API dưới dạng chuỗi JSON, hoặc {@code null} nếu xảy ra lỗi.
+     */
+    public String getEmailValidationApiResponse(String email) {
+        try {
+            @SuppressWarnings("deprecation")
+            URL url = new URL(
+                    "https://emailvalidation.abstractapi.com/v1/?api_key=fe97d39becd94b14a4a19b97ebcc29a1&email="
+                            + email);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                return response.toString();
+            } else {
+                System.out.println("GET request not worked");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Truy vấn số lượng email khớp trong cơ sở dữ liệu.
+     *
+     * @param email Địa chỉ email cần kiểm tra.
+     * @return Số lượng email khớp, hoặc {@code -1} nếu xảy ra lỗi.
+     */
+    public int getEmailCountFromDatabase(String email) {
+        String query = "SELECT COUNT(*) FROM Client WHERE email = ?";
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return -1;
+            }
+
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    public Map<String, Integer> getBorrowingTrendsByCategoryForAllUsers() {
+        Map<String, Integer> trends = new LinkedHashMap<>();
+
+        // Query to get the number of books borrowed per genre for all users
+        String query = "SELECT genre, COUNT(*) AS borrow_count " +
+                "FROM BorrowTransaction bt " +
+                "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
+                "JOIN Book b ON bc.book_id = b.book_id " +
+                "GROUP BY genre";
+
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String genre = resultSet.getString("genre");
+                int count = resultSet.getInt("borrow_count");
+                trends.put(genre, count);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return trends;
+    }
+
+    public Map<String, Double> getTotalFeesOverTimeForAllClients() {
+        Map<String, Double> feesOverTime = new HashMap<>();
+
+        String query = "SELECT DATE_FORMAT(registration_date, '%Y-%m') AS month, " +
+                "SUM(outstanding_fees) AS total_fees FROM Client GROUP BY month ORDER BY month";
+
+        try (Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String month = rs.getString("month");
+                double totalFees = rs.getDouble("total_fees");
+                feesOverTime.put(month, totalFees);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return feesOverTime;
+    }
+
+    public void updateStatus(int copyID) {
+        String query = "UPDATE BorrowTransaction SET status = 'Done' WHERE copy_id = ? AND status = 'Processing'";
+        try (Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, copyID);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateBook(Book book) {
+        String query = "UPDATE Book SET title = ?, author = ?, isbn = ?, genre = ?, language = ?, description = ?, publication_year = ?, image_path = ? WHERE book_id = ?;";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            // Only set the parameter if the field is not null
+            if (book.getTitle() != null) {
+                pstmt.setString(1, book.getTitle());
+            } else {
+                pstmt.setNull(1, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getAuthor() != null) {
+                pstmt.setString(2, book.getAuthor());
+            } else {
+                pstmt.setNull(2, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getIsbn() != null) {
+                pstmt.setString(3, book.getIsbn());
+            } else {
+                pstmt.setNull(3, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getGenre() != null) {
+                pstmt.setString(4, book.getGenre());
+            } else {
+                pstmt.setNull(4, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getLanguage() != null) {
+                pstmt.setString(5, book.getLanguage());
+            } else {
+                pstmt.setNull(5, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getDescription() != null) {
+                pstmt.setString(6, book.getDescription());
+            } else {
+                pstmt.setNull(6, java.sql.Types.VARCHAR);
+            }
+
+            if (book.getPublication_year() != 0) {
+                pstmt.setInt(7, book.getPublication_year());
+            } else {
+                pstmt.setNull(7, java.sql.Types.INTEGER);
+            }
+
+            if (book.getImagePath() != null) {
+                pstmt.setString(8, book.getImagePath());
+            } else {
+                pstmt.setNull(8, java.sql.Types.VARCHAR);
+            }
+
+            // Set book_id at the end
+            pstmt.setInt(9, book.getBook_id());
+
+            // Execute the update query and check the number of affected rows
+            int rowsUpdated = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Gửi mật khẩu mới đến địa chỉ email của người nhận.
+     *
+     * @param recipientEmail Địa chỉ email của người nhận.
+     * @param newPassword    Mật khẩu mới cần gửi.
+     * @throws MessagingException Nếu có lỗi xảy ra trong quá trình gửi email.
+     */
+    public void sendNewPassword(String recipientEmail, String newPassword) throws MessagingException {
+        String smtpHost = "smtp.gmail.com";
+        String smtpPort = "587";
+        String senderEmail = "thuha25121976@gmail.com";
+        String senderPassword = "bbjh xcbp oxtj qozz";
+
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", smtpHost);
+        properties.put("mail.smtp.port", smtpPort);
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(senderEmail, senderPassword);
+            }
+        });
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(senderEmail));
+        message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
+        message.setSubject("Your New Password");
+        message.setText("Dear customer,\n\nYour new password is: " + newPassword
+                + "\n\nPlease log in and change your password as soon as possible.\n\nThank you.");
+        Transport.send(message);
+        System.out.println("Email sent successfully to " + recipientEmail);
+    }
+
+    /**
+     * Cập nhật mật khẩu của người dùng trong cơ sở dữ liệu.
+     *
+     * @param username    Tên người dùng cần cập nhật mật khẩu.
+     * @param newPassword Mật khẩu mới cần cập nhật.
+     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu
+     *         không thành công.
+     */
+    public int updatePassword(String username, String newPassword) {
+        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+        int row = 0;
+        String query = "UPDATE client SET password_hash = ? WHERE username = ?";
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, hashedPassword);
+            preparedStatement.setString(2, username);
+            row = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return row;
+    }
+
+    /**
+     * Xóa tài khoản của người dùng dựa trên tên người dùng.
+     *
+     * <p>
+     * Phương thức này sẽ xóa tất cả các giao dịch mượn sách liên quan, yêu cầu
+     * thông báo và tài khoản của người dùng.
+     * </p>
+     *
+     * @param username Tên người dùng của tài khoản cần xóa.
+     */
+    public void deleteAccount(String username) {
+        String deleteTransactionsQuery = "DELETE FROM borrowtransaction WHERE client_id = (SELECT client_id FROM client WHERE username = ?)";
+        String deleteNotificationRequestsQuery = "DELETE FROM notificationrequest WHERE client_id = (SELECT client_id FROM client WHERE username = ?)";
+        String deleteAccountQuery = "DELETE FROM client WHERE username = ?";
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsQuery);
+                PreparedStatement deleteNotificationRequestsStatement = connection
+                        .prepareStatement(deleteNotificationRequestsQuery);
+                PreparedStatement deleteAccountStatement = connection.prepareStatement(deleteAccountQuery)) {
+
+            // Check connection validity
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Invalid database connection!");
+                return;
+            }
+
+            // Step 1: Delete related borrow transactions
+            deleteTransactionsStatement.setString(1, username);
+            int rowsAffectedInTransactions = deleteTransactionsStatement.executeUpdate();
+            if (rowsAffectedInTransactions > 0) {
+                System.out.println("Related borrow transactions deleted successfully.");
+            }
+
+            // Step 2: Delete related notification requests
+            deleteNotificationRequestsStatement.setString(1, username);
+            int rowsAffectedInNotificationRequests = deleteNotificationRequestsStatement.executeUpdate();
+            if (rowsAffectedInNotificationRequests > 0) {
+                System.out.println("Related notification requests deleted successfully.");
+            }
+
+            // Step 3: Delete the account from the client table
+            deleteAccountStatement.setString(1, username);
+            int rowsAffectedInAccount = deleteAccountStatement.executeUpdate();
+            if (rowsAffectedInAccount > 0) {
+                System.out.println("Account deleted successfully.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int addBook2(Book book) {
+        // Câu truy vấn kiểm tra xem sách đã tồn tại với ISBN chưa
+        String checkQuery = "SELECT book_id FROM Book WHERE isbn = ?";
+        String query = "INSERT INTO Book (title, author, isbn, genre, language, description, publication_year, image_path, average_rating, review_count) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        // Kiểm tra nếu sách với cùng ISBN đã tồn tại
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt2 = conn.prepareStatement(checkQuery)) {
+
+            // Đặt giá trị của ISBN vào tham số
+            stmt2.setString(1, book.getIsbn());
+
+            try (ResultSet rs = stmt2.executeQuery()) {
+                if (rs.next()) {
+                    // Nếu sách đã tồn tại, trả về book_id
+                    int existingBookId = rs.getInt("book_id");
+                    return existingBookId;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Chèn sách mới vào cơ sở dữ liệu nếu không tìm thấy sách với ISBN này
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+            // Đặt các giá trị cho các tham số của câu lệnh INSERT
+            stmt.setString(1, book.getTitle());
+            stmt.setString(2, book.getAuthor());
+            stmt.setString(3, book.getIsbn());
+            stmt.setString(4, book.getGenre());
+            stmt.setString(5, book.getLanguage());
+            stmt.setString(6, book.getDescription());
+            stmt.setInt(7, book.getPublication_year());
+            stmt.setString(8, book.getImagePath());
+            stmt.setBigDecimal(9, BigDecimal.ZERO); // Sử dụng BigDecimal cho rating
+            stmt.setInt(10, 0); // Đặt review count là 0
+
+            // Thực thi câu lệnh INSERT
+            int rowsAffected = stmt.executeUpdate();
+
+            // Nếu câu lệnh chèn thành công, lấy book_id từ các khóa tự động sinh
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int bookId = generatedKeys.getInt(1);
+                        return bookId;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1; // Trả về -1 nếu chèn sách thất bại
+    }
+
+    public int checkBookExist(String title) {
+        String query = "SELECT book_id FROM Book WHERE title = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            // Set parameter
+            stmt.setString(1, title);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("book_id"); // Trả về book_id nếu tìm thấy
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; // Nếu không tìm thấy, trả về 0
+    }
+
+    public void addBookCopy(int bookId, boolean isAvailable, String condition) {
+        String query = "INSERT INTO BookCopy (book_id, is_available, book_condition) VALUES (?, ?, ?)";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setInt(1, bookId); // Set the book_id
+            stmt.setBoolean(2, isAvailable); // Set the availability status
+            stmt.setString(3, condition); // Set the condition (New, Good, Fair, Poor)
+
+            // Execute the INSERT statement
+            int rowsAffected = stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void ProcessReturnBook(int transaction_id) {
+        String query = "UPDATE BorrowTransaction SET status = 'Done' WHERE transaction_id = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) { // Close the parenthesis here
+
+            stmt.setInt(1, transaction_id); // Set the transaction_id
+            stmt.executeUpdate(); // Execute the update
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Print stack trace if an error occurs
+        }
+    }
+
+    public Map<Integer, Map<Integer, Double>> loadDataFromDatabase() {
+        String query = "SELECT client_id, book_id, rating FROM BookReview;";
+        Map<Integer, Map<Integer, Double>> resultMap = new HashMap<>();
+
+        try (Connection conn = dataSource.getConnection(); // Replace dataSource with your actual data source
+                PreparedStatement pstmt = conn.prepareStatement(query);
+                ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int clientId = rs.getInt("client_id");
+                int bookId = rs.getInt("book_id");
+                double rating = rs.getDouble("rating");
+
+                // Check if the clientId already exists in the resultMap
+                resultMap.computeIfAbsent(clientId, k -> new HashMap<>())
+                        .put(bookId, rating);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultMap;
+    }
+
+    // CREATE TABLE IF NOT EXISTS BookCopy (
+    // copy_id INT AUTO_INCREMENT PRIMARY KEY, -- Unique ID for each physical book
+    // copy
+    // book_id INT, -- Foreign key referencing the book this copy belongs to
+    // is_available BOOLEAN DEFAULT TRUE, -- Availability status of the book copy
+    // book_condition ENUM('New', 'Good', 'Fair', 'Poor') DEFAULT 'Good', --
+    // Physical condition of the book copy
+    // FOREIGN KEY (book_id) REFERENCES Book(book_id) ON DELETE CASCADE
+    // );
+
+    // public void toCSV() {
+    // String query = "SELECT client_id, book_id, rating FROM BookReview;";
+    // String output =
+    // getClass().getResource("/resources/Database/Data.csv").getFile();
+
+    // try (Connection conn = dataSource.getConnection();
+    // PreparedStatement pstmt = conn.prepareStatement(query);
+    // ResultSet rs = pstmt.executeQuery();
+    // BufferedWriter writer = Files.newBufferedWriter(Paths.get(output))) {
+
+    // writer.write("client_id,book_id,rating\n");
+
+    // // Write data rows
+    // while (rs.next()) {
+    // int userId = rs.getInt("client_id");
+    // int bookId = rs.getInt("book_id");
+    // double rating = rs.getDouble("rating");
+
+    // try {
+    // writer.write(userId + "," + bookId + "," + rating + "\n");
+    // } catch (IOException e) {
+    // e.printStackTrace(); // Handle the write exception
+    // }
+    // }
+
+    // } catch (SQLException | IOException e) {
+    // e.printStackTrace(); // Handle SQL and IOException for the whole block
+    // }
+    // }
+    /**
+     * Cập nhật địa chỉ của người dùng trong cơ sở dữ liệu.
+     *
+     * @param newAddress Địa chỉ mới cần cập nhật.
+     * @param username   Tên người dùng cần cập nhật địa chỉ.
+     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu
+     *         không thành công.
+     */
+    public int updateAddress(String newAddress, String username) {
+        // Câu truy vấn để cập nhật địa chỉ
+        String updateQuery = "UPDATE client SET address = ? WHERE username = ?";
+        int row = 0;
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+
+            // Kiểm tra kết nối
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return 0;
+            }
+
+            // Cài đặt tham số vào câu truy vấn
+            preparedStatement.setString(1, newAddress); // Đặt địa chỉ mới
+            preparedStatement.setString(2, username); // Đặt tên người dùng
+
+            // Thực thi câu lệnh update
+            row = preparedStatement.executeUpdate();
+
+            // Nếu có ít nhất một dòng bị ảnh hưởng, tức là địa chỉ đã được cập nhật
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return row;
+    }
+
+    /**
+     * Cập nhật số điện thoại của người dùng trong cơ sở dữ liệu.
+     *
+     * @param newPhoneNumber Số điện thoại mới cần cập nhật.
+     * @param username       Tên người dùng cần cập nhật số điện thoại.
+     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu
+     *         không thành công.
+     */
+    public int updatePhoneNumber(String newPhoneNumber, String username) {
+        // Câu truy vấn để cập nhật số điện thoại
+        String updateQuery = "UPDATE client SET phone_number = ? WHERE username = ?";
+        int row = 0;
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+
+            // Kiểm tra kết nối
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return 0;
+            }
+
+            // Cài đặt tham số vào câu truy vấn
+            preparedStatement.setString(1, newPhoneNumber); // Đặt số điện thoại mới
+            preparedStatement.setString(2, username); // Đặt tên người dùng
+
+            // Thực thi câu lệnh update
+            row = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return row;
+    }
+
+    /**
+     * Cập nhật email của người dùng trong cơ sở dữ liệu.
+     *
+     * @param newEmail Địa chỉ email mới cần cập nhật.
+     * @param username Tên người dùng cần cập nhật email.
+     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu
+     *         không thành công.
+     */
+    public int updateEmail(String newEmail, String username) {
+        // Câu truy vấn để cập nhật email
+        String updateQuery = "UPDATE client SET email = ? WHERE username = ?";
+        int row = 0;
+
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+
+            // Kiểm tra kết nối
+            if (connection == null || connection.isClosed()) {
+                System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
+                return 0;
+            }
+
+            // Cài đặt tham số vào câu truy vấn
+            preparedStatement.setString(1, newEmail); // Đặt email mới
+            preparedStatement.setString(2, username); // Đặt tên người dùng
+
+            // Thực thi câu lệnh update
+            row = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return row;
+    }
+
+    /**
+     * Đếm số lượng tên người dùng khớp trong cơ sở dữ liệu.
+     *
+     * @param username Tên người dùng cần đếm.
+     * @return Số lượng tên người dùng khớp, hoặc {@code 0} nếu không có.
+     */
+    public int getUsernameCount(String username) {
+        String query = "SELECT COUNT(*) FROM Client WHERE username = ?";
+        int count = 0;
+        try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, username);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    count = resultSet.getInt(1); // Lấy số lượng tên người dùng
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // In ra lỗi nếu có
+        }
+        return count; // Trả về số lần xuất hiện tên người dùng trong cơ sở dữ liệu
+    }
+
     public void setAllBooksAverageRating() {
         String query = """
                 UPDATE Book b
@@ -2140,3 +2832,6 @@ public class DatabaseDriver {
         }
     }
 }
+
+// public boolean insertNotification(Notification notification) {
+// String query = "

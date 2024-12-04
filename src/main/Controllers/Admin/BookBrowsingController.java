@@ -232,6 +232,7 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
         }
         Model.getInstance().setSelectedBook(selectedBook);
     }
+
     @FXML
     private void addBook() {
         try {
