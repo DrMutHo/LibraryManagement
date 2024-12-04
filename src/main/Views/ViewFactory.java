@@ -58,13 +58,21 @@ public class ViewFactory {
         profileView = null;
         browsingView = null;
         notiView = null;
-        booktransactionView = null;
         bookDetailsView = null;
         BorrowTransactionView = null;
         profileDetailView = null;
         changePasswordView = null;
         editProfileView = null;
         deleteAccountView = null;
+    }
+
+    public void reset() {
+        resetAllPanes();
+
+        clientSelectedMenuItem.set(null);
+        profileSelectedMenuItem.set(null);
+        adminSelectedMenuItem.set(null);
+        loginAccountType = AccountType.CLIENT;
     }
 
     // Admin Views
@@ -210,7 +218,7 @@ public class ViewFactory {
         return adminDashboardView;
     }
 
-    public AnchorPane getChangePasswordView() {
+    public BorderPane getChangePasswordView() {
         if (changePasswordView == null) {
             try {
                 changePasswordView = new FXMLLoader(
@@ -248,7 +256,7 @@ public class ViewFactory {
         return adminProfileView;
     }
 
-    public AnchorPane getDeleteAccountView() {
+    public BorderPane getDeleteAccountView() {
 
         if (deleteAccountView == null) {
             try {

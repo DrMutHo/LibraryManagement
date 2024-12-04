@@ -1,4 +1,5 @@
 package main.Models;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -49,8 +50,8 @@ import main.Views.NotificationType;
 import main.Views.RecipientType;
 
 /**
- * The DatabaseDriver class handles the configuration and management of the 
- * database connection pool using HikariCP. It provides utility methods for 
+ * The DatabaseDriver class handles the configuration and management of the
+ * database connection pool using HikariCP. It provides utility methods for
  * retrieving and closing database connections.
  */
 public class DatabaseDriver {
@@ -127,7 +128,6 @@ public class DatabaseDriver {
         }
     }
 
-
     /**
      * 
      * @return
@@ -176,19 +176,19 @@ public class DatabaseDriver {
     public String getBookTitleByCopyId(int copyId) {
         String title = null;
         String query = "SELECT b.title " +
-                       "FROM Book b " +
-                       "JOIN BookCopy bc ON b.book_id = bc.book_id " +
-                       "WHERE bc.copy_id = ?";
-    
+                "FROM Book b " +
+                "JOIN BookCopy bc ON b.book_id = bc.book_id " +
+                "WHERE bc.copy_id = ?";
+
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-    
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
             // Set the copyId parameter
             pstmt.setInt(1, copyId);
-    
+
             // Execute the query and get the result set
             ResultSet rs = pstmt.executeQuery();
-    
+
             // Check if the result set contains a title
             if (rs.next()) {
                 title = rs.getString("title");
@@ -196,18 +196,17 @@ public class DatabaseDriver {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
-        return title;  // Will return null if no book found for the given copyId
+
+        return title; // Will return null if no book found for the given copyId
     }
-    
-
-
 
     /**
      * Retrieves book data based on the copy ID.
      *
-     * @param copy_id the ID of the book copy used to fetch the corresponding book data.
-     * @return a ResultSet containing the book data. If no matching record is found, the ResultSet will be empty.
+     * @param copy_id the ID of the book copy used to fetch the corresponding book
+     *                data.
+     * @return a ResultSet containing the book data. If no matching record is found,
+     *         the ResultSet will be empty.
      * @throws SQLException if a database access error occurs.
      */
     public ResultSet get1BookDataByCopyID(int copy_id) {
@@ -234,9 +233,12 @@ public class DatabaseDriver {
      * Retrieves transaction details for a specific client based on their client ID.
      *
      * @param client_id the ID of the client whose transactions are to be retrieved.
-     * @return a ResultSet containing transaction details, including transaction ID, book title, 
-     *         copy ID, borrow date, return date, and status. If no transactions are found, the ResultSet will be empty.
-     * @throws SQLException if a database access error occurs during the query execution.
+     * @return a ResultSet containing transaction details, including transaction ID,
+     *         book title,
+     *         copy ID, borrow date, return date, and status. If no transactions are
+     *         found, the ResultSet will be empty.
+     * @throws SQLException if a database access error occurs during the query
+     *                      execution.
      */
     public ResultSet getTransactionByClientID(int client_id) {
         ResultSet resultSet = null;
@@ -263,13 +265,15 @@ public class DatabaseDriver {
         return resultSet;
     }
 
-
     /**
      * Retrieves all borrow transactions from the database.
      *
-     * @return a ResultSet containing details of all borrow transactions, including transaction ID, client ID, 
-     *         copy ID, borrow date, return date, and status. If no transactions are present, the ResultSet will be empty.
-     * @throws SQLException if a database access error occurs during the query execution.
+     * @return a ResultSet containing details of all borrow transactions, including
+     *         transaction ID, client ID,
+     *         copy ID, borrow date, return date, and status. If no transactions are
+     *         present, the ResultSet will be empty.
+     * @throws SQLException if a database access error occurs during the query
+     *                      execution.
      */
     public ResultSet getAllBorrowTransactions() {
         ResultSet resultSet = null;
@@ -287,8 +291,10 @@ public class DatabaseDriver {
     /**
      * Retrieves the list of books borrowed by a specific client.
      *
-     * @param client_id the ID of the client whose borrowed books are to be retrieved
-     * @return a {@link ResultSet} containing details of the books borrowed by the client,
+     * @param client_id the ID of the client whose borrowed books are to be
+     *                  retrieved
+     * @return a {@link ResultSet} containing details of the books borrowed by the
+     *         client,
      *         or {@code null} if an error occurs
      */
     public ResultSet getBookByClientID(int client_id) {
@@ -313,45 +319,43 @@ public class DatabaseDriver {
 
     public Book getBookByBookId(int bookId) {
         String query = "SELECT * FROM Book WHERE book_id = ?";
-        
+
         try {
             // Establish connection with the database
             Connection connection = this.dataSource.getConnection();
-            
+
             // Prepare the SQL query
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            
+
             // Set the book_id parameter
             preparedStatement.setInt(1, bookId);
-            
+
             // Execute the query
             ResultSet resultSet = preparedStatement.executeQuery();
-            
+
             // Check if resultSet has data
             if (resultSet.next()) {
                 // Map the ResultSet to the Book object
                 return new Book(
-                    resultSet.getInt("book_id"),
-                    resultSet.getString("title"),
-                    resultSet.getString("author"),
-                    resultSet.getString("isbn"),
-                    resultSet.getString("genre"),
-                    resultSet.getString("language"),
-                    resultSet.getString("description"),
-                    resultSet.getInt("publication_year"),
-                    resultSet.getString("image_path"),
-                    resultSet.getDouble("average_rating"),
-                    resultSet.getInt("review_count"),
-                    1
-                );
+                        resultSet.getInt("book_id"),
+                        resultSet.getString("title"),
+                        resultSet.getString("author"),
+                        resultSet.getString("isbn"),
+                        resultSet.getString("genre"),
+                        resultSet.getString("language"),
+                        resultSet.getString("description"),
+                        resultSet.getInt("publication_year"),
+                        resultSet.getString("image_path"),
+                        resultSet.getDouble("average_rating"),
+                        resultSet.getInt("review_count"),
+                        1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return new Book();
     }
-    
 
     /**
      * Retrieves the wish list of a specific client.
@@ -384,8 +388,10 @@ public class DatabaseDriver {
     /**
      * Retrieves the details of the book currently being read by a specific client.
      *
-     * @param client_id the ID of the client whose currently reading book is to be retrieved
-     * @return a {@link ResultSet} containing details of the book currently being read,
+     * @param client_id the ID of the client whose currently reading book is to be
+     *                  retrieved
+     * @return a {@link ResultSet} containing details of the book currently being
+     *         read,
      *         or {@code null} if an error occurs
      */
     public ResultSet getReadingBook(int client_id) {
@@ -477,8 +483,10 @@ public class DatabaseDriver {
     /**
      * Lấy danh sách 10 cuốn sách có đánh giá cao nhất theo thể loại.
      *
-     * @param genre Thể loại của sách. Nếu là "TẤT CẢ" hoặc null, sẽ lấy sách từ mọi thể loại.
-     * @return Một đối tượng ResultSet chứa danh sách sách được sắp xếp theo đánh giá từ cao đến thấp.
+     * @param genre Thể loại của sách. Nếu là "TẤT CẢ" hoặc null, sẽ lấy sách từ mọi
+     *              thể loại.
+     * @return Một đối tượng ResultSet chứa danh sách sách được sắp xếp theo đánh
+     *         giá từ cao đến thấp.
      */
     public ResultSet getHighestRatingBooksByGenre(String genre) {
         ResultSet resultSet = null;
@@ -513,7 +521,8 @@ public class DatabaseDriver {
      * Lấy dữ liệu khách hàng dựa trên tên người dùng.
      *
      * @param username Tên người dùng của khách hàng.
-     * @return Một đối tượng ResultSet chứa thông tin của khách hàng tương ứng với tên người dùng.
+     * @return Một đối tượng ResultSet chứa thông tin của khách hàng tương ứng với
+     *         tên người dùng.
      */
     public ResultSet getClientData(String username) {
         Statement statement;
@@ -527,12 +536,12 @@ public class DatabaseDriver {
         return resultSet;
     }
 
-
     /**
      * Lấy dữ liệu quản trị viên dựa trên tên người dùng.
      *
      * @param username Tên người dùng của quản trị viên.
-     * @return Một đối tượng ResultSet chứa thông tin của quản trị viên tương ứng với tên người dùng.
+     * @return Một đối tượng ResultSet chứa thông tin của quản trị viên tương ứng
+     *         với tên người dùng.
      */
     public ResultSet getAdminData(String username) {
         Statement statement;
@@ -549,12 +558,12 @@ public class DatabaseDriver {
     /**
      * Tạo một khách hàng mới với các thông tin cung cấp.
      *
-     * @param email          Địa chỉ email của khách hàng.
-     * @param phone_number   Số điện thoại của khách hàng.
-     * @param address        Địa chỉ của khách hàng.
-     * @param username       Tên người dùng của khách hàng.
-     * @param password_hash  Mã hóa mật khẩu của khách hàng.
-     * @param name           Tên của khách hàng.
+     * @param email         Địa chỉ email của khách hàng.
+     * @param phone_number  Số điện thoại của khách hàng.
+     * @param address       Địa chỉ của khách hàng.
+     * @param username      Tên người dùng của khách hàng.
+     * @param password_hash Mã hóa mật khẩu của khách hàng.
+     * @param name          Tên của khách hàng.
      */
     public void createClient(String email, String phone_number, String address, String username, String password_hash,
             String name) {
@@ -607,7 +616,6 @@ public class DatabaseDriver {
         }
     }
 
-
     /**
      * Lấy tên khách hàng dựa trên ID của khách hàng.
      *
@@ -632,12 +640,15 @@ public class DatabaseDriver {
     }
 
     /**
-     * Lấy danh sách thông báo cho người nhận dựa trên ID, loại tài khoản và giới hạn số lượng.
+     * Lấy danh sách thông báo cho người nhận dựa trên ID, loại tài khoản và giới
+     * hạn số lượng.
      *
      * @param recipientId ID của người nhận thông báo.
      * @param AccountType Loại tài khoản của người nhận (ví dụ: Client, Admin).
-     * @param limit       Số lượng thông báo tối đa cần lấy. Nếu nhỏ hơn hoặc bằng 0, không giới hạn.
-     * @return Một đối tượng ResultSet chứa danh sách thông báo theo tiêu chí đã cho, hoặc null nếu xảy ra lỗi.
+     * @param limit       Số lượng thông báo tối đa cần lấy. Nếu nhỏ hơn hoặc bằng
+     *                    0, không giới hạn.
+     * @return Một đối tượng ResultSet chứa danh sách thông báo theo tiêu chí đã
+     *         cho, hoặc null nếu xảy ra lỗi.
      */
     public ResultSet getNotifications(int recipientId, String AccountType, int limit) {
         String query = "SELECT * FROM Notification WHERE recipient_id = ? And recipient_type = ? ORDER BY is_read ASC, created_at DESC";
@@ -676,12 +687,12 @@ public class DatabaseDriver {
         }
     }
 
-
     /**
      * Cập nhật trạng thái đọc của một thông báo dựa trên ID của thông báo đó.
      *
      * @param notificationId ID của thông báo cần cập nhật.
-     * @param isRead         Trạng thái đọc mới của thông báo. {@code true} nếu đã đọc, {@code false} nếu chưa đọc.
+     * @param isRead         Trạng thái đọc mới của thông báo. {@code true} nếu đã
+     *                       đọc, {@code false} nếu chưa đọc.
      */
     public void updateNotification(int notificationId, boolean isRead) {
         String query = "UPDATE Notification SET is_read = ? WHERE notification_id = ?;";
@@ -698,7 +709,8 @@ public class DatabaseDriver {
     /**
      * Chèn một thông báo mới vào cơ sở dữ liệu.
      *
-     * @param notification Đối tượng {@link Notification} chứa thông tin thông báo cần chèn.
+     * @param notification Đối tượng {@link Notification} chứa thông tin thông báo
+     *                     cần chèn.
      * @return {@code true} nếu chèn thành công, {@code false} nếu có lỗi xảy ra.
      */
     public boolean insertNotification(Notification notification) {
@@ -730,7 +742,8 @@ public class DatabaseDriver {
      * Lấy thông tin một thông báo dựa trên ID của thông báo đó.
      *
      * @param notificationId ID của thông báo cần lấy.
-     * @return Đối tượng {@link Notification} chứa thông tin của thông báo nếu tìm thấy, ngược lại trả về {@code null}.
+     * @return Đối tượng {@link Notification} chứa thông tin của thông báo nếu tìm
+     *         thấy, ngược lại trả về {@code null}.
      */
     public Notification getNotificationById(int notificationId) {
         String query = "SELECT * FROM Notification WHERE notification_id = ?;";
@@ -753,7 +766,6 @@ public class DatabaseDriver {
         }
         return null;
     }
-
 
     /**
      * Đếm số lượng thông báo chưa đọc cho một người nhận cụ thể.
@@ -801,8 +813,10 @@ public class DatabaseDriver {
      *
      * @param bookId   ID của cuốn sách được đánh giá.
      * @param clientId ID của khách hàng đánh giá.
-     * @param rating   Đánh giá số sao của sách. Có thể là {@code null} nếu không có đánh giá số.
-     * @param comment  Bình luận về sách. Có thể là {@code null} hoặc rỗng nếu không có bình luận.
+     * @param rating   Đánh giá số sao của sách. Có thể là {@code null} nếu không có
+     *                 đánh giá số.
+     * @param comment  Bình luận về sách. Có thể là {@code null} hoặc rỗng nếu không
+     *                 có bình luận.
      * @return {@code true} nếu chèn thành công, {@code false} nếu có lỗi xảy ra.
      */
     public boolean insertBookReview(int bookId, int clientId, Double rating, String comment) {
@@ -834,7 +848,8 @@ public class DatabaseDriver {
     }
 
     /**
-     * Cập nhật trung bình đánh giá và số lượng đánh giá của một cuốn sách dựa trên các đánh giá hiện có.
+     * Cập nhật trung bình đánh giá và số lượng đánh giá của một cuốn sách dựa trên
+     * các đánh giá hiện có.
      *
      * @param bookId ID của cuốn sách cần cập nhật đánh giá trung bình.
      */
@@ -863,12 +878,12 @@ public class DatabaseDriver {
         }
     }
 
-
     /**
      * Lấy danh sách tất cả các đánh giá cho một cuốn sách cụ thể.
      *
      * @param bookId ID của cuốn sách cần lấy đánh giá.
-     * @return Một đối tượng {@link ObservableList} chứa danh sách các đánh giá cho cuốn sách, sắp xếp theo ngày đánh giá giảm dần.
+     * @return Một đối tượng {@link ObservableList} chứa danh sách các đánh giá cho
+     *         cuốn sách, sắp xếp theo ngày đánh giá giảm dần.
      */
     public ObservableList<BookReview> getAllReviewsForBook(int bookId) {
         ObservableList<BookReview> reviews = FXCollections.observableArrayList();
@@ -897,49 +912,51 @@ public class DatabaseDriver {
 
     public ResultSet getAllBorrowTransactions2() {
         String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status " +
-                       "FROM BorrowTransaction ORDER BY borrow_date DESC;";
-    
+                "FROM BorrowTransaction ORDER BY borrow_date DESC;";
+
         try {
             // Establish the database connection
             Connection conn = dataSource.getConnection();
-    
+
             // Prepare the statement
             PreparedStatement pstmt = conn.prepareStatement(query);
-    
+
             // Execute the query and return the ResultSet
             return pstmt.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
+
         // Return null if an exception occurs
         return null;
     }
-    
-    public ObservableList<BorrowTransaction> getAllBorrowTransactions() {
+
+    public ObservableList<BorrowTransaction> getAllBorrowTransactionsList() {
         ObservableList<BorrowTransaction> borrowTransactions = FXCollections.observableArrayList();
         String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status " +
-                       "FROM BorrowTransaction ORDER BY borrow_date DESC;";
-    
+                "FROM BorrowTransaction ORDER BY borrow_date DESC;";
+
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-    
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
             // Execute the query and get the result set
             ResultSet rs = pstmt.executeQuery();
-    
+
             // Iterate over the result set and create BorrowTransaction objects
             while (rs.next()) {
                 int transactionId = rs.getInt("transaction_id");
                 int clientId = rs.getInt("client_id");
                 int copyId = rs.getInt("copy_id");
-               
+
                 LocalDate borrowDate = rs.getDate("borrow_date").toLocalDate();
-                LocalDate returnDate = rs.getDate("return_date") != null ? rs.getDate("return_date").toLocalDate() : null;
+                LocalDate returnDate = rs.getDate("return_date") != null ? rs.getDate("return_date").toLocalDate()
+                        : null;
                 String status = rs.getString("status");
                 String title = Model.getInstance().getDatabaseDriver().getBookTitleByCopyId(copyId);
-    
+
                 // Create a new BorrowTransaction object
-                BorrowTransaction transaction = new BorrowTransaction(transactionId, clientId, title, copyId, borrowDate,
+                BorrowTransaction transaction = new BorrowTransaction(transactionId,
+                        clientId, title, copyId, borrowDate,
                         returnDate, status);
                 borrowTransactions.add(transaction);
             }
@@ -986,19 +1003,19 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
     }
-    
+
     public ObservableList<Client> getAllClients() {
         ObservableList<Client> clients = FXCollections.observableArrayList();
         String query = "SELECT client_id, name, library_card_number, email, phone_number, address, " +
-                       "registration_date, outstanding_fees, username, password_hash, avatar_image_path " +
-                       "FROM Client ORDER BY name ASC;";
-    
+                "registration_date, outstanding_fees, username, password_hash, avatar_image_path " +
+                "FROM Client ORDER BY name ASC;";
+
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-    
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
             // Execute the query and get the result set
             ResultSet rs = pstmt.executeQuery();
-    
+
             // Iterate over the result set and create Client objects
             while (rs.next()) {
                 int clientId = rs.getInt("client_id");
@@ -1012,51 +1029,50 @@ public class DatabaseDriver {
                 String username = rs.getString("username");
                 String passwordHash = rs.getString("password_hash");
                 String avatarImagePath = rs.getString("avatar_image_path");
-    
+
                 // Create a new Client object
                 Client client = new Client(clientId, name, libraryCardNumber, email, phoneNumber, address,
                         registrationDate, outstandingFees, username, passwordHash, avatarImagePath);
-    
+
                 // Add the client object to the list
                 clients.add(client);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return clients;
     }
-    
+
     public ResultSet getAllClients2() {
         String query = "SELECT client_id, name, library_card_number, email, phone_number, address, " +
-                       "registration_date, outstanding_fees, username, password_hash, avatar_image_path " +
-                       "FROM Client ORDER BY name ASC;";
-        
+                "registration_date, outstanding_fees, username, password_hash, avatar_image_path " +
+                "FROM Client ORDER BY name ASC;";
+
         try {
             // Establish the database connection
             Connection conn = dataSource.getConnection();
-    
+
             // Prepare the statement
             PreparedStatement pstmt = conn.prepareStatement(query);
-    
+
             // Execute the query and return the ResultSet
             return pstmt.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
+
         // Return null if an exception occurs
         return null;
     }
-    
-
 
     /**
      * Lấy đánh giá của một người dùng cụ thể cho một cuốn sách.
      *
      * @param bookId   ID của cuốn sách.
      * @param clientId ID của khách hàng.
-     * @return Đối tượng {@link BookReview} chứa thông tin đánh giá nếu tìm thấy, ngược lại trả về {@code null}.
+     * @return Đối tượng {@link BookReview} chứa thông tin đánh giá nếu tìm thấy,
+     *         ngược lại trả về {@code null}.
      */
     public BookReview getUserReview(int bookId, int clientId) {
         String query = "SELECT review_id, book_id, client_id, rating, comment, review_date FROM BookReview WHERE book_id = ? AND client_id = ?;";
@@ -1081,13 +1097,17 @@ public class DatabaseDriver {
     }
 
     /**
-     * Chèn một đánh giá sách mới hoặc cập nhật đánh giá hiện có của một khách hàng cho một cuốn sách.
+     * Chèn một đánh giá sách mới hoặc cập nhật đánh giá hiện có của một khách hàng
+     * cho một cuốn sách.
      *
      * @param bookId   ID của cuốn sách được đánh giá.
      * @param clientId ID của khách hàng đánh giá.
-     * @param rating   Đánh giá số sao của sách. Có thể là {@code null} nếu không có đánh giá số.
-     * @param comment  Bình luận về sách. Có thể là {@code null} hoặc rỗng nếu không có bình luận.
-     * @return {@code true} nếu chèn hoặc cập nhật thành công, {@code false} nếu có lỗi xảy ra.
+     * @param rating   Đánh giá số sao của sách. Có thể là {@code null} nếu không có
+     *                 đánh giá số.
+     * @param comment  Bình luận về sách. Có thể là {@code null} hoặc rỗng nếu không
+     *                 có bình luận.
+     * @return {@code true} nếu chèn hoặc cập nhật thành công, {@code false} nếu có
+     *         lỗi xảy ra.
      */
     public boolean upsertBookReview(int bookId, int clientId, Double rating, String comment) {
         BookReview existingReview = getUserReview(bookId, clientId);
@@ -1103,9 +1123,12 @@ public class DatabaseDriver {
      * Cập nhật một đánh giá sách hiện có.
      *
      * @param reviewId ID của đánh giá cần cập nhật.
-     * @param rating   Đánh giá số sao mới. Có thể là {@code null} nếu không có đánh giá số mới.
-     * @param comment  Bình luận mới về sách. Có thể là {@code null} hoặc rỗng nếu không có bình luận mới.
-     * @return {@code true} nếu cập nhật thành công, {@code false} nếu có lỗi xảy ra.
+     * @param rating   Đánh giá số sao mới. Có thể là {@code null} nếu không có đánh
+     *                 giá số mới.
+     * @param comment  Bình luận mới về sách. Có thể là {@code null} hoặc rỗng nếu
+     *                 không có bình luận mới.
+     * @return {@code true} nếu cập nhật thành công, {@code false} nếu có lỗi xảy
+     *         ra.
      */
     public boolean updateBookReview(int reviewId, Double rating, String comment) {
         String query = "UPDATE BookReview SET rating = ?, comment = ?, review_date = ? WHERE review_id = ?;";
@@ -1164,12 +1187,12 @@ public class DatabaseDriver {
         return 0;
     }
 
-
     /**
      * Lấy tổng số điểm đánh giá của một cuốn sách cụ thể.
      *
      * @param bookId ID của cuốn sách cần tính tổng điểm đánh giá.
-     * @return Tổng số điểm đánh giá của cuốn sách nếu tìm thấy, ngược lại trả về 0.0.
+     * @return Tổng số điểm đánh giá của cuốn sách nếu tìm thấy, ngược lại trả về
+     *         0.0.
      */
     public double getSumRatings(int bookId) {
         String query = "SELECT SUM(rating) AS sum FROM BookReview WHERE book_id = ?";
@@ -1211,7 +1234,8 @@ public class DatabaseDriver {
      * Lấy cuốn sách yêu thích của một khách hàng dựa trên số lần mượn.
      *
      * @param clientId ID của khách hàng cần lấy cuốn sách yêu thích.
-     * @return Đối tượng {@link Book} là cuốn sách yêu thích nếu tìm thấy, ngược lại trả về {@code null}.
+     * @return Đối tượng {@link Book} là cuốn sách yêu thích nếu tìm thấy, ngược lại
+     *         trả về {@code null}.
      */
     public Book getClientFavouriteBook(int clientId) {
         String query = "SELECT b.*, COUNT(bt.copy_id) AS borrow_count " +
@@ -1264,7 +1288,8 @@ public class DatabaseDriver {
     }
 
     /**
-     * Lấy danh sách các hoạt động gần đây của một khách hàng, bao gồm ngày mượn và tiêu đề sách.
+     * Lấy danh sách các hoạt động gần đây của một khách hàng, bao gồm ngày mượn và
+     * tiêu đề sách.
      *
      * @param clientId ID của khách hàng cần lấy hoạt động.
      * @param limit    Số lượng hoạt động gần đây cần lấy.
@@ -1300,7 +1325,8 @@ public class DatabaseDriver {
      *
      * @param clientId ID của khách hàng cần lấy danh sách sách.
      * @param limit    Số lượng sách hàng đầu cần lấy.
-     * @return Chuỗi chứa thông tin các cuốn sách hàng đầu, mỗi cuốn sách được phân tách bằng ký tự ngăn cách dòng.
+     * @return Chuỗi chứa thông tin các cuốn sách hàng đầu, mỗi cuốn sách được phân
+     *         tách bằng ký tự ngăn cách dòng.
      */
     public String getTopBooksForClient(int clientId, int limit) {
         String query = "SELECT b.book_id, b.author, b.image_path, br.rating AS client_rating " +
@@ -1333,22 +1359,22 @@ public class DatabaseDriver {
         return result.toString();
     }
 
-
     /**
      * Lấy xu hướng mượn sách hàng tháng của một khách hàng cụ thể.
      *
      * @param clientId ID của khách hàng cần lấy xu hướng mượn sách.
-     * @return Một {@link Map} chứa khóa là tháng (định dạng "YYYY-MM") và giá trị là số lượng sách đã mượn trong tháng đó.
+     * @return Một {@link Map} chứa khóa là tháng (định dạng "YYYY-MM") và giá trị
+     *         là số lượng sách đã mượn trong tháng đó.
      */
     public Map<String, Integer> getMonthlyBorrowingTrends(int clientId) {
         String query = "SELECT DATE_FORMAT(borrow_date, '%Y-%m') AS month, COUNT(*) AS borrow_count " +
-                    "FROM BorrowTransaction " +
-                    "WHERE client_id = ? " +
-                    "GROUP BY month " +
-                    "ORDER BY month ASC";
+                "FROM BorrowTransaction " +
+                "WHERE client_id = ? " +
+                "GROUP BY month " +
+                "ORDER BY month ASC";
         Map<String, Integer> trends = new LinkedHashMap<>();
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(query)) {
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, clientId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -1366,18 +1392,19 @@ public class DatabaseDriver {
      * Lấy xu hướng mượn sách theo thể loại của một khách hàng cụ thể.
      *
      * @param clientId ID của khách hàng cần lấy xu hướng mượn sách theo thể loại.
-     * @return Một {@link Map} chứa khóa là thể loại sách và giá trị là số lượng sách đã mượn thuộc thể loại đó.
+     * @return Một {@link Map} chứa khóa là thể loại sách và giá trị là số lượng
+     *         sách đã mượn thuộc thể loại đó.
      */
     public Map<String, Integer> getBorrowingTrendsByCategory(int clientId) {
         String query = "SELECT b.genre, COUNT(*) AS borrow_count " +
-                    "FROM BorrowTransaction bt " +
-                    "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
-                    "JOIN Book b ON bc.book_id = b.book_id " +
-                    "WHERE bt.client_id = ? " +
-                    "GROUP BY b.genre";
+                "FROM BorrowTransaction bt " +
+                "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
+                "JOIN Book b ON bc.book_id = b.book_id " +
+                "WHERE bt.client_id = ? " +
+                "GROUP BY b.genre";
         Map<String, Integer> trends = new HashMap<>();
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(query)) {
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, clientId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -1396,7 +1423,8 @@ public class DatabaseDriver {
      *
      * @param rs Đối tượng {@link ResultSet} chứa dữ liệu của cuốn sách.
      * @return Đối tượng {@link Book} được tạo từ dữ liệu trong {@link ResultSet}.
-     * @throws SQLException Nếu có lỗi xảy ra khi truy xuất dữ liệu từ {@link ResultSet}.
+     * @throws SQLException Nếu có lỗi xảy ra khi truy xuất dữ liệu từ
+     *                      {@link ResultSet}.
      */
     private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
         int book_id = rs.getInt("book_id");
@@ -1414,28 +1442,28 @@ public class DatabaseDriver {
         int quantity = countBookCopies(book_id);
 
         return new Book(book_id, title, author, isbn, genre, language, description, publication_year, image_path,
-                    average_rating, review_count, quantity);
+                average_rating, review_count, quantity);
     }
 
     /**
      * Lấy một bản sao sách khả dụng của một cuốn sách cụ thể.
      *
      * @param bookId ID của cuốn sách cần lấy bản sao khả dụng.
-     * @return Đối tượng {@link BookCopy} là bản sao sách khả dụng nếu tìm thấy, ngược lại trả về {@code null}.
+     * @return Đối tượng {@link BookCopy} là bản sao sách khả dụng nếu tìm thấy,
+     *         ngược lại trả về {@code null}.
      */
     public BookCopy getAvailableBookCopy(int bookId) {
         String query = "SELECT * FROM BookCopy WHERE book_id = ? AND is_available = TRUE LIMIT 1";
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, bookId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new BookCopy(
-                    rs.getInt("copy_id"),
-                    rs.getInt("book_id"),
-                    rs.getBoolean("is_available"),
-                    rs.getString("book_condition")
-                );
+                        rs.getInt("copy_id"),
+                        rs.getInt("book_id"),
+                        rs.getBoolean("is_available"),
+                        rs.getString("book_condition"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -1454,7 +1482,7 @@ public class DatabaseDriver {
 
         String query = "SELECT book_id FROM BookCopy WHERE copy_id = ?";
         try (Connection conn = getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, copyId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -1467,7 +1495,6 @@ public class DatabaseDriver {
         return bookId;
     }
 
-
     /**
      * Đếm số lượng bản sao sách khả dụng của một cuốn sách cụ thể.
      *
@@ -1478,7 +1505,7 @@ public class DatabaseDriver {
         int count = 0;
         String query = "SELECT COUNT(*) AS count FROM BookCopy WHERE book_id = ? AND is_available = true";
         try (Connection conn = getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, book_id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -1532,11 +1559,11 @@ public class DatabaseDriver {
         try {
             // Retrieve the ResultSet for all clients
             ResultSet resultSet = Model.getInstance().getDatabaseDriver().getAllClients2();
-    
+
             // Create a new workbook and sheet
             XSSFWorkbook workbook = new XSSFWorkbook();
             XSSFSheet sheet = workbook.createSheet("Clients");
-    
+
             // Create the header row
             Row headerRow = sheet.createRow(0);
             headerRow.createCell(0).setCellValue("Client ID");
@@ -1548,7 +1575,7 @@ public class DatabaseDriver {
             headerRow.createCell(6).setCellValue("Registration Date");
             headerRow.createCell(7).setCellValue("Outstanding Fees");
             headerRow.createCell(8).setCellValue("Username");
-    
+
             // Write client data into the sheet
             int rowNum = 1;
             while (resultSet.next()) {
@@ -1563,28 +1590,27 @@ public class DatabaseDriver {
                 row.createCell(7).setCellValue(resultSet.getDouble("outstanding_fees"));
                 row.createCell(8).setCellValue(resultSet.getString("username"));
             }
-    
+
             // Save the workbook to the specified file path
             try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
                 workbook.write(fileOut);
             }
-    
+
             // Close resources
             workbook.close();
             resultSet.close();
-    
+
             System.out.println("Excel file generated successfully: " + filePath);
-    
+
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }
-    
- 
+
     public int adjustBookCopies(int book_id, int quantity) {
         int currentCopies = countBookCopies(book_id); // Get the current number of copies
         int processedCopies = currentCopies; // Track the updated number of copies
-    
+
         String findQuery = "SELECT copy_id FROM BookCopy WHERE book_id = ? LIMIT 1";
         String deleteQuery = "DELETE FROM BookCopy WHERE copy_id = ?";
         String deleteTransactionQuery = "DELETE FROM BorrowTransaction WHERE copy_id = ?";
@@ -1593,43 +1619,44 @@ public class DatabaseDriver {
         String deleteBookQuery = "DELETE FROM Book WHERE book_id = ?";
         String deleteNotificationsQuery = "DELETE FROM NotificationRequest WHERE book_id = ?";
         String deleteReviewsQuery = "DELETE FROM BookReview WHERE book_id = ?";
-    
+
         if (quantity == 0) {
             // Delete the book and all its copies
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement deleteBookStmt = conn.prepareStatement(deleteBookQuery);
-                 PreparedStatement findStmt = conn.prepareStatement(findQuery);
-                 PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
-                 PreparedStatement deleteTransStmt = conn.prepareStatement(deleteTransactionQuery);
-                 PreparedStatement checkStatusStmt = conn.prepareStatement(checkTransactionStatusQuery);
-                 PreparedStatement deleteNotificationsStmt = conn.prepareStatement(deleteNotificationsQuery);
-                 PreparedStatement deleteReviewsStmt = conn.prepareStatement(deleteReviewsQuery)) {
-    
+                    PreparedStatement deleteBookStmt = conn.prepareStatement(deleteBookQuery);
+                    PreparedStatement findStmt = conn.prepareStatement(findQuery);
+                    PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
+                    PreparedStatement deleteTransStmt = conn.prepareStatement(deleteTransactionQuery);
+                    PreparedStatement checkStatusStmt = conn.prepareStatement(checkTransactionStatusQuery);
+                    PreparedStatement deleteNotificationsStmt = conn.prepareStatement(deleteNotificationsQuery);
+                    PreparedStatement deleteReviewsStmt = conn.prepareStatement(deleteReviewsQuery)) {
+
                 conn.setAutoCommit(false); // Start transaction
-    
+
                 // Delete all book copies and associated borrow transactions
                 while (true) {
                     findStmt.setInt(1, book_id);
                     try (ResultSet rs = findStmt.executeQuery()) {
                         if (rs.next()) {
                             int copyId = rs.getInt("copy_id");
-    
+
                             // Check the status of the associated borrow transaction
                             checkStatusStmt.setInt(1, copyId);
                             try (ResultSet statusRs = checkStatusStmt.executeQuery()) {
                                 if (statusRs.next()) {
                                     String status = statusRs.getString("status");
                                     if ("processing".equalsIgnoreCase(status)) {
-                                        System.out.println("Cannot delete copy ID " + copyId + ": Transaction is still processing.");
+                                        System.out.println("Cannot delete copy ID " + copyId
+                                                + ": Transaction is still processing.");
                                         continue; // Skip deleting this copy
                                     }
                                 }
                             }
-    
+
                             // Delete associated borrow transaction (if any)
                             deleteTransStmt.setInt(1, copyId);
                             deleteTransStmt.executeUpdate();
-    
+
                             // Delete the book copy
                             deleteStmt.setInt(1, copyId);
                             deleteStmt.executeUpdate();
@@ -1639,24 +1666,24 @@ public class DatabaseDriver {
                         }
                     }
                 }
-    
+
                 // Delete associated notifications
                 deleteNotificationsStmt.setInt(1, book_id);
                 deleteNotificationsStmt.executeUpdate();
-    
+
                 // Delete associated reviews
                 deleteReviewsStmt.setInt(1, book_id);
                 deleteReviewsStmt.executeUpdate();
-    
+
                 // Delete the book itself if no copies are left
                 if (processedCopies == 0) {
                     deleteBookStmt.setInt(1, book_id);
                     deleteBookStmt.executeUpdate();
                 }
-    
+
                 conn.commit(); // Commit the transaction
                 System.out.println("Book and all associated records deleted successfully.");
-    
+
             } catch (SQLException e) {
                 e.printStackTrace();
                 System.out.println("Error adjusting book copies.");
@@ -1664,8 +1691,8 @@ public class DatabaseDriver {
         } else if (quantity > currentCopies) {
             // Add more copies
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
-    
+                    PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+
                 for (int i = 0; i < quantity - currentCopies; i++) {
                     insertStmt.setInt(1, book_id);
                     insertStmt.executeUpdate();
@@ -1678,35 +1705,36 @@ public class DatabaseDriver {
         } else if (quantity < currentCopies) {
             // Remove copies
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement findStmt = conn.prepareStatement(findQuery);
-                 PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
-                 PreparedStatement deleteTransStmt = conn.prepareStatement(deleteTransactionQuery);
-                 PreparedStatement checkStatusStmt = conn.prepareStatement(checkTransactionStatusQuery)) {
-    
+                    PreparedStatement findStmt = conn.prepareStatement(findQuery);
+                    PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
+                    PreparedStatement deleteTransStmt = conn.prepareStatement(deleteTransactionQuery);
+                    PreparedStatement checkStatusStmt = conn.prepareStatement(checkTransactionStatusQuery)) {
+
                 conn.setAutoCommit(false); // Start transaction
-    
+
                 for (int i = 0; i < currentCopies - quantity; i++) {
                     findStmt.setInt(1, book_id);
                     try (ResultSet rs = findStmt.executeQuery()) {
                         if (rs.next()) {
                             int copyId = rs.getInt("copy_id");
-    
+
                             // Check the status of the associated borrow transaction
                             checkStatusStmt.setInt(1, copyId);
                             try (ResultSet statusRs = checkStatusStmt.executeQuery()) {
                                 if (statusRs.next()) {
                                     String status = statusRs.getString("status");
                                     if ("processing".equalsIgnoreCase(status)) {
-                                        System.out.println("Cannot delete copy ID " + copyId + ": Transaction is still processing.");
+                                        System.out.println("Cannot delete copy ID " + copyId
+                                                + ": Transaction is still processing.");
                                         continue; // Skip deleting this copy
                                     }
                                 }
                             }
-    
+
                             // Delete associated borrow transaction (if any)
                             deleteTransStmt.setInt(1, copyId);
                             deleteTransStmt.executeUpdate();
-    
+
                             // Delete the book copy
                             deleteStmt.setInt(1, copyId);
                             deleteStmt.executeUpdate();
@@ -1716,7 +1744,7 @@ public class DatabaseDriver {
                         }
                     }
                 }
-    
+
                 conn.commit(); // Commit the transaction
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -1724,23 +1752,23 @@ public class DatabaseDriver {
             }
         }
 
-        if(processedCopies < 0) return 0;
+        if (processedCopies < 0)
+            return 0;
         return processedCopies; // Return the updated number of book copies
     }
-    
-    
-    
+
     /**
      * Tạo một giao dịch mượn sách mới cho một khách hàng cụ thể.
      *
      * @param clientId ID của khách hàng mượn sách.
      * @param copyId   ID của bản sao sách được mượn.
-     * @return {@code true} nếu tạo giao dịch thành công, {@code false} nếu có lỗi xảy ra.
+     * @return {@code true} nếu tạo giao dịch thành công, {@code false} nếu có lỗi
+     *         xảy ra.
      */
     public boolean createBorrowTransaction(int clientId, int copyId) {
         String query = "INSERT INTO BorrowTransaction (client_id, copy_id, borrow_date, status) VALUES (?, ?, ?, 'Processing')";
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, clientId);
             stmt.setInt(2, copyId);
             stmt.setDate(3, Date.valueOf(LocalDate.now()));
@@ -1756,13 +1784,15 @@ public class DatabaseDriver {
      * Cập nhật trạng thái khả dụng của một bản sao sách cụ thể.
      *
      * @param copyId      ID của bản sao sách cần cập nhật.
-     * @param isAvailable Trạng thái khả dụng mới của bản sao sách. {@code true} nếu bản sao đang có sẵn, {@code false} nếu không.
-     * @return {@code true} nếu cập nhật thành công, {@code false} nếu có lỗi xảy ra.
+     * @param isAvailable Trạng thái khả dụng mới của bản sao sách. {@code true} nếu
+     *                    bản sao đang có sẵn, {@code false} nếu không.
+     * @return {@code true} nếu cập nhật thành công, {@code false} nếu có lỗi xảy
+     *         ra.
      */
     public boolean updateBookCopyAvailability(int copyId, boolean isAvailable) {
         String query = "UPDATE BookCopy SET is_available = ? WHERE copy_id = ?";
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setBoolean(1, isAvailable);
             stmt.setInt(2, copyId);
             int affectedRows = stmt.executeUpdate();
@@ -1774,17 +1804,19 @@ public class DatabaseDriver {
     }
 
     /**
-     * Lấy danh sách các giao dịch mượn sách đang hoạt động (trạng thái 'Processing') của một khách hàng cụ thể.
+     * Lấy danh sách các giao dịch mượn sách đang hoạt động (trạng thái
+     * 'Processing') của một khách hàng cụ thể.
      *
      * @param clientId ID của khách hàng cần lấy danh sách giao dịch.
-     * @return Một {@link List} chứa các đối tượng {@link BorrowTransaction} đang hoạt động, hoặc danh sách rỗng nếu không có giao dịch nào.
+     * @return Một {@link List} chứa các đối tượng {@link BorrowTransaction} đang
+     *         hoạt động, hoặc danh sách rỗng nếu không có giao dịch nào.
      */
     public List<BorrowTransaction> getActiveBorrowTransactions(int clientId) {
         List<BorrowTransaction> transactions = new ArrayList<>();
         String query = "SELECT * FROM BorrowTransaction WHERE client_id = ? AND status = 'Processing'";
 
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, clientId);
             ResultSet rs = stmt.executeQuery();
 
@@ -1806,15 +1838,17 @@ public class DatabaseDriver {
     }
 
     /**
-     * Lấy danh sách tất cả các giao dịch mượn sách đang hoạt động (trạng thái 'Processing').
+     * Lấy danh sách tất cả các giao dịch mượn sách đang hoạt động (trạng thái
+     * 'Processing').
      *
-     * @return Một {@link List} chứa các đối tượng {@link BorrowTransaction} đang hoạt động, hoặc danh sách rỗng nếu không có giao dịch nào.
+     * @return Một {@link List} chứa các đối tượng {@link BorrowTransaction} đang
+     *         hoạt động, hoặc danh sách rỗng nếu không có giao dịch nào.
      */
     public List<BorrowTransaction> getActiveBorrowTransactions() {
         String query = "SELECT * FROM BorrowTransaction WHERE status = 'Processing'";
         List<BorrowTransaction> activeTransactions = new ArrayList<>();
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -1838,12 +1872,13 @@ public class DatabaseDriver {
      *
      * @param clientId ID của khách hàng tạo yêu cầu.
      * @param bookId   ID của cuốn sách mà khách hàng yêu cầu thông báo khi có sẵn.
-     * @return {@code true} nếu tạo yêu cầu thành công, {@code false} nếu có lỗi xảy ra.
+     * @return {@code true} nếu tạo yêu cầu thành công, {@code false} nếu có lỗi xảy
+     *         ra.
      */
     public boolean createNotificationRequest(int clientId, int bookId) {
         String query = "INSERT INTO NotificationRequest (client_id, book_id, request_date) VALUES (?, ?, ?)";
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, clientId);
             stmt.setInt(2, bookId);
             stmt.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
@@ -1856,18 +1891,20 @@ public class DatabaseDriver {
     }
 
     /**
-     * Kiểm tra xem một khách hàng có bất kỳ giao dịch mượn sách đang hoạt động nào cho một cuốn sách cụ thể hay không.
+     * Kiểm tra xem một khách hàng có bất kỳ giao dịch mượn sách đang hoạt động nào
+     * cho một cuốn sách cụ thể hay không.
      *
      * @param clientId ID của khách hàng cần kiểm tra.
      * @param bookId   ID của cuốn sách cần kiểm tra.
-     * @return {@code true} nếu khách hàng có ít nhất một giao dịch mượn đang hoạt động cho cuốn sách đó, {@code false} ngược lại.
+     * @return {@code true} nếu khách hàng có ít nhất một giao dịch mượn đang hoạt
+     *         động cho cuốn sách đó, {@code false} ngược lại.
      */
     public boolean hasActiveBorrowForBook(int clientId, int bookId) {
         String query = "SELECT COUNT(*) AS count FROM BorrowTransaction bt " +
-                    "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
-                    "WHERE bt.client_id = ? AND bc.book_id = ? AND bt.status = 'Processing'";
+                "JOIN BookCopy bc ON bt.copy_id = bc.copy_id " +
+                "WHERE bt.client_id = ? AND bc.book_id = ? AND bt.status = 'Processing'";
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, clientId);
             stmt.setInt(2, bookId);
             ResultSet rs = stmt.executeQuery();
@@ -1885,12 +1922,13 @@ public class DatabaseDriver {
      *
      * @param clientId ID của khách hàng.
      * @param bookId   ID của cuốn sách.
-     * @return Đối tượng {@link NotificationRequest} nếu tìm thấy, ngược lại trả về {@code null}.
+     * @return Đối tượng {@link NotificationRequest} nếu tìm thấy, ngược lại trả về
+     *         {@code null}.
      */
     public NotificationRequest getNotificationRequest(int clientId, int bookId) {
         String query = "SELECT * FROM NotificationRequest WHERE client_id = ? AND book_id = ?;";
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(query)) {
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, clientId);
             pstmt.setInt(2, bookId);
             ResultSet rs = pstmt.executeQuery();
@@ -1911,13 +1949,14 @@ public class DatabaseDriver {
      * Lấy danh sách tất cả các yêu cầu thông báo cho một cuốn sách cụ thể.
      *
      * @param bookId ID của cuốn sách cần lấy danh sách yêu cầu.
-     * @return Một {@link List} chứa các đối tượng {@link NotificationRequest} nếu có, ngược lại trả về danh sách rỗng.
+     * @return Một {@link List} chứa các đối tượng {@link NotificationRequest} nếu
+     *         có, ngược lại trả về danh sách rỗng.
      */
     public List<NotificationRequest> getNotificationRequestsForBook(int bookId) {
         List<NotificationRequest> requests = new ArrayList<>();
         String query = "SELECT * FROM NotificationRequest WHERE book_id = ?";
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, bookId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -1943,7 +1982,7 @@ public class DatabaseDriver {
     public boolean deleteNotificationRequest(int requestId) {
         String query = "DELETE FROM NotificationRequest WHERE request_id = ?";
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, requestId);
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -1956,8 +1995,11 @@ public class DatabaseDriver {
     /**
      * Xử lý việc trả sách cho một giao dịch mượn cụ thể.
      *
-     * <p>Phương thức này sẽ cập nhật trạng thái giao dịch thành 'Returned', cập nhật lại trạng thái khả dụng của bản sao sách,
-     * và gửi thông báo cho các yêu cầu thông báo liên quan đến cuốn sách đó.</p>
+     * <p>
+     * Phương thức này sẽ cập nhật trạng thái giao dịch thành 'Returned', cập nhật
+     * lại trạng thái khả dụng của bản sao sách,
+     * và gửi thông báo cho các yêu cầu thông báo liên quan đến cuốn sách đó.
+     * </p>
      *
      * @param transactionId ID của giao dịch mượn cần xử lý.
      * @return {@code true} nếu xử lý thành công, {@code false} nếu có lỗi xảy ra.
@@ -2024,11 +2066,13 @@ public class DatabaseDriver {
     }
 
     /**
-     * Kiểm tra xem một giao dịch mượn có được gửi nhắc nhở trả sách hay không dựa trên số ngày đã mượn.
+     * Kiểm tra xem một giao dịch mượn có được gửi nhắc nhở trả sách hay không dựa
+     * trên số ngày đã mượn.
      *
      * @param transactionId ID của giao dịch mượn cần kiểm tra.
      * @param dayBorrowed   Số ngày đã mượn.
-     * @return {@code true} nếu đã gửi nhắc nhở trả sách trong ngày mượn tương ứng, {@code false} ngược lại.
+     * @return {@code true} nếu đã gửi nhắc nhở trả sách trong ngày mượn tương ứng,
+     *         {@code false} ngược lại.
      */
     public boolean hasReturnReminder(int transactionId, long dayBorrowed) {
         String query = "";
@@ -2041,7 +2085,7 @@ public class DatabaseDriver {
         }
 
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, transactionId);
             LocalDate reminderDate = LocalDate.now();
             stmt.setDate(2, Date.valueOf(reminderDate));
@@ -2066,7 +2110,7 @@ public class DatabaseDriver {
     public void setClientAvatar(int clientId, String fileURI) {
         String query = "UPDATE Client SET avatar_image_path = ? WHERE client_id = ?";
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, fileURI);
             stmt.setInt(2, clientId);
             stmt.executeUpdate();
@@ -2160,7 +2204,12 @@ public class DatabaseDriver {
                 String month = resultSet.getString("month");
                 int count = resultSet.getInt("borrow_count");
                 trends.put(month, count);
-
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return trends;
+    }
 
     /**
      * Gửi yêu cầu API để xác minh địa chỉ email.
@@ -2171,7 +2220,9 @@ public class DatabaseDriver {
     public String getEmailValidationApiResponse(String email) {
         try {
             @SuppressWarnings("deprecation")
-            URL url = new URL("https://emailvalidation.abstractapi.com/v1/?api_key=fe97d39becd94b14a4a19b97ebcc29a1&email=" + email);
+            URL url = new URL(
+                    "https://emailvalidation.abstractapi.com/v1/?api_key=fe97d39becd94b14a4a19b97ebcc29a1&email="
+                            + email);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
 
@@ -2203,7 +2254,7 @@ public class DatabaseDriver {
     public int getEmailCountFromDatabase(String email) {
         String query = "SELECT COUNT(*) FROM Client WHERE email = ?";
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             if (connection == null || connection.isClosed()) {
                 System.err.println("Kết nối cơ sở dữ liệu không hợp lệ!");
@@ -2220,7 +2271,7 @@ public class DatabaseDriver {
             e.printStackTrace();
         }
 
-        return trends;
+        return -1;
     }
 
     public Map<String, Integer> getBorrowingTrendsByCategoryForAllUsers() {
@@ -2342,8 +2393,9 @@ public class DatabaseDriver {
 
             // Execute the update query and check the number of affected rows
             int rowsUpdated = pstmt.executeUpdate();
-
-        return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -2355,15 +2407,15 @@ public class DatabaseDriver {
      */
     public void sendNewPassword(String recipientEmail, String newPassword) throws MessagingException {
         String smtpHost = "smtp.gmail.com";
-        String smtpPort = "587"; 
-        String senderEmail = "thuha25121976@gmail.com"; 
+        String smtpPort = "587";
+        String senderEmail = "thuha25121976@gmail.com";
         String senderPassword = "bbjh xcbp oxtj qozz";
 
         Properties properties = new Properties();
         properties.put("mail.smtp.host", smtpHost);
         properties.put("mail.smtp.port", smtpPort);
         properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true"); 
+        properties.put("mail.smtp.starttls.enable", "true");
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -2374,7 +2426,8 @@ public class DatabaseDriver {
         message.setFrom(new InternetAddress(senderEmail));
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
         message.setSubject("Your New Password");
-        message.setText("Dear customer,\n\nYour new password is: " + newPassword + "\n\nPlease log in and change your password as soon as possible.\n\nThank you.");
+        message.setText("Dear customer,\n\nYour new password is: " + newPassword
+                + "\n\nPlease log in and change your password as soon as possible.\n\nThank you.");
         Transport.send(message);
         System.out.println("Email sent successfully to " + recipientEmail);
     }
@@ -2384,16 +2437,17 @@ public class DatabaseDriver {
      *
      * @param username    Tên người dùng cần cập nhật mật khẩu.
      * @param newPassword Mật khẩu mới cần cập nhật.
-     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu không thành công.
+     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu
+     *         không thành công.
      */
     public int updatePassword(String username, String newPassword) {
         String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
         int row = 0;
         String query = "UPDATE client SET password_hash = ? WHERE username = ?";
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, hashedPassword); 
-            preparedStatement.setString(2, username);       
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, hashedPassword);
+            preparedStatement.setString(2, username);
             row = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -2404,7 +2458,10 @@ public class DatabaseDriver {
     /**
      * Xóa tài khoản của người dùng dựa trên tên người dùng.
      *
-     * <p>Phương thức này sẽ xóa tất cả các giao dịch mượn sách liên quan, yêu cầu thông báo và tài khoản của người dùng.</p>
+     * <p>
+     * Phương thức này sẽ xóa tất cả các giao dịch mượn sách liên quan, yêu cầu
+     * thông báo và tài khoản của người dùng.
+     * </p>
      *
      * @param username Tên người dùng của tài khoản cần xóa.
      */
@@ -2414,9 +2471,10 @@ public class DatabaseDriver {
         String deleteAccountQuery = "DELETE FROM client WHERE username = ?";
 
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-            PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsQuery);
-            PreparedStatement deleteNotificationRequestsStatement = connection.prepareStatement(deleteNotificationRequestsQuery);
-            PreparedStatement deleteAccountStatement = connection.prepareStatement(deleteAccountQuery)) {
+                PreparedStatement deleteTransactionsStatement = connection.prepareStatement(deleteTransactionsQuery);
+                PreparedStatement deleteNotificationRequestsStatement = connection
+                        .prepareStatement(deleteNotificationRequestsQuery);
+                PreparedStatement deleteAccountStatement = connection.prepareStatement(deleteAccountQuery)) {
 
             // Check connection validity
             if (connection == null || connection.isClosed()) {
@@ -2551,13 +2609,13 @@ public class DatabaseDriver {
     public void ProcessReturnBook(int transaction_id) {
         String query = "UPDATE BorrowTransaction SET status = 'Done' WHERE transaction_id = ?";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {  // Close the parenthesis here
-    
+                PreparedStatement stmt = conn.prepareStatement(query)) { // Close the parenthesis here
+
             stmt.setInt(1, transaction_id); // Set the transaction_id
-            stmt.executeUpdate();  // Execute the update
-    
+            stmt.executeUpdate(); // Execute the update
+
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace if an error occurs
+            e.printStackTrace(); // Print stack trace if an error occurs
         }
     }
 
@@ -2566,8 +2624,8 @@ public class DatabaseDriver {
         Map<Integer, Map<Integer, Double>> resultMap = new HashMap<>();
 
         try (Connection conn = dataSource.getConnection(); // Replace dataSource with your actual data source
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
+                PreparedStatement pstmt = conn.prepareStatement(query);
+                ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 int clientId = rs.getInt("client_id");
@@ -2586,52 +2644,52 @@ public class DatabaseDriver {
         return resultMap;
     }
 
-   
+    // CREATE TABLE IF NOT EXISTS BookCopy (
+    // copy_id INT AUTO_INCREMENT PRIMARY KEY, -- Unique ID for each physical book
+    // copy
+    // book_id INT, -- Foreign key referencing the book this copy belongs to
+    // is_available BOOLEAN DEFAULT TRUE, -- Availability status of the book copy
+    // book_condition ENUM('New', 'Good', 'Fair', 'Poor') DEFAULT 'Good', --
+    // Physical condition of the book copy
+    // FOREIGN KEY (book_id) REFERENCES Book(book_id) ON DELETE CASCADE
+    // );
 
-
-
-//     CREATE TABLE IF NOT EXISTS BookCopy (
-//     copy_id INT AUTO_INCREMENT PRIMARY KEY,           -- Unique ID for each physical book copy
-//     book_id INT,                                      -- Foreign key referencing the book this copy belongs to
-//     is_available BOOLEAN DEFAULT TRUE,                -- Availability status of the book copy
-//     book_condition ENUM('New', 'Good', 'Fair', 'Poor') DEFAULT 'Good', -- Physical condition of the book copy
-//     FOREIGN KEY (book_id) REFERENCES Book(book_id) ON DELETE CASCADE
-// );
-    
     // public void toCSV() {
-    //     String query = "SELECT client_id, book_id, rating FROM BookReview;";
-    //     String output = getClass().getResource("/resources/Database/Data.csv").getFile();
-    
-    //     try (Connection conn = dataSource.getConnection();
-    //          PreparedStatement pstmt = conn.prepareStatement(query);
-    //          ResultSet rs = pstmt.executeQuery();
-    //          BufferedWriter writer = Files.newBufferedWriter(Paths.get(output))) {
-    
-    //         writer.write("client_id,book_id,rating\n");
-    
-    //         // Write data rows
-    //         while (rs.next()) {
-    //             int userId = rs.getInt("client_id");
-    //             int bookId = rs.getInt("book_id");
-    //             double rating = rs.getDouble("rating");
-    
-    //             try {
-    //                 writer.write(userId + "," + bookId + "," + rating + "\n");
-    //             } catch (IOException e) {
-    //                 e.printStackTrace(); // Handle the write exception
-    //             }
-    //         }
-    
-    //     } catch (SQLException | IOException e) {
-    //         e.printStackTrace(); // Handle SQL and IOException for the whole block
-    //     }
+    // String query = "SELECT client_id, book_id, rating FROM BookReview;";
+    // String output =
+    // getClass().getResource("/resources/Database/Data.csv").getFile();
+
+    // try (Connection conn = dataSource.getConnection();
+    // PreparedStatement pstmt = conn.prepareStatement(query);
+    // ResultSet rs = pstmt.executeQuery();
+    // BufferedWriter writer = Files.newBufferedWriter(Paths.get(output))) {
+
+    // writer.write("client_id,book_id,rating\n");
+
+    // // Write data rows
+    // while (rs.next()) {
+    // int userId = rs.getInt("client_id");
+    // int bookId = rs.getInt("book_id");
+    // double rating = rs.getDouble("rating");
+
+    // try {
+    // writer.write(userId + "," + bookId + "," + rating + "\n");
+    // } catch (IOException e) {
+    // e.printStackTrace(); // Handle the write exception
+    // }
+    // }
+
+    // } catch (SQLException | IOException e) {
+    // e.printStackTrace(); // Handle SQL and IOException for the whole block
+    // }
     // }
     /**
      * Cập nhật địa chỉ của người dùng trong cơ sở dữ liệu.
      *
      * @param newAddress Địa chỉ mới cần cập nhật.
      * @param username   Tên người dùng cần cập nhật địa chỉ.
-     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu không thành công.
+     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu
+     *         không thành công.
      */
     public int updateAddress(String newAddress, String username) {
         // Câu truy vấn để cập nhật địa chỉ
@@ -2639,7 +2697,7 @@ public class DatabaseDriver {
         int row = 0;
 
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
 
             // Kiểm tra kết nối
             if (connection == null || connection.isClosed()) {
@@ -2666,7 +2724,8 @@ public class DatabaseDriver {
      *
      * @param newPhoneNumber Số điện thoại mới cần cập nhật.
      * @param username       Tên người dùng cần cập nhật số điện thoại.
-     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu không thành công.
+     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu
+     *         không thành công.
      */
     public int updatePhoneNumber(String newPhoneNumber, String username) {
         // Câu truy vấn để cập nhật số điện thoại
@@ -2674,7 +2733,7 @@ public class DatabaseDriver {
         int row = 0;
 
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
 
             // Kiểm tra kết nối
             if (connection == null || connection.isClosed()) {
@@ -2699,7 +2758,8 @@ public class DatabaseDriver {
      *
      * @param newEmail Địa chỉ email mới cần cập nhật.
      * @param username Tên người dùng cần cập nhật email.
-     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu không thành công.
+     * @return Số dòng bị ảnh hưởng nếu cập nhật thành công, hoặc {@code 0} nếu
+     *         không thành công.
      */
     public int updateEmail(String newEmail, String username) {
         // Câu truy vấn để cập nhật email
@@ -2707,7 +2767,7 @@ public class DatabaseDriver {
         int row = 0;
 
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
 
             // Kiểm tra kết nối
             if (connection == null || connection.isClosed()) {
@@ -2724,7 +2784,7 @@ public class DatabaseDriver {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return row; 
+        return row;
     }
 
     /**
@@ -2737,22 +2797,21 @@ public class DatabaseDriver {
         String query = "SELECT COUNT(*) FROM Client WHERE username = ?";
         int count = 0;
         try (Connection connection = Model.getInstance().getDatabaseDriver().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
             preparedStatement.setString(1, username);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    count = resultSet.getInt(1);  // Lấy số lượng tên người dùng
+                    count = resultSet.getInt(1); // Lấy số lượng tên người dùng
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();  // In ra lỗi nếu có
+            e.printStackTrace(); // In ra lỗi nếu có
         }
-        return count;  // Trả về số lần xuất hiện tên người dùng trong cơ sở dữ liệu
+        return count; // Trả về số lần xuất hiện tên người dùng trong cơ sở dữ liệu
     }
 
 }
-    
 
-    // public boolean insertNotification(Notification notification) {
-    //     String query = "
+// public boolean insertNotification(Notification notification) {
+// String query = "
