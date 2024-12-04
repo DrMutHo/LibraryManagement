@@ -3,11 +3,13 @@ package main.Models;
 import javafx.beans.property.*;
 
 /**
- * Represents a book with various attributes such as title, author, ISBN, genre, and more.
- * This class provides a detailed representation of a book, including its metadata and ratings.
+ * Represents a book with various attributes such as title, author, ISBN, genre,
+ * and more.
+ * This class provides a detailed representation of a book, including its
+ * metadata and ratings.
  */
 public class Book {
-    
+
     private final IntegerProperty book_id;
     private final StringProperty title;
     private final StringProperty author;
@@ -23,7 +25,8 @@ public class Book {
 
     /**
      * Default constructor to initialize a new Book object with empty values.
-     * This constructor sets all properties to their default values (e.g., empty strings, zero for numbers).
+     * This constructor sets all properties to their default values (e.g., empty
+     * strings, zero for numbers).
      */
     public Book() {
         this.book_id = new SimpleIntegerProperty();
@@ -43,22 +46,23 @@ public class Book {
     /**
      * Constructor to initialize a Book object with specific values.
      *
-     * @param book_id         The unique identifier for the book.
-     * @param title          The title of the book.
-     * @param author         The author of the book.
-     * @param isbn           The ISBN (International Standard Book Number) of the book.
-     * @param genre          The genre/category of the book.
-     * @param language       The language in which the book is written.
-     * @param description    A brief description of the book's content.
+     * @param book_id          The unique identifier for the book.
+     * @param title            The title of the book.
+     * @param author           The author of the book.
+     * @param isbn             The ISBN (International Standard Book Number) of the
+     *                         book.
+     * @param genre            The genre/category of the book.
+     * @param language         The language in which the book is written.
+     * @param description      A brief description of the book's content.
      * @param publication_year The year the book was published.
-     * @param image_path     The file path to the book's cover image.
-     * @param average_rating The average rating given to the book by readers.
-     * @param review_count   The total number of reviews the book has received.
-     * @param quantity       The number of copies of the book available.
+     * @param image_path       The file path to the book's cover image.
+     * @param average_rating   The average rating given to the book by readers.
+     * @param review_count     The total number of reviews the book has received.
+     * @param quantity         The number of copies of the book available.
      */
     public Book(int book_id, String title, String author, String isbn, String genre, String language,
-                String description, int publication_year, String image_path, double average_rating, 
-                int review_count, int quantity) {
+            String description, int publication_year, String image_path, double average_rating,
+            int review_count, int quantity) {
         this.book_id = new SimpleIntegerProperty(book_id);
         this.title = new SimpleStringProperty(title);
         this.author = new SimpleStringProperty(author);
@@ -72,7 +76,6 @@ public class Book {
         this.review_count = new SimpleIntegerProperty(review_count);
         this.quantity = new SimpleIntegerProperty(quantity);
     }
-
 
     /**
      * Gets the unique ID of the book.
@@ -94,7 +97,8 @@ public class Book {
 
     /**
      * Gets the property for the book's ID.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The IntegerProperty representing the book's unique ID.
      */
@@ -120,10 +124,10 @@ public class Book {
         title.set(value);
     }
 
-
     /**
      * Gets the property for the book's title.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The StringProperty representing the book's title.
      */
@@ -151,7 +155,8 @@ public class Book {
 
     /**
      * Gets the property for the book's author.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The StringProperty representing the book's author.
      */
@@ -179,7 +184,8 @@ public class Book {
 
     /**
      * Gets the property for the book's ISBN.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The StringProperty representing the book's ISBN.
      */
@@ -196,7 +202,6 @@ public class Book {
         return genre.get();
     }
 
-
     /**
      * Sets the genre of the book.
      *
@@ -208,7 +213,8 @@ public class Book {
 
     /**
      * Gets the property for the book's genre.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The StringProperty representing the book's genre.
      */
@@ -236,7 +242,8 @@ public class Book {
 
     /**
      * Gets the property for the book's language.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The StringProperty representing the book's language.
      */
@@ -262,10 +269,10 @@ public class Book {
         publication_year.set(value);
     }
 
-
     /**
      * Gets the property for the book's publication year.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The IntegerProperty representing the book's publication year.
      */
@@ -293,7 +300,8 @@ public class Book {
 
     /**
      * Gets the property for the book's description.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The StringProperty representing the book's description.
      */
@@ -306,7 +314,7 @@ public class Book {
      *
      * @return The file path to the book's image.
      */
-    public String getImage_path() {
+    public String getImagePath() {
         return image_path.get();
     }
 
@@ -321,7 +329,8 @@ public class Book {
 
     /**
      * Gets the property for the book's image path.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The StringProperty representing the book's image path.
      */
@@ -347,10 +356,10 @@ public class Book {
         average_rating.set(value);
     }
 
-
     /**
      * Gets the property for the book's average rating.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The DoubleProperty representing the book's average rating.
      */
@@ -378,7 +387,8 @@ public class Book {
 
     /**
      * Gets the property for the book's review count.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The IntegerProperty representing the book's review count.
      */
@@ -406,12 +416,13 @@ public class Book {
 
     /**
      * Gets the property for the book's quantity.
-     * This method allows access to the property for binding or listening for changes.
+     * This method allows access to the property for binding or listening for
+     * changes.
      *
      * @return The IntegerProperty representing the book's quantity.
      */
     public IntegerProperty quantityProperty() {
         return quantity;
-}
+    }
 
 }

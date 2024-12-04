@@ -7,10 +7,11 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane fx:id="rootPane" prefHeight="120.0" prefWidth="600.0" Stylesheets="@../../Styles/Client/NotificationCell.css"
-        styleClass="notification-cell-container" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1">
+        styleClass="notification-cell-container" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" >
+    
     <VBox layoutX="20.0" layoutY="20.0" spacing="8" styleClass="details-container">
         <HBox spacing="15">
-            <Label fx:id="client_name_lbl" styleClass="notification-title" text="John Doe" />
+            <Label fx:id="admin_name_lbl" styleClass="notification-title" text="John Doe" />
             <Label fx:id="date_lbl" styleClass="notification-date" text="2023-11-01 10:45 AM" />
         </HBox>
         <Label fx:id="notification_type_lbl" styleClass="notification-type" text="New Message" />

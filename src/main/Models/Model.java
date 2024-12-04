@@ -7,6 +7,9 @@ import main.Models.Client;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import main.Models.Client;
+import main.Models.Admin;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -25,14 +28,21 @@ import org.apache.poi.ss.usermodel.Cell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import main.Views.AccountType;
+import java.sql.Timestamp;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 import main.Views.ViewFactory;
 
 /**
- * Represents the central model of the library system, managing the data and interactions 
- * between various components such as books, clients, transactions, and notifications.
- * The model acts as a singleton and facilitates communication between the client and 
+ * Represents the central model of the library system, managing the data and
+ * interactions
+ * between various components such as books, clients, transactions, and
+ * notifications.
+ * The model acts as a singleton and facilitates communication between the
+ * client and
  * admin components.
  */
 public class Model {
@@ -54,8 +64,11 @@ public class Model {
     private final Client client;
     private final Admin admin;
 
+    private GoogleBooksAPI BookAddSearch;
+
     /**
-     * Initializes a new instance of the Model class, setting up various fields including lists for books, 
+     * Initializes a new instance of the Model class, setting up various fields
+     * including lists for books,
      * transactions, notifications, and listeners.
      */
     private Model() {
@@ -90,10 +103,11 @@ public class Model {
         this.listenersClient.clear();
         this.listenersAdmin.clear();
         this.selectedBook.set(null);
+        this.viewFactory = new ViewFactory();
     }
 
     /**
-     * Interface for client-related listeners. Defines the method to be called 
+     * Interface for client-related listeners. Defines the method to be called
      * when a borrow transaction is created for the client.
      */
     public interface ModelListenerClient {
@@ -122,19 +136,23 @@ public class Model {
     }
 
     /**
-     * Notifies all listeners that a borrow transaction has been created for the client.
-     * This method is called whenever a new borrow transaction is created, and it triggers
+     * Notifies all listeners that a borrow transaction has been created for the
+     * client.
+     * This method is called whenever a new borrow transaction is created, and it
+     * triggers
      * the notification to each registered listener.
      */
     public void notifyBorrowTransactionClientCreated() {
         for (ModelListenerClient listener : listenersClient) {
             listener.onBorrowTransactionClientCreated();
         }
+
     }
 
     /**
      * Returns the singleton instance of the Model class, creating it if necessary.
-     * This method ensures that only one instance of the Model class exists throughout
+     * This method ensures that only one instance of the Model class exists
+     * throughout
      * the application's lifecycle, providing a global point of access.
      * 
      * @return The singleton instance of the Model class.
@@ -145,7 +163,6 @@ public class Model {
         }
         return model;
     }
-
 
     /**
      * Returns the ViewFactory associated with this model instance.
@@ -180,7 +197,7 @@ public class Model {
      * @return A boolean indicating whether the admin login was successful.
      */
     public boolean getAdminLoginSuccessFlag() {
-        return this.clientLoginSuccessFlag;
+        return this.adminLoginSuccessFlag;
     }
 
     /**
@@ -189,7 +206,7 @@ public class Model {
      * @param flag A boolean value to set the admin login success flag.
      */
     public void setAdminLoginSuccessFlag(boolean flag) {
-        this.clientLoginSuccessFlag = flag;
+        this.adminLoginSuccessFlag = flag;
     }
 
     /**
@@ -257,9 +274,9 @@ public class Model {
 
     /**
      * Sets the list of all books available in the library.
-     * This method retrieves the book data from the database and updates 
-     * the list of all books. Each book's information is fetched from the 
-     * result set and added to the `allBook` observable list. It also counts 
+     * This method retrieves the book data from the database and updates
+     * the list of all books. Each book's information is fetched from the
+     * result set and added to the `allBook` observable list. It also counts
      * the number of available copies of each book.
      * 
      * @throws SQLException If there is an error accessing the database.
@@ -283,7 +300,8 @@ public class Model {
 
                 int quantity = databaseDriver.countBookCopies(book_id);
 
-                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year, image_path, average_rating, review_count, quantity);
+                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
+                        image_path, average_rating, review_count, quantity);
                 allBook.add(book);
             }
         } catch (SQLException e) {
@@ -291,16 +309,28 @@ public class Model {
         }
     }
 
+    public void AddBookCTL(Book currentBook, int quantity) {
+        try {
+            int bookId = Model.getInstance().getDatabaseDriver().addBook2(currentBook);
 
+            String bookIdString = String.valueOf(bookId);
 
+            for (int i = 0; i < quantity; ++i) {
+                Model.getInstance().getDatabaseDriver().addBookCopy(bookId, true, "Good");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * Sets the list of highest rated books, optionally filtered by genre.
-     * This method retrieves the highest rated books from the database, either 
-     * for all genres or filtered by a specific genre. The resulting books are 
-     * added to the `HighestRatedBooks` observable list. 
+     * This method retrieves the highest rated books from the database, either
+     * for all genres or filtered by a specific genre. The resulting books are
+     * added to the `HighestRatedBooks` observable list.
      * 
-     * @param genre The genre to filter the books by. If the value is "ALL", 
+     * @param genre The genre to filter the books by. If the value is "ALL",
      *              the method fetches the highest rated books across all genres.
      * @throws SQLException If there is an error accessing the database.
      */
@@ -350,16 +380,20 @@ public class Model {
         }
     }
 
-
     /**
-     * Exports the borrow transactions of the currently logged-in client to an Excel file.
-     * This method retrieves the borrow transaction history of the client from the database
+     * Exports the borrow transactions of the currently logged-in client to an Excel
+     * file.
+     * This method retrieves the borrow transaction history of the client from the
+     * database
      * and exports the data to an Excel file using the Apache POI library.
-     * The generated Excel file contains the transaction details such as transaction ID,
+     * The generated Excel file contains the transaction details such as transaction
+     * ID,
      * client ID, copy ID, borrow date, return date, and transaction status.
      * 
-     * @param filePath The path where the Excel file should be saved. This should include
-     *                 the full file name and extension (e.g., "C:/path/to/file.xlsx").
+     * @param filePath The path where the Excel file should be saved. This should
+     *                 include
+     *                 the full file name and extension (e.g.,
+     *                 "C:/path/to/file.xlsx").
      */
     public void exportClientBorrowTransactionsToExcel(String filePath) {
         try {
@@ -406,16 +440,19 @@ public class Model {
         }
     }
 
-
     /**
      * Exports all borrow transactions to an Excel file.
-     * This method retrieves all borrow transactions from the database and exports the data 
-     * to an Excel file using the Apache POI library. The generated Excel file contains 
-     * transaction details such as transaction ID, client ID, copy ID, borrow date, 
+     * This method retrieves all borrow transactions from the database and exports
+     * the data
+     * to an Excel file using the Apache POI library. The generated Excel file
+     * contains
+     * transaction details such as transaction ID, client ID, copy ID, borrow date,
      * return date, and transaction status.
      * 
-     * @param filePath The path where the Excel file should be saved. This should include
-     *                 the full file name and extension (e.g., "C:/path/to/file.xlsx").
+     * @param filePath The path where the Excel file should be saved. This should
+     *                 include
+     *                 the full file name and extension (e.g.,
+     *                 "C:/path/to/file.xlsx").
      */
     public void exportBorrowTransactionsToExcel(String filePath) {
         try {
@@ -463,13 +500,13 @@ public class Model {
         }
     }
 
-
-
     /**
      * Sets the list of borrow transactions for the currently logged-in client.
-     * This method retrieves the borrow transactions for the client from the database 
-     * and adds them to the `BorrowTransactions` list. Each transaction includes 
-     * details such as the transaction ID, client ID, book title, copy ID, borrow date, 
+     * This method retrieves the borrow transactions for the client from the
+     * database
+     * and adds them to the `BorrowTransactions` list. Each transaction includes
+     * details such as the transaction ID, client ID, book title, copy ID, borrow
+     * date,
      * return date, and transaction status.
      * 
      * @see BorrowTransaction
@@ -477,7 +514,7 @@ public class Model {
     public void setBorrowTransaction() {
         // Retrieve the borrow transactions for the current client
         ResultSet resultSet = databaseDriver.getTransactionByClientID(Model.getInstance().getClient().getClientId());
-        
+
         try {
             // Loop through each result and create a BorrowTransaction object
             while (resultSet.next()) {
@@ -503,21 +540,24 @@ public class Model {
         }
     }
 
-
     /**
      * Retrieves book data by the specified copy ID.
-     * This method queries the database for book details based on the provided copy ID and returns the corresponding book data.
-     * The book data includes information such as the book ID, title, author, ISBN, genre, language, description, 
-     * publication year, image path, average rating, review count, and the quantity of available copies.
+     * This method queries the database for book details based on the provided copy
+     * ID and returns the corresponding book data.
+     * The book data includes information such as the book ID, title, author, ISBN,
+     * genre, language, description,
+     * publication year, image path, average rating, review count, and the quantity
+     * of available copies.
      *
      * @param copy_id The copy ID of the book whose details are to be retrieved.
-     * @return A {@link Book} object containing the details of the book associated with the provided copy ID. 
+     * @return A {@link Book} object containing the details of the book associated
+     *         with the provided copy ID.
      *         If no book is found, an empty Book object is returned.
      */
     public Book getBookDataByCopyID(int copy_id) {
         ResultSet resultSet = databaseDriver.getBookDataByCopyID(copy_id);
         Book res = new Book();
-        
+
         try {
             // Retrieve book details from the result set based on the copy ID
             while (resultSet.next()) {
@@ -539,37 +579,41 @@ public class Model {
                 // Create a Book object with the retrieved data
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count, quantity);
-                res = book;  // Set the result as the current book
+                res = book; // Set the result as the current book
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         // Return the book data (or an empty Book object if not found)
         return res;
     }
 
-
     /**
      * Retrieves the book currently being read by the logged-in client.
-     * If the client is not currently reading any book, it defaults to returning the highest-rated book in the database.
+     * If the client is not currently reading any book, it defaults to returning the
+     * highest-rated book in the database.
      * 
-     * This method first tries to retrieve the book that the client is currently reading by querying the database.
-     * If the client is not reading any book, it then queries the database for the highest-rated book.
+     * This method first tries to retrieve the book that the client is currently
+     * reading by querying the database.
+     * If the client is not reading any book, it then queries the database for the
+     * highest-rated book.
      * 
-     * @return A {@link Book} object representing the book that the client is currently reading, or the highest-rated
-     *         book if the client isn't reading any book. If no book is found, an empty {@link Book} object is returned.
+     * @return A {@link Book} object representing the book that the client is
+     *         currently reading, or the highest-rated
+     *         book if the client isn't reading any book. If no book is found, an
+     *         empty {@link Book} object is returned.
      */
     public Book getReadingBook() {
         // Attempt to retrieve the book currently being read by the client
         ResultSet resultSet = databaseDriver.get1BookDataByCopyID(Model.getInstance().getClient().getClientId());
         Book res = new Book();
-        
+
         // If no book is being read, fallback to retrieving the highest-rated book
         if (resultSet == null) {
-            resultSet = databaseDriver.getHighestRatingBook();
+            resultSet = databaseDriver.getHighestRatingBooks();
         }
-        
+
         try {
             while (resultSet.next()) {
                 // Extract book details from the result set
@@ -591,12 +635,12 @@ public class Model {
                 // Create a new Book object and assign it to the result
                 Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count, quantity);
-                res = book;  // Set the result book
+                res = book; // Set the result book
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         // Return the retrieved book or an empty book if no result
         return res;
     }
@@ -604,10 +648,12 @@ public class Model {
     /**
      * Returns the list of borrow transactions for the currently logged-in client.
      * 
-     * This method retrieves the list of borrow transactions that the client has made. It returns an 
+     * This method retrieves the list of borrow transactions that the client has
+     * made. It returns an
      * observable list of {@link BorrowTransaction} objects.
      * 
-     * @return An observable list of {@link BorrowTransaction} objects representing the borrow transactions.
+     * @return An observable list of {@link BorrowTransaction} objects representing
+     *         the borrow transactions.
      */
     public ObservableList<BorrowTransaction> getBorrowTransaction() {
         return BorrowTransactions;
@@ -616,10 +662,13 @@ public class Model {
     /**
      * Returns the list of all books available in the library.
      * 
-     * This method retrieves the complete list of books stored in the library system. It returns an 
-     * observable list of {@link Book} objects representing the books in the library.
+     * This method retrieves the complete list of books stored in the library
+     * system. It returns an
+     * observable list of {@link Book} objects representing the books in the
+     * library.
      * 
-     * @return An observable list of {@link Book} objects representing all available books.
+     * @return An observable list of {@link Book} objects representing all available
+     *         books.
      */
     public ObservableList<Book> getAllBook() {
         return allBook;
@@ -628,10 +677,13 @@ public class Model {
     /**
      * Returns the list of highest-rated books in the library.
      * 
-     * This method retrieves the list of books that have the highest ratings, optionally filtered by genre.
-     * It returns an observable list of {@link Book} objects representing the highest-rated books.
+     * This method retrieves the list of books that have the highest ratings,
+     * optionally filtered by genre.
+     * It returns an observable list of {@link Book} objects representing the
+     * highest-rated books.
      * 
-     * @return An observable list of {@link Book} objects representing the highest-rated books.
+     * @return An observable list of {@link Book} objects representing the
+     *         highest-rated books.
      */
     public ObservableList<Book> getHighestRatedBook() {
         return HighestRatedBooks;
@@ -640,11 +692,13 @@ public class Model {
     /**
      * Finds a book by its ISBN from the list of all books.
      * 
-     * This method searches through the list of all books and returns the first book that matches the given ISBN.
+     * This method searches through the list of all books and returns the first book
+     * that matches the given ISBN.
      * If no book is found with the specified ISBN, it returns {@code null}.
      * 
      * @param ISBN The ISBN of the book to search for.
-     * @return The {@link Book} object that matches the provided ISBN, or {@code null} if no such book is found.
+     * @return The {@link Book} object that matches the provided ISBN, or
+     *         {@code null} if no such book is found.
      */
     public Book findBookByISBN(String ISBN) {
         for (Book book : allBook) {
@@ -654,15 +708,17 @@ public class Model {
         return null;
     }
 
-
     /**
      * Evaluates the credentials of an admin user based on the provided username.
      * <p>
-     * This method retrieves admin data from the database using the provided username.
-     * If the admin exists, it sets the admin details and marks the login as successful.
+     * This method retrieves admin data from the database using the provided
+     * username.
+     * If the admin exists, it sets the admin details and marks the login as
+     * successful.
      * </p>
      *
-     * @param username The username of the admin to evaluate. Must not be null or empty.
+     * @param username The username of the admin to evaluate. Must not be null or
+     *                 empty.
      */
     public void evaluateAdminCred(String username) {
         ResultSet resultSet = databaseDriver.getAdminData(username);
@@ -690,11 +746,14 @@ public class Model {
     /**
      * Evaluates the credentials of a client user based on the provided username.
      * <p>
-     * This method retrieves client data from the database using the provided username.
-     * If the client exists, it sets the client details and marks the login as successful.
+     * This method retrieves client data from the database using the provided
+     * username.
+     * If the client exists, it sets the client details and marks the login as
+     * successful.
      * </p>
      *
-     * @param username The username of the client to evaluate. Must not be null or empty.
+     * @param username The username of the client to evaluate. Must not be null or
+     *                 empty.
      */
     public void evaluateClientCred(String username) {
         ResultSet resultSet = databaseDriver.getClientData(username);
@@ -729,18 +788,22 @@ public class Model {
     /**
      * Prepares a list of notifications for display.
      * <p>
-     * This method retrieves notifications from the database based on the account type
-     * (Client or Admin) and the provided limit. It then constructs Notification objects
+     * This method retrieves notifications from the database based on the account
+     * type
+     * (Client or Admin) and the provided limit. It then constructs Notification
+     * objects
      * and adds them to the provided ObservableList.
      * </p>
      *
      * @param notifications The ObservableList to populate with notifications.
-     * @param limit         The maximum number of notifications to retrieve. Use -1 for no limit.
+     * @param limit         The maximum number of notifications to retrieve. Use -1
+     *                      for no limit.
      */
     private void prepareNotifications(ObservableList<Notification> notifications, int limit) {
         ResultSet resultSet = (viewFactory.getLoginAccountType().equals(AccountType.CLIENT))
                 ? databaseDriver.getNotifications(this.client.getClientId(), "Client", limit)
-                : databaseDriver.getNotifications(this.client.getClientId(), "Admin", limit);
+                : databaseDriver.getNotifications(this.admin.getadmin_id(), "Admin", limit);
+
         try {
             while (resultSet != null && resultSet.next()) {
                 int notificationId = resultSet.getInt("notification_id");
@@ -795,7 +858,8 @@ public class Model {
     /**
      * Updates the specified notification as read.
      * <p>
-     * This method updates the notification's status in the database and marks it as read
+     * This method updates the notification's status in the database and marks it as
+     * read
      * in the local notifications list.
      * </p>
      *
@@ -809,7 +873,8 @@ public class Model {
     /**
      * Inserts a new notification into the system.
      * <p>
-     * This method adds the notification to the database and, upon successful insertion,
+     * This method adds the notification to the database and, upon successful
+     * insertion,
      * updates the local notifications list on the JavaFX application thread.
      * </p>
      *
@@ -826,7 +891,8 @@ public class Model {
     /**
      * Sends a notification by inserting it into the database.
      * <p>
-     * This method is used to dispatch a notification without updating the local list.
+     * This method is used to dispatch a notification without updating the local
+     * list.
      * </p>
      *
      * @param notification The notification to send. Must not be null.
@@ -838,11 +904,13 @@ public class Model {
     /**
      * Marks all notifications for the specified recipient as read.
      * <p>
-     * This method updates the read status of all notifications for the given recipient
+     * This method updates the read status of all notifications for the given
+     * recipient
      * in the database and reflects the changes in the local notifications list.
      * </p>
      *
-     * @param recipientId The ID of the recipient whose notifications are to be marked as read.
+     * @param recipientId The ID of the recipient whose notifications are to be
+     *                    marked as read.
      */
     public void markAllNotificationsAsRead(int recipientId) {
         if (viewFactory.getLoginAccountType().equals(AccountType.CLIENT))
@@ -896,10 +964,13 @@ public class Model {
          * Called when a book return is processed by an admin.
          */
         void onBookReturnProcessed();
+
+        void onAddBook();
     }
 
     /**
-     * Notifies all registered admin listeners that a book return has been processed.
+     * Notifies all registered admin listeners that a book return has been
+     * processed.
      */
     public void notifyBookReturnProcessed() {
         for (ModelListenerAdmin listener : listenersAdmin) {
@@ -907,8 +978,15 @@ public class Model {
         }
     }
 
+    public void notifyAddBook() {
+        for (ModelListenerAdmin listener : listenersAdmin) {
+            listener.onAddBook();
+        }
+    }
+
     /**
-     * Notifies all registered admin listeners that a borrow transaction has been created.
+     * Notifies all registered admin listeners that a borrow transaction has been
+     * created.
      */
     public void notifyBorrowTransactionAdminCreated() {
         for (ModelListenerAdmin listener : listenersAdmin) {
@@ -917,10 +995,19 @@ public class Model {
     }
 
     /**
-     * Notifies all registered admin listeners that a borrow transaction event has occurred.
+     * Notifies all registered admin listeners that a borrow transaction event has
+     * occurred.
      */
     public void notifyBorrowTransactionAdminCreatedEvent() {
         notifyBorrowTransactionAdminCreated();
+    }
+
+    public void notifyAddBookEvent() {
+        notifyAddBook();
+    }
+
+    public void notifyBookReturnProcessedEvent() {
+        notifyBookReturnProcessed();
     }
 
     /**
@@ -934,6 +1021,5 @@ public class Model {
     public void setClientAvatar(String fileURI) {
         databaseDriver.setClientAvatar(Model.getInstance().getClient().getClientId(), fileURI);
     }
-
 
 }
