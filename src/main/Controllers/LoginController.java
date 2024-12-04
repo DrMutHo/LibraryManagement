@@ -36,6 +36,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.Models.DatabaseDriver;
 import main.Models.Model;
@@ -80,7 +81,7 @@ public class LoginController implements Initializable {
     @FXML ImageView lib_image;
     private Stage stage;
     @FXML
-    private AnchorPane inner_pane;
+    private VBox inner_pane;
 
     
     
@@ -273,7 +274,7 @@ public class LoginController implements Initializable {
         enableAllComponents(inner_pane);
 
     }
-    private void disableAllComponents(AnchorPane root) {
+    private void disableAllComponents(VBox root) {
         for (javafx.scene.Node node : root.getChildren()) {
             // Kiểm tra nếu node không phải là notificationPane và không phải con của notificationPane
             if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null && ((AnchorPane) node).getId().equals("notificationPane"))) {
@@ -288,7 +289,7 @@ public class LoginController implements Initializable {
         }
     }
 
-    private void enableAllComponents(AnchorPane root) {
+    private void enableAllComponents(VBox root) {
         for (javafx.scene.Node node : root.getChildren()) {
             // Kiểm tra nếu node không phải là notificationPane và không phải con của notificationPane
             if (!(node instanceof AnchorPane && ((AnchorPane) node).getId() != null && ((AnchorPane) node).getId().equals("notificationPane"))) {
