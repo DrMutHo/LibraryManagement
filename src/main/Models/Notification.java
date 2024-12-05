@@ -24,16 +24,19 @@ public class Notification {
     private final BooleanProperty isRead;
 
     /**
-     * Constructs a new {@code Notification} with the specified recipient details and message.
-     * <p>
-     * The {@code createdAt} timestamp is set to the current date and time, and the notification
-     * is marked as unread by default.
-     * </p>
-     *
-     * @param recipientId       The ID of the recipient.
-     * @param recipientType     The type of the recipient (e.g., Client, Admin).
-     * @param notificationType  The type of the notification (e.g., Info, Alert).
-     * @param message           The message content of the notification.
+     * Constructs a new Notification object with the specified details.
+     * 
+     * This constructor initializes a Notification with the recipient's ID,
+     * recipient type, notification type,
+     * a message, the current timestamp, and sets the read status to false by
+     * default.
+     * 
+     * @param recipientId      The ID of the recipient of the notification.
+     * @param recipientType    The type of the recipient (e.g., client, admin,
+     *                         etc.).
+     * @param notificationType The type of the notification (e.g., alert, reminder,
+     *                         etc.).
+     * @param message          The message content of the notification.
      */
     public Notification(int recipientId, RecipientType recipientType, NotificationType notificationType,
                         String message) {
@@ -47,15 +50,22 @@ public class Notification {
     }
 
     /**
-     * Constructs a new {@code Notification} with all fields specified.
-     *
-     * @param notificationId    The unique ID of the notification.
-     * @param recipientId       The ID of the recipient.
-     * @param recipientType     The type of the recipient (e.g., Client, Admin).
-     * @param notificationType  The type of the notification (e.g., Info, Alert).
-     * @param message           The message content of the notification.
-     * @param createdAt         The timestamp when the notification was created.
-     * @param isRead            The read status of the notification.
+     * Constructs a new Notification object with the specified details.
+     * 
+     * This constructor initializes a Notification with the provided notification
+     * ID, recipient's ID, recipient type,
+     * notification type, message, timestamp, and read status.
+     * 
+     * @param notificationId   The unique ID of the notification.
+     * @param recipientId      The ID of the recipient of the notification.
+     * @param recipientType    The type of the recipient (e.g., client, admin,
+     *                         etc.).
+     * @param notificationType The type of the notification (e.g., alert, reminder,
+     *                         etc.).
+     * @param message          The message content of the notification.
+     * @param createdAt        The timestamp when the notification was created.
+     * @param isRead           The read status of the notification (true if read,
+     *                         false if unread).
      */
     public Notification(int notificationId, int recipientId, RecipientType recipientType,
                         NotificationType notificationType, String message, LocalDateTime createdAt, boolean isRead) {
@@ -69,62 +79,64 @@ public class Notification {
     }
 
     /**
-     * Retrieves the notification ID.
-     *
-     * @return The notification ID.
+     * Retrieves the unique ID of the notification.
+     * 
+     * @return The unique ID of the notification.
      */
     public int getNotificationId() {
         return notificationId.get();
     }
 
     /**
-     * Sets the notification ID.
-     *
-     * @param value The notification ID to set.
+     * Sets the unique ID for the notification.
+     * 
+     * @param value The unique ID to set for the notification.
      */
     public void setNotificationId(int value) {
         notificationId.set(value);
     }
 
     /**
-     * Gets the {@code IntegerProperty} for the notification ID.
-     *
-     * @return The notification ID property.
+     * Gets the property for the notification's unique ID.
+     * This allows for binding to the notificationId property in a UI context.
+     * 
+     * @return The IntegerProperty representing the notification's unique ID.
      */
     public IntegerProperty notificationIdProperty() {
         return notificationId;
     }
 
     /**
-     * Retrieves the recipient ID.
-     *
-     * @return The recipient ID.
+     * Gets the recipient's ID associated with the notification.
+     * 
+     * @return The recipient's ID.
      */
     public int getRecipientId() {
         return recipientId.get();
     }
 
     /**
-     * Sets the recipient ID.
-     *
-     * @param value The recipient ID to set.
+     * Sets the recipient's ID associated with the notification.
+     * 
+     * @param value The recipient's ID to set.
      */
     public void setRecipientId(int value) {
         recipientId.set(value);
     }
 
     /**
-     * Gets the {@code IntegerProperty} for the recipient ID.
-     *
-     * @return The recipient ID property.
+     * Gets the property for the recipient's ID associated with the notification.
+     * This allows for binding to the recipientId property in a UI context.
+     * 
+     * @return The IntegerProperty representing the recipient's ID.
      */
     public IntegerProperty recipientIdProperty() {
         return recipientId;
     }
 
     /**
-     * Retrieves the recipient type.
-     *
+     * Gets the recipient type associated with the notification.
+     * 
      * @return The recipient type.
      */
     public RecipientType getRecipientType() {
@@ -132,8 +144,8 @@ public class Notification {
     }
 
     /**
-     * Sets the recipient type.
-     *
+     * Sets the recipient type associated with the notification.
+     * 
      * @param value The recipient type to set.
      */
     public void setRecipientType(RecipientType value) {
@@ -141,17 +153,18 @@ public class Notification {
     }
 
     /**
-     * Gets the {@code ObjectProperty} for the recipient type.
-     *
-     * @return The recipient type property.
+     * Gets the property for the recipient type associated with the notification.
+     * This allows for binding to the recipientType property in a UI context.
+     * 
+     * @return The ObjectProperty representing the recipient type.
      */
     public ObjectProperty<RecipientType> recipientTypeProperty() {
         return recipientType;
     }
 
     /**
-     * Retrieves the notification type.
-     *
+     * Gets the notification type associated with the notification.
+     * 
      * @return The notification type.
      */
     public NotificationType getNotificationType() {
@@ -159,8 +172,8 @@ public class Notification {
     }
 
     /**
-     * Sets the notification type.
-     *
+     * Sets the notification type associated with the notification.
+     * 
      * @param value The notification type to set.
      */
     public void setNotificationType(NotificationType value) {
@@ -168,45 +181,47 @@ public class Notification {
     }
 
     /**
-     * Gets the {@code ObjectProperty} for the notification type.
-     *
-     * @return The notification type property.
+     * Gets the property for the notification type associated with the notification.
+     * This allows for binding to the notificationType property in a UI context.
+     * 
+     * @return The ObjectProperty representing the notification type.
      */
     public ObjectProperty<NotificationType> notificationTypeProperty() {
         return notificationType;
     }
 
     /**
-     * Retrieves the message content of the notification.
-     *
-     * @return The notification message.
+     * Gets the message associated with the notification.
+     * 
+     * @return The message content.
      */
     public String getMessage() {
         return message.get();
     }
 
     /**
-     * Sets the message content of the notification.
-     *
-     * @param value The message to set.
+     * Sets the message associated with the notification.
+     * 
+     * @param value The message content to set.
      */
     public void setMessage(String value) {
         message.set(value);
     }
 
     /**
-     * Gets the {@code StringProperty} for the message.
-     *
-     * @return The message property.
+     * Gets the property for the message associated with the notification.
+     * This allows for binding to the message property in a UI context.
+     * 
+     * @return The StringProperty representing the message.
      */
     public StringProperty messageProperty() {
         return message;
     }
 
     /**
-     * Retrieves the creation timestamp of the notification.
-     *
-     * @return The creation timestamp.
+     * Gets the creation timestamp of the notification.
+     * 
+     * @return The creation timestamp of the notification.
      */
     public LocalDateTime getCreatedAt() {
         return createdAt.get();
@@ -214,7 +229,7 @@ public class Notification {
 
     /**
      * Sets the creation timestamp of the notification.
-     *
+     * 
      * @param value The creation timestamp to set.
      */
     public void setCreatedAt(LocalDateTime value) {
@@ -222,9 +237,10 @@ public class Notification {
     }
 
     /**
-     * Gets the {@code ObjectProperty} for the creation timestamp.
-     *
-     * @return The creation timestamp property.
+     * Gets the property for the creation timestamp of the notification.
+     * This allows for binding to the createdAt property in a UI context.
+     * 
+     * @return The ObjectProperty representing the creation timestamp.
      */
     public ObjectProperty<LocalDateTime> createdAtProperty() {
         return createdAt;
@@ -232,28 +248,31 @@ public class Notification {
 
     /**
      * Checks whether the notification has been read.
-     *
-     * @return {@code true} if the notification is read; {@code false} otherwise.
+     * 
+     * @return True if the notification has been read, otherwise false.
      */
     public boolean isRead() {
         return isRead.get();
     }
 
     /**
-     * Marks the notification as read or unread.
-     *
-     * @param value {@code true} to mark as read; {@code false} to mark as unread.
+     * Sets whether the notification has been read.
+     * 
+     * @param value True to mark the notification as read, false to mark it as
+     *              unread.
      */
     public void setRead(boolean value) {
         isRead.set(value);
     }
 
     /**
-     * Gets the {@code BooleanProperty} for the read status.
-     *
-     * @return The read status property.
+     * Gets the property for the read status of the notification.
+     * This allows for binding to the isRead property in a UI context.
+     * 
+     * @return The BooleanProperty representing the read status.
      */
     public BooleanProperty isReadProperty() {
         return isRead;
     }
+
 }

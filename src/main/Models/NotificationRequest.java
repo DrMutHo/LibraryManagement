@@ -14,11 +14,11 @@ public class NotificationRequest {
     private LocalDateTime requestDate;
 
     /**
-     * Constructs a new {@code NotificationRequest} with the specified details.
-     *
-     * @param requestId   The unique identifier for the notification request.
+     * Constructor for creating a NotificationRequest instance.
+     * 
+     * @param requestId   The unique ID of the request.
      * @param clientId    The ID of the client making the request.
-     * @param bookId      The ID of the book associated with the request.
+     * @param bookId      The ID of the book being requested.
      * @param requestDate The date and time when the request was made.
      */
     public NotificationRequest(int requestId, int clientId, int bookId, LocalDateTime requestDate) {
@@ -29,72 +29,72 @@ public class NotificationRequest {
     }
 
     /**
-     * Retrieves the request ID.
-     *
-     * @return The unique identifier of the notification request.
+     * Gets the unique request ID.
+     * 
+     * @return The unique request ID.
      */
     public int getRequestId() {
         return requestId;
     }
 
     /**
-     * Sets the request ID.
-     *
-     * @param requestId The unique identifier to set for the notification request.
+     * Sets the unique request ID.
+     * 
+     * @param requestId The request ID to set.
      */
     public void setRequestId(int requestId) {
         this.requestId = requestId;
     }
 
     /**
-     * Retrieves the client ID associated with the request.
-     *
-     * @return The ID of the client who made the request.
+     * Gets the client ID of the user who made the request.
+     * 
+     * @return The client ID.
      */
     public int getClientId() {
         return clientId;
     }
 
     /**
-     * Sets the client ID for the request.
-     *
-     * @param clientId The ID of the client to associate with the notification request.
+     * Sets the client ID of the user making the request.
+     * 
+     * @param clientId The client ID to set.
      */
     public void setClientId(int clientId) {
         this.clientId = clientId;
     }
 
     /**
-     * Retrieves the book ID associated with the request.
-     *
-     * @return The ID of the book related to the notification request.
+     * Gets the book ID of the book being requested.
+     * 
+     * @return The book ID.
      */
     public int getBookId() {
         return bookId;
     }
 
     /**
-     * Sets the book ID for the request.
-     *
-     * @param bookId The ID of the book to associate with the notification request.
+     * Sets the book ID of the book being requested.
+     * 
+     * @param bookId The book ID to set.
      */
     public void setBookId(int bookId) {
         this.bookId = bookId;
     }
 
     /**
-     * Retrieves the date and time when the request was made.
-     *
-     * @return The {@code LocalDateTime} representing when the notification request was created.
+     * Gets the date and time when the request was made.
+     * 
+     * @return The request date and time.
      */
     public LocalDateTime getRequestDate() {
         return requestDate;
     }
 
     /**
-     * Sets the date and time for the request.
-     *
-     * @param requestDate The {@code LocalDateTime} to set as the request date and time.
+     * Sets the date and time when the request was made.
+     * 
+     * @param requestDate The request date and time to set.
      */
     public void setRequestDate(LocalDateTime requestDate) {
         this.requestDate = requestDate;

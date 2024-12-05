@@ -35,6 +35,7 @@
                <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                   <image>
                      <Image url="@../../Images/stack-of-books.png" />
+                     <Image url="@../../Images/stack-of-books.png" />
                   </image>
                </ImageView>
             </graphic>
@@ -82,6 +83,7 @@
             <graphic>
                <ImageView fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                   <image>
+                     <Image url="@../../Images/book.png" />
                      <Image url="@../../Images/book.png" />
                   </image>
                </ImageView>
