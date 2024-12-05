@@ -2,3 +2,4 @@
 .vscode/
 /bin
 src/resources/Database/Data.csv
+src/main/Models/Model.java

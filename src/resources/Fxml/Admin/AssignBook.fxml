@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="400.0" spacing="15" styleClass="write-review-panel" stylesheets="@../../Styles/Client/BookDetailWithReview.css" 
+      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller = "main.Controllers.Admin.AssignBookController">
+   <children>
+      <Label styleClass="section-title" text="Assign Book" />
+      <VBox prefHeight="0.0" prefWidth="356.0" spacing="15">
+         <children>
+            <TextField fx:id="textTitle1" editable="true" promptText="BookID" />
+            <TextField fx:id="textPublicationYear1" editable="true" promptText="ClientID" />
+         </children>
+      </VBox>
+      <HBox spacing="20">
+         <children>
+            <Button onAction="#onSubmitReview" styleClass="action-button" text="Save Changes" />
+            <Button fx:id = "notifyMeButton" "styleClass="action-button" text="Cancel" />
+         </children>
+      </HBox>
+   </children>
+</VBox>
