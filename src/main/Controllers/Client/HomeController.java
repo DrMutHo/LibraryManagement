@@ -70,11 +70,10 @@ public class HomeController implements Initializable {
                 return Model.getInstance().getReadingBook(); // Lấy thông tin sách đang đọc
             }
         };
-
         // Lắng nghe khi task hoàn thành để cập nhật UI
         task.setOnSucceeded(event -> {
             Book readingBook = task.getValue(); // Lấy kết quả trả về từ Task
-
+        
             // Cập nhật tiêu đề và mô tả sách
             bookTitle.setText(readingBook.getTitle());
             description.setText(readingBook.getDescription());
@@ -88,29 +87,27 @@ public class HomeController implements Initializable {
 
             // Cập nhật danh sách thể loại vào ComboBox
             ObservableList<String> genres = FXCollections.observableArrayList(
-                    "All", "Fiction", "Dystopian", "Romance", "Adventure", "Historical", "Fantasy", "Philosophical",
-                    "Epic",
+                    "All", "Fiction", "Dystopian", "Romance", "Adventure", "Historical", "Fantasy", "Philosophical", "Epic",
                     "Modernist", "Gothic", "Magic Realism", "Existential", "Literature", "War", "Science Fiction");
             genreComboBox.setItems(genres);
-
+        
             // Đặt giá trị mặc định cho ComboBox
             genreComboBox.setValue("All");
-            // Cập nhật danh sách sách được đánh giá cao nhất dựa trên thể loại mặc định
-            // "All"
+            // Cập nhật danh sách sách được đánh giá cao nhất dựa trên thể loại mặc định "All"
             updateHighestRatedBooks("All");
-
+        
             // Thêm listener để cập nhật khi người dùng thay đổi thể loại
             genreComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
                 updateHighestRatedBooks(newValue);
             });
         });
-
+        
         // Lắng nghe lỗi nếu Task gặp vấn đề
         task.setOnFailed(event -> {
             Throwable exception = task.getException();
             System.err.println("Đã xảy ra lỗi khi tải dữ liệu sách: " + exception.getMessage());
         });
-
+        
         // Chạy Task trên một Thread riêng
         Thread thread = new Thread(task);
         thread.setDaemon(true); // Đặt thread là daemon để tự động dừng khi ứng dụng đóng
@@ -287,7 +284,8 @@ public class HomeController implements Initializable {
                 return null;
             }
         };
-        task.setOnSucceeded(event -> {
+
+        task.setOnSucceeded(event -> { 
             for (Book book : Model.getInstance().getHighestRatedBook()) {
                 addBookToHighestRatedBooks(book);
             }
