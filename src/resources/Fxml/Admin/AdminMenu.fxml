@@ -10,7 +10,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="180.0" styleClass="main_menu_container" stylesheets="@../../Styles/ClientMenu.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Admin.AdminMenuController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="180.0" styleClass="main_menu_container" stylesheets="@../../Styles/ClientMenu.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controllers.Admin.AdminMenuController">
    <AnchorPane prefHeight="730.0" prefWidth="160.0" styleClass="left_container">
       <VBox prefHeight="80.0" prefWidth="160.0" styleClass="title_container" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <ImageView fitHeight="38.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
@@ -25,7 +25,7 @@
             <graphic>
                <ImageView fitHeight="25.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                     <Image url="@../../Images/home.png" />
+                     <Image url="@../../Images/diagram.png" />
                   </image>
                </ImageView>
             </graphic>
@@ -34,7 +34,7 @@
             <graphic>
                <ImageView fitHeight="24.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                     <Image url="@../../Images/book-issue.png" />
+                     <Image url="@../../Images/stack-of-books.png" />
                   </image>
                </ImageView>
             </graphic>
@@ -50,7 +50,7 @@
             <graphic>
                <ImageView fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                     <Image url="@../../Images/profile-user.png" />
+                     <Image url="@../../Images/user%20img.png" />
                   </image>
                </ImageView>
             </graphic>
@@ -82,7 +82,7 @@
             <graphic>
                <ImageView fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                     <Image url="@../../Images/profile-user.png" />
+                     <Image url="@../../Images/book.png" />
                   </image>
                </ImageView>
             </graphic>

@@ -44,7 +44,8 @@ import main.Views.AccountType;
 
 /**
  * Controller class for handling the Login functionality.
- * Implements the Initializable interface to initialize the controller after its root element has been completely processed.
+ * Implements the Initializable interface to initialize the controller after its
+ * root element has been completely processed.
  */
 public class LoginController implements Initializable {
 
@@ -111,8 +112,10 @@ public class LoginController implements Initializable {
      * Initializes the controller class. This method is automatically called
      * after the FXML file has been loaded.
      *
-     * @param url            The location used to resolve relative paths for the root object, or null if the location is not known.
-     * @param resourceBundle The resources used to localize the root object, or null if the root object was not localized.
+     * @param url            The location used to resolve relative paths for the
+     *                       root object, or null if the location is not known.
+     * @param resourceBundle The resources used to localize the root object, or null
+     *                       if the root object was not localized.
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -128,8 +131,8 @@ public class LoginController implements Initializable {
         initializePasswordField();
         setButtonActions();
     }
-  
-     /**
+
+    /**
      * Sets up the actions for various buttons in the login form.
      */
     private void setButtonActions() {
@@ -151,16 +154,19 @@ public class LoginController implements Initializable {
     }
 
     /**
-     * Initializes the account type selector with available account types and sets up listeners.
+     * Initializes the account type selector with available account types and sets
+     * up listeners.
      */
     public void acc_selector_init() {
         acc_selector.setItems(FXCollections.observableArrayList(AccountType.CLIENT, AccountType.ADMIN));
         acc_selector.setValue(Model.getInstance().getViewFactory().getLoginAccountType());
+        setAcc_selector();
         acc_selector.valueProperty().addListener(observable -> setAcc_selector());
     }
 
     /**
-     * Initializes the prompt texts and focus listeners for the username and password fields.
+     * Initializes the prompt texts and focus listeners for the username and
+     * password fields.
      */
     public void username_password_promptext_init() {
         setPromptText();
@@ -177,7 +183,8 @@ public class LoginController implements Initializable {
     }
 
     /**
-     * Adds focus listeners to input fields to handle UI styling based on focus state.
+     * Adds focus listeners to input fields to handle UI styling based on focus
+     * state.
      */
     private void addFocusListeners() {
         addTextFieldFocusListener(usernameField, hbox_0);
@@ -186,7 +193,8 @@ public class LoginController implements Initializable {
     }
 
     /**
-     * Adds a focus listener to a PasswordField to update the corresponding HBox style based on focus.
+     * Adds a focus listener to a PasswordField to update the corresponding HBox
+     * style based on focus.
      *
      * @param field The PasswordField to add the listener to.
      * @param hbox  The HBox whose style is to be updated.
@@ -196,7 +204,8 @@ public class LoginController implements Initializable {
     }
 
     /**
-     * Adds a focus listener to a TextField to update the corresponding HBox style based on focus.
+     * Adds a focus listener to a TextField to update the corresponding HBox style
+     * based on focus.
      *
      * @param field The TextField to add the listener to.
      * @param hbox  The HBox whose style is to be updated.
@@ -275,7 +284,8 @@ public class LoginController implements Initializable {
 
     /**
      * Handles the login action when the login button is pressed.
-     * Validates the user credentials and navigates to the appropriate window based on account type.
+     * Validates the user credentials and navigates to the appropriate window based
+     * on account type.
      */
     @FXML
     private void onLogin() {
@@ -351,7 +361,8 @@ public class LoginController implements Initializable {
     }
 
     /**
-     * Handles the action of creating a new account by navigating to the sign-up window.
+     * Handles the action of creating a new account by navigating to the sign-up
+     * window.
      */
     private void onsignUp() {
         stage = (Stage) createnewaccountButton.getScene().getWindow();
@@ -385,7 +396,8 @@ public class LoginController implements Initializable {
     }
 
     /**
-     * Disables all UI components within the specified VBox except for the notification pane.
+     * Disables all UI components within the specified VBox except for the
+     * notification pane.
      *
      * @param root The root VBox whose child components are to be disabled.
      */
@@ -396,7 +408,8 @@ public class LoginController implements Initializable {
                     && ((AnchorPane) node).getId().equals("notificationPane"))) {
                 node.setDisable(true);
             } else if (node instanceof AnchorPane && ((AnchorPane) node).getId().equals("notificationPane")) {
-                // If node is notificationPane, iterate through its children and ensure they are not disabled
+                // If node is notificationPane, iterate through its children and ensure they are
+                // not disabled
                 AnchorPane notificationPane = (AnchorPane) node;
                 for (javafx.scene.Node notificationChild : notificationPane.getChildren()) {
                     notificationChild.setDisable(false); // Ensure components inside notificationPane are not disabled
@@ -417,7 +430,8 @@ public class LoginController implements Initializable {
                     && ((AnchorPane) node).getId().equals("notificationPane"))) {
                 node.setDisable(false);
             } else if (node instanceof AnchorPane && ((AnchorPane) node).getId().equals("notificationPane")) {
-                // If node is notificationPane, iterate through its children and ensure they are enabled
+                // If node is notificationPane, iterate through its children and ensure they are
+                // enabled
                 AnchorPane notificationPane = (AnchorPane) node;
                 for (javafx.scene.Node notificationChild : notificationPane.getChildren()) {
                     notificationChild.setDisable(false); // Ensure components inside notificationPane are enabled
