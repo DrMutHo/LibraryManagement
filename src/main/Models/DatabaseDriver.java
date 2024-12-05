@@ -193,6 +193,7 @@ public class DatabaseDriver {
      * @param copy_id the ID of the book copy whose details are to be retrieved.
      * @return a ResultSet containing the book data for the specified copy ID, or
      *         null if an error occurs.
+     */
     public String getBookTitleByCopyId(int copyId) {
         String title = null;
         String query = "SELECT b.title " +
@@ -355,6 +356,7 @@ public class DatabaseDriver {
      * @return a ResultSet containing the book(s) currently on the wishlist for the
      *         specified client,
      *         or null if an error occurs.
+     */
     public Book getBookByBookId(int bookId) {
         String query = "SELECT * FROM Book WHERE book_id = ?";
 
@@ -1058,6 +1060,7 @@ public class DatabaseDriver {
      * @param clientId the ID of the client who submitted the review.
      * @return the `BookReview` object corresponding to the provided bookId and
      *         clientId, or null if no review exists.
+     */
     public ResultSet getAllBorrowTransactions2() {
         String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status " +
                 "FROM BorrowTransaction ORDER BY borrow_date DESC;";
@@ -1742,6 +1745,7 @@ public class DatabaseDriver {
      * @param copyId   the ID of the book copy being borrowed.
      * @return true if the borrow transaction was successfully created, false
      *         otherwise.
+     */
 
     public void exportClientBorrowTransactionsToExcel(String filePath) {
         try {
