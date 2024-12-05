@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import javafx.animation.ScaleTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -61,38 +62,56 @@ public class HomeController implements Initializable {
      * @param resourceBundle the resources used for localization.
      */
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Get the currently reading book from the model
-        Book readingBook = Model.getInstance().getReadingBook();
+        updateRecommendedBook();
+        Task<Book> task = new Task<>() {
+            @Override
+            protected Book call() throws Exception {
+                // Thực hiện công việc trong nền (background)
+                return Model.getInstance().getReadingBook(); // Lấy thông tin sách đang đọc
+            }
+        };
+        // Lắng nghe khi task hoàn thành để cập nhật UI
+        task.setOnSucceeded(event -> {
+            Book readingBook = task.getValue(); // Lấy kết quả trả về từ Task
+        
+            // Cập nhật tiêu đề và mô tả sách
+            bookTitle.setText(readingBook.getTitle());
+            description.setText(readingBook.getDescription());
 
-        // Set the title and description of the currently reading book
-        bookTitle.setText(readingBook.getTitle());
-        description.setText(readingBook.getDescription());
+            // Đặt hình ảnh của sách
+            rec.setArcWidth(20);
+            rec.setArcHeight(20);
+            ImagePattern pattern = new ImagePattern(new Image(readingBook.getImagePath()));
+            rec.setFill(pattern);
+            rec.setStroke(Color.TRANSPARENT);
 
-        // Set the appearance of the book's image rectangle
-        rec.setArcWidth(20);
-        rec.setArcHeight(20);
-        System.out.println(readingBook.getImagePath());
-        ImagePattern pattern = new ImagePattern(new Image(readingBook.getImagePath()));
-        rec.setFill(pattern);
-        rec.setStroke(Color.TRANSPARENT);
-
-        // Populate the genre combo box with a list of possible genres
-        ObservableList<String> genres = FXCollections.observableArrayList(
-                "All", "Fiction", "Dystopian", "Romance", "Adventure", "Historical", "Fantasy", "Philosophical", "Epic",
-                "Modernist", "Gothic", "Magic Realism", "Existential", "Literature", "War", "Science Fiction");
-        genreComboBox.setItems(genres);
-
-        // Set the default value of the combo box to "All"
-        genreComboBox.setValue("All");
-
-        // Update the highest rated books based on the default genre "All"
-        updateHighestRatedBooks("All");
-
-        // Add a listener to update the highest rated books when the genre selection
-        // changes
-        genreComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateHighestRatedBooks(newValue);
+            // Cập nhật danh sách thể loại vào ComboBox
+            ObservableList<String> genres = FXCollections.observableArrayList(
+                    "All", "Fiction", "Dystopian", "Romance", "Adventure", "Historical", "Fantasy", "Philosophical", "Epic",
+                    "Modernist", "Gothic", "Magic Realism", "Existential", "Literature", "War", "Science Fiction");
+            genreComboBox.setItems(genres);
+        
+            // Đặt giá trị mặc định cho ComboBox
+            genreComboBox.setValue("All");
+            // Cập nhật danh sách sách được đánh giá cao nhất dựa trên thể loại mặc định "All"
+            updateHighestRatedBooks("All");
+        
+            // Thêm listener để cập nhật khi người dùng thay đổi thể loại
+            genreComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                updateHighestRatedBooks(newValue);
+            });
         });
+        
+        // Lắng nghe lỗi nếu Task gặp vấn đề
+        task.setOnFailed(event -> {
+            Throwable exception = task.getException();
+            System.err.println("Đã xảy ra lỗi khi tải dữ liệu sách: " + exception.getMessage());
+        });
+        
+        // Chạy Task trên một Thread riêng
+        Thread thread = new Thread(task);
+        thread.setDaemon(true); // Đặt thread là daemon để tự động dừng khi ứng dụng đóng
+        thread.start();
     }
 
     /**
@@ -134,6 +153,13 @@ public class HomeController implements Initializable {
         }
     }
 
+    /**
+     * Adds a book to the recommended books list.
+     * This method creates a book card and displays it in the user interface.
+     * When the user clicks on the card, the book details will be shown.
+     *
+     * @param book The Book object to be added to the recommended list.
+     */
     private void addBookToRecommended(Book book) {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -250,21 +276,50 @@ public class HomeController implements Initializable {
     private void updateHighestRatedBooks(String genre) {
         // Clear the current list of highest-rated books
         highestRatedBooks.getChildren().clear();
-        Recommended.getChildren().clear();
 
         // Set the highest-rated books in the model based on the selected genre
-        Model.getInstance().setHighestRatedBooks(genre);
+        Task<Void> task = new Task<Void>() {
+            protected Void call() throws Exception {
+                Model.getInstance().setHighestRatedBooks(genre);
+                return null;
+            }
+        };
 
-        BookRecommendation bookRecommendation = new BookRecommendation();
-        List<Book> dak = bookRecommendation.Recommendation();
+        task.setOnSucceeded(event -> { 
+            for (Book book : Model.getInstance().getHighestRatedBook()) {
+                addBookToHighestRatedBooks(book);
+            }
+        });
+        new Thread(task).start();
 
-        for (Book book : Model.getInstance().getHighestRatedBook()) {
-            addBookToHighestRatedBooks(book);
-        }
-
-        for (Book book : dak) {
-            addBookToRecommended(book);
-        }
     }
 
+    /**
+     * Updates the recommended books list by clearing the current list
+     * and loading a new set of book recommendations.
+     * This method creates a background task to fetch the recommended books
+     * and updates the UI once the task is complete.
+     */
+    private void updateRecommendedBook() {
+        Recommended.getChildren().clear();
+        BookRecommendation bookRecommendation = new BookRecommendation();
+        Task<List<Book>> recommendationTask = new Task<>() {
+            @Override
+            protected List<Book> call() throws Exception {
+                // Thực hiện công việc nặng ở đây
+                return bookRecommendation.Recommendation();
+            }
+        };
+
+        // Xử lý khi Task thành công
+        recommendationTask.setOnSucceeded(event -> {
+            List<Book> dak = recommendationTask.getValue();
+            // Cập nhật UI hoặc xử lý dữ liệu tại đây
+            // Ví dụ: cập nhật TableView, ListView, v.v.
+            for (Book book : dak) {
+                addBookToRecommended(book);
+            }
+        });
+        new Thread(recommendationTask).start();
+    }
 }

@@ -6,5 +6,6 @@ public enum ClientMenuOptions {
     PROFILE,
     BROWSING,
     NOTIFICATION,
-    BORROWTRANSACTION
+    BORROWTRANSACTION,
+    LOGOUT
 }

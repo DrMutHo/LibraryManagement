@@ -64,6 +64,19 @@ public class ViewFactory {
         changePasswordView = null;
         editProfileView = null;
         deleteAccountView = null;
+        adminDashboardView = null;
+        adminProfileView = null;
+        adminBookBrowsingView = null;
+        adminClientsBrowsingView = null;
+        adminNotiView = null;
+        adminBookTransactionView = null;
+    }
+
+    public void reset() {
+        resetAllPanes();
+        clientSelectedMenuItem.set(ClientMenuOptions.LOGOUT);
+        profileSelectedMenuItem.set(ProfileMenuOptions.LOGOUT);
+        adminSelectedMenuItem.set(AdminMenuOptions.LOGOUT);
     }
 
     public void reset() {

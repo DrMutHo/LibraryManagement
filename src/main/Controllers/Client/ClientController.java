@@ -13,7 +13,8 @@ import javafx.scene.layout.BorderPane;
 
 /**
  * Controller for managing the main client view, which includes navigating
- * between different sections of the application such as Home, Profile, Browsing,
+ * between different sections of the application such as Home, Profile,
+ * Browsing,
  * Notifications, Borrow Transactions, and Book Details.
  */
 public class ClientController implements Initializable {
@@ -25,12 +26,14 @@ public class ClientController implements Initializable {
     private Book selectedBook;
 
     /**
-     * Initializes the client controller. Sets up listeners for client menu selection
+     * Initializes the client controller. Sets up listeners for client menu
+     * selection
      * and book selection events.
      * 
      * This method is called when the FXML view is loaded.
      * 
-     * @param url The location used to resolve relative paths for the root object.
+     * @param url            The location used to resolve relative paths for the
+     *                       root object.
      * @param resourceBundle The resources used to localize the view.
      */
     @Override
@@ -40,24 +43,28 @@ public class ClientController implements Initializable {
         // Listener for menu item selection changes
         Model.getInstance().getViewFactory().getClientSelectedMenuItem()
                 .addListener((observableValue, oldVal, newVal) -> {
-                    switch (newVal) {
-                        case HOME ->
-                            client_parent.setCenter(Model.getInstance().getViewFactory().getHomeView());
-                        case PROFILE ->
-                            client_parent.setCenter(Model.getInstance().getViewFactory().getProfileView());
-                        case BROWSING -> {
-                            if (isInBookDetails) {
-                                client_parent.setCenter(
-                                        Model.getInstance().getViewFactory().getBookDetailsView(selectedBook));
-                            } else {
-                                client_parent.setCenter(Model.getInstance().getViewFactory().getBrowsingView());
+                    if (newVal != null) { // Kiểm tra newVal có phải là null không
+                        switch (newVal) {
+                            case HOME -> client_parent.setCenter(Model.getInstance().getViewFactory().getHomeView());
+                            case PROFILE ->
+                                client_parent.setCenter(Model.getInstance().getViewFactory().getProfileView());
+                            case BROWSING -> {
+                                if (isInBookDetails && selectedBook != null) {
+                                    client_parent.setCenter(
+                                            Model.getInstance().getViewFactory().getBookDetailsView(selectedBook));
+                                } else {
+                                    client_parent.setCenter(Model.getInstance().getViewFactory().getBrowsingView());
+                                }
                             }
+                            case NOTIFICATION ->
+                                client_parent.setCenter(Model.getInstance().getViewFactory().getNotiView());
+                            case BORROWTRANSACTION -> client_parent
+                                    .setCenter(Model.getInstance().getViewFactory().getBorrowTransactionView());
+                            default -> client_parent.setCenter(Model.getInstance().getViewFactory().getDashboardView());
                         }
-                        case NOTIFICATION ->
-                            client_parent.setCenter(Model.getInstance().getViewFactory().getNotiView());
-                        case BORROWTRANSACTION ->
-                            client_parent.setCenter(Model.getInstance().getViewFactory().getBorrowTransactionView());
-                        default -> client_parent.setCenter(Model.getInstance().getViewFactory().getDashboardView());
+                    } else {
+                        // Nếu newVal là null, bạn có thể xử lý tình huống này ở đây
+                        System.out.println("newVal is null, default action taken.");
                     }
                 });
 
@@ -105,39 +112,3 @@ public class ClientController implements Initializable {
         client_parent.setCenter(Model.getInstance().getViewFactory().getHomeView());
     }
 }
-
-
-// package main.Controllers.Admin;
-
-// import main.Models.Model;
-// import java.net.URL;
-// import java.util.ResourceBundle;
-
-// import javafx.fxml.Initializable;
-// import javafx.scene.layout.BorderPane;
-
-// public class AdminController implements Initializable {
-
-//     public BorderPane admin_parent;
-
-//     @Override
-//     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-//         Model.getInstance().getViewFactory().getAdminSelectedMenuItem()
-//                 .addListener((observableValue, oldVal, newVal) -> {
-//                     switch (newVal) {
-//                         case HOME ->
-//                             admin_parent.setCenter(Model.getInstance().getViewFactory().getHomeView());
-//                         case PROFILE ->
-//                             admin_parent.setCenter(Model.getInstance().getViewFactory().getProfileView());
-//                         case BROWSING ->
-//                             admin_parent.setCenter(Model.getInstance().getViewFactory().getBrowsingView());
-//                         case NOTIFICATION ->
-//                             admin_parent.setCenter(Model.getInstance().getViewFactory().getNotiView());
-//                         case BOOKTRANSACTION ->
-//                             admin_parent.setCenter(Model.getInstance().getViewFactory().getBookTransactionView());
-//                         default -> admin_parent.setCenter(Model.getInstance().getViewFactory().getDashboardView());
-//                     }
-//                 });
-//     }
-// }
