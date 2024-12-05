@@ -94,7 +94,7 @@ public class DatabaseDriver {
             config.setJdbcUrl(url);
             config.setUsername(username);
             config.setPassword(password);
-            config.setMaximumPoolSize(151); // Maximum connections in the pool
+            config.setMaximumPoolSize(3000); // Maximum connections in the pool
             config.setConnectionTimeout(60000); // Connection timeout (60 seconds)
             config.setIdleTimeout(600000); // Idle connection timeout (10 minutes)
             config.setMaxLifetime(1800000); // Maximum connection lifetime (30 minutes)
@@ -468,7 +468,29 @@ public class DatabaseDriver {
         ResultSet resultSet = null;
         String query = "SELECT * FROM Book " +
                 "ORDER BY average_rating DESC " +
-                "LIMIT 6";
+                "LIMIT 10";
+        try {
+            Connection connection = this.dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * Retrieves the top-rated books based on their average rating.
+     *
+     * @return a {@link ResultSet} containing details of the highest-rated books,
+     *         or {@code null} if an error occurs
+     */
+    public ResultSet getTop1HighestRatingBooks() {
+        ResultSet resultSet = null;
+        String query = "SELECT * FROM Book " +
+                "ORDER BY average_rating DESC " +
+                "LIMIT 1";
         try {
             Connection connection = this.dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -2005,8 +2027,8 @@ public class DatabaseDriver {
      * @return {@code true} nếu xử lý thành công, {@code false} nếu có lỗi xảy ra.
      */
     public boolean processBookReturn(int transactionId) {
-        String updateTransaction = "UPDATE BorrowTransaction SET status = 'Returned', return_date = ? WHERE transaction_id = ?";
-        String getCopyIdQuery = "SELECT copy_id, book_id FROM BorrowTransaction WHERE transaction_id = ?";
+        String updateTransaction = "UPDATE BorrowTransaction SET status = 'Done', return_date = ? WHERE transaction_id = ?";
+        String getCopyIdQuery = "SELECT copy_id FROM BorrowTransaction WHERE transaction_id = ?";
 
         try (Connection conn = dataSource.getConnection()) {
             conn.setAutoCommit(false);
@@ -2018,12 +2040,12 @@ public class DatabaseDriver {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     copyId = rs.getInt("copy_id");
-                    bookId = rs.getInt("book_id");
                 } else {
                     conn.rollback();
                     return false;
                 }
             }
+            bookId = getBookIdByCopyId(copyId);
 
             try (PreparedStatement stmt = conn.prepareStatement(updateTransaction)) {
                 stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
@@ -2040,6 +2062,9 @@ public class DatabaseDriver {
                 conn.rollback();
                 return false;
             }
+            Book currentBook = getBookByBookId(bookId);
+            currentBook
+                    .setQuantity(Model.getInstance().getDatabaseDriver().countBookCopies(currentBook.getBook_id()));
 
             List<NotificationRequest> requests = getNotificationRequestsForBook(bookId);
             String bookTitle = getBookTitleById(bookId);

@@ -1,9 +1,6 @@
 package main.Controllers.Admin;
 
 import java.io.File;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import java.awt.Checkbox;
 import javafx.beans.property.BooleanProperty;
@@ -19,28 +16,22 @@ import javafx.fxml.FXML;
 import javafx.stage.DirectoryChooser;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import main.Models.BorrowTransaction;
 import main.Models.Model;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.util.Callback;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
  * Controller class for managing borrow transactions in the admin panel.
- * Handles displaying and searching, and processing the return of borrowed
- * books.
+ * Handles displaying, searching, and processing the return of borrowed books.
  */
-public class AminBorrowTransactionController implements Initializable {
+public class AdminBorrowTransactionController implements Initializable {
 
     /** TextField for entering search queries */
     @FXML
@@ -155,61 +146,17 @@ public class AminBorrowTransactionController implements Initializable {
      */
     @FXML
     private void onReturnButtonClick() {
-        int processedCount = 0;
-        List<Integer> failedTransactions = new ArrayList<>();
 
         for (BorrowTransaction transaction : sortedData) {
+
             if (transaction.getSelected().isSelected()) {
                 if (transaction.getStatus().equals("Processing")) {
                     transaction.setStatus("Done");
                     transaction.setReturnDate(LocalDate.now());
-
-                    boolean success = Model.getInstance()
-                            .getDatabaseDriver()
+                    Model.getInstance().getDatabaseDriver()
                             .processBookReturn(transaction.getTransactionId());
-
-                    if (success) {
-                        processedCount++;
-                    } else {
-                        failedTransactions.add(transaction.getTransactionId());
-                    }
                 }
             }
-        }
-
-        bookTable.refresh();
-
-        // Prepare alert content based on the results
-        if (processedCount > 0 || !failedTransactions.isEmpty()) {
-            StringBuilder alertContent = new StringBuilder();
-
-            if (processedCount > 0) {
-                alertContent.append(processedCount)
-                        .append(processedCount == 1 ? " book has " : " books have ")
-                        .append("been returned successfully.\n");
-            }
-
-            if (!failedTransactions.isEmpty()) {
-                alertContent.append("Failed to return the following transaction ID(s): ")
-                        .append(failedTransactions)
-                        .append(".");
-            }
-
-            notifyReturnBookCreated();
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Return Books");
-            alert.setHeaderText(null);
-            alert.setContentText(alertContent.toString());
-            alert.showAndWait();
-
-        } else {
-            // No transactions were processed
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Return Books");
-            alert.setHeaderText(null);
-            alert.setContentText("No books were selected for return or no transactions are in 'Processing' status.");
-
-            alert.showAndWait();
         }
     }
 
@@ -249,9 +196,5 @@ public class AminBorrowTransactionController implements Initializable {
         } else {
             System.out.println("No directory selected.");
         }
-    }
-
-    public void notifyReturnBookCreated() {
-        Model.getInstance().notifyBookReturnProcessedEvent();
     }
 }

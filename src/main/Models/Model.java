@@ -35,6 +35,7 @@ import javafx.collections.ObservableList;
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 import main.Views.ViewFactory;
+import main.Views.ClientMenuOptions;
 
 /**
  * Represents the central model of the library system, managing the data and
@@ -47,7 +48,7 @@ import main.Views.ViewFactory;
  */
 public class Model {
     private static Model model;
-    private ViewFactory viewFactory;
+    private final ViewFactory viewFactory;
     private boolean clientLoginSuccessFlag;
     private boolean adminLoginSuccessFlag;
     private final DatabaseDriver databaseDriver;
@@ -61,9 +62,9 @@ public class Model {
     private final List<ModelListenerAdmin> listenersAdmin;
     private ClientController clientController;
     private ObjectProperty<Book> selectedBook;
+    private ClientMenuOptions prvMenu;
     private final Client client;
     private final Admin admin;
-
     private GoogleBooksAPI BookAddSearch;
 
     /**
@@ -84,7 +85,7 @@ public class Model {
         this.recentlyAddBook = FXCollections.observableArrayList();
         selectedBook = new SimpleObjectProperty<>(null);
         this.BorrowTransactions = FXCollections.observableArrayList();
-
+        this.prvMenu = null;
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "", "");
         this.admin = new Admin(0, "", "", "");
     }
@@ -102,8 +103,9 @@ public class Model {
         this.recentlyAddBook.clear();
         this.listenersClient.clear();
         this.listenersAdmin.clear();
-        this.selectedBook.set(null);
-        this.viewFactory = new ViewFactory();
+        this.selectedBook = new SimpleObjectProperty<>(null);
+        this.viewFactory.reset();
+        this.prvMenu = null;
     }
 
     /**
@@ -225,6 +227,14 @@ public class Model {
      */
     public Client getClient() {
         return client;
+    }
+
+    public ClientMenuOptions getPrevMenu() {
+        return prvMenu;
+    }
+
+    public void setPrevMenu(ClientMenuOptions menu) {
+        this.prvMenu = menu;
     }
 
     /**
@@ -605,13 +615,25 @@ public class Model {
      *         empty {@link Book} object is returned.
      */
     public Book getReadingBook() {
-        ResultSet resultSet = databaseDriver.get1BookDataByCopyID(Model.getInstance().getClient().getClientId());
-        Book res = new Book();
-        if (resultSet == null) {
-            resultSet = databaseDriver.getHighestRatingBooks();
-        }
+        // Khởi tạo đối tượng Book rỗng
+        Book res = null;
+
         try {
-            while (resultSet.next()) {
+            // Cố gắng lấy sách mà khách hàng đang đọc
+            ResultSet resultSet = databaseDriver.getReadingBook(Model.getInstance().getClient().getClientId());
+
+            // Nếu không có sách đang đọc, lấy sách đánh giá cao nhất
+            if (resultSet == null || !resultSet.isBeforeFirst()) { // Kiểm tra nếu ResultSet trống
+                resultSet = databaseDriver.getTop1HighestRatingBooks();
+
+                // Nếu vẫn không có sách nào, trả về null
+                if (resultSet == null || !resultSet.isBeforeFirst()) {
+                    return null;
+                }
+            }
+
+            // Lấy dữ liệu từ ResultSet
+            if (resultSet.next()) {
                 int book_id = resultSet.getInt("book_id");
                 String title = resultSet.getString("title");
                 String author = resultSet.getString("author");
@@ -624,16 +646,19 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
+                // Đếm số bản sao có sẵn của sách
                 int quantity = databaseDriver.countBookCopies(book_id);
 
-                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
+                // Tạo đối tượng Book và gán vào res
+                res = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count, quantity);
-                res = book;
-
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+            // Bạn có thể xử lý thêm ở đây, ví dụ: ghi log hoặc thông báo lỗi
         }
+
+        // Trả về đối tượng Book hoặc null nếu không tìm thấy
         return res;
     }
 
@@ -760,7 +785,7 @@ public class Model {
                 this.client.setRegistrationDate(resultSet.getDate("registration_date"));
                 this.client.setOutstandingFees(resultSet.getDouble("outstanding_fees"));
                 this.client.setUsername(resultSet.getString("username"));
-                this.client.setPasswordHash(resultSet.getString("password_hash"));
+                this.client.setPassword_hash(resultSet.getString("password_hash"));
                 this.client.setAvatarImagePath(resultSet.getString("avatar_image_path"));
                 this.clientLoginSuccessFlag = true;
             }
@@ -950,8 +975,6 @@ public class Model {
         /**
          * Called when a borrow transaction is created by an admin.
          */
-        void onBorrowTransactionAdminCreated();
-
         /**
          * Called when a book return is processed by an admin.
          */
@@ -980,19 +1003,11 @@ public class Model {
      * Notifies all registered admin listeners that a borrow transaction has been
      * created.
      */
-    public void notifyBorrowTransactionAdminCreated() {
-        for (ModelListenerAdmin listener : listenersAdmin) {
-            listener.onBorrowTransactionAdminCreated();
-        }
-    }
 
     /**
      * Notifies all registered admin listeners that a borrow transaction event has
      * occurred.
      */
-    public void notifyBorrowTransactionAdminCreatedEvent() {
-        notifyBorrowTransactionAdminCreated();
-    }
 
     public void notifyAddBookEvent() {
         notifyAddBook();

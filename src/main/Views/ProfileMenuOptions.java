@@ -4,5 +4,6 @@ public enum ProfileMenuOptions {
     PROFILEDETAIL,
     EDITPROFILE,
     CHANGEPASSWORD,
-    DELETEACCOUNT
+    DELETEACCOUNT,
+    LOGOUT
 }

@@ -26,38 +26,66 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import javafx.scene.text.Text;
 
-public class AdminDashboardController implements Initializable {
+/**
+ * Controller class for the Admin Dashboard.
+ * Handles the initialization and functionality of the admin dashboard view,
+ * including displaying statistics and charts.
+ */
+public class AdminDashboardController implements Initializable, Model.ModelListenerAdmin {
 
+    /** Label for displaying the header subtitle */
     @FXML
     private Label headerSubtitle;
 
+    /** Label for displaying total number of books */
     @FXML
     private Label Books;
 
+    /** Label for displaying total number of clients */
     @FXML
     private Label Clients;
 
+    /** Label for displaying total number of borrowed books */
     @FXML
     private Label BorrowedBooks;
 
+    /** Label for displaying total number of employees */
     @FXML
     private Label Employee;
 
     // @FXML
     // private ListView<String> recentActivityList;
 
+    /** LineChart for displaying borrowing trends */
     @FXML
-    private LineChart<String, Number> borrowingTrendsLineChart, totalFeesLineChart;
+    private LineChart<String, Number> borrowingTrendsLineChart;
+
+    /** LineChart for displaying total fees over time */
+    @FXML
+    private LineChart<String, Number> totalFeesLineChart;
 
     // @FXML
     // private BarChart<String, Number> borrowingTrendsBarChart;
 
+    /** The admin user currently logged in */
     private Admin admin;
 
+    /**
+     * Initializes the controller after its root element has been completely
+     * processed.
+     * Sets up labels and loads charts data.
+     *
+     * @param location  The location used to resolve relative paths for the root
+     *                  object
+     * @param resources The resources used to localize the root object
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         admin = Model.getInstance().getAdmin();
+        initializeBookTable();
+    }
 
+    public void initializeBookTable() {
         headerSubtitle.setText("Welcome, " + admin.getUsername() + "!");
 
         int books = Model.getInstance().getDatabaseDriver().getTotalNumberOfBooks();
@@ -77,6 +105,24 @@ public class AdminDashboardController implements Initializable {
         loadTotalFeesOverTime();
     }
 
+    @Override
+    public void onBookReturnProcessed() {
+        initializeBookTable();
+    }
+
+    /**
+     * Callback method when a book is added.
+     * Refreshes the book table.
+     */
+    @Override
+    public void onAddBook() {
+        initializeBookTable();
+    }
+
+    /**
+     * Loads the borrowing trends data into the borrowingTrendsLineChart.
+     * Fetches monthly borrowing trends from the database and populates the chart.
+     */
     private void loadBorrowingTrends() {
         Map<String, Integer> monthlyTrends = Model.getInstance().getDatabaseDriver()
                 .getMonthlyBorrowingTrendsForAllUsers();
@@ -91,6 +137,10 @@ public class AdminDashboardController implements Initializable {
         borrowingTrendsLineChart.getData().add(lineSeries);
     }
 
+    /**
+     * Loads the total fees over time data into the totalFeesLineChart.
+     * Fetches total fees data from the database and populates the chart.
+     */
     private void loadTotalFeesOverTime() {
         Map<String, Double> totalFeesOverTime = Model.getInstance().getDatabaseDriver()
                 .getTotalFeesOverTimeForAllClients();
@@ -105,6 +155,11 @@ public class AdminDashboardController implements Initializable {
         totalFeesLineChart.getData().add(lineSeries);
     }
 
+    // /**
+    // * Loads the genre trends data into the borrowingTrendsBarChart.
+    // * Fetches borrowing trends by category from the database and populates the
+    // chart.
+    // */
     // private void loadGenreTrends() {
     // Map<String, Integer> genreTrends = Model.getInstance().getDatabaseDriver()
     // .getBorrowingTrendsByCategoryForAllUsers();
@@ -120,6 +175,10 @@ public class AdminDashboardController implements Initializable {
     // borrowingTrendsBarChart.getData().add(barSeries);
     // }
 
+    // /**
+    // * Loads recent activities into the recentActivityList.
+    // * Fetches recent activities from the database and populates the list.
+    // */
     // private void loadRecentActivities() {
     // List<String> recentActivities = Model.getInstance().getDatabaseDriver()
     // .getClientRecentActivities(client.getClientId(), 10);

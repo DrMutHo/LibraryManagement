@@ -35,7 +35,7 @@ public class ClientTest {
         assertNotNull(client.getRegistrationDate());
         assertEquals(0.0, client.getOutstandingFees());
         assertEquals("john_doe", client.getUsername());
-        assertEquals("hashedPassword", client.getPasswordHash());
+        assertEquals("hashedPassword", client.getPassword_hash());
         assertEquals("avatar.png", client.getAvatarImagePath());
     }
 
@@ -48,7 +48,7 @@ public class ClientTest {
         client.setAddress("456 Secondary St");
         client.setOutstandingFees(10.5);
         client.setUsername("jane_smith");
-        client.setPasswordHash("newHashedPassword");
+        client.setPassword_hash("newHashedPassword");
         client.setAvatarImagePath("newAvatar.png");
 
         // Check that the values have been updated
@@ -58,7 +58,7 @@ public class ClientTest {
         assertEquals("456 Secondary St", client.getAddress());
         assertEquals(10.5, client.getOutstandingFees());
         assertEquals("jane_smith", client.getUsername());
-        assertEquals("newHashedPassword", client.getPasswordHash());
+        assertEquals("newHashedPassword", client.getPassword_hash());
         assertEquals("newAvatar.png", client.getAvatarImagePath());
     }
 

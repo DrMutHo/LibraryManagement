@@ -43,24 +43,28 @@ public class ClientController implements Initializable {
         // Listener for menu item selection changes
         Model.getInstance().getViewFactory().getClientSelectedMenuItem()
                 .addListener((observableValue, oldVal, newVal) -> {
-                    switch (newVal) {
-                        case HOME ->
-                            client_parent.setCenter(Model.getInstance().getViewFactory().getHomeView());
-                        case PROFILE ->
-                            client_parent.setCenter(Model.getInstance().getViewFactory().getProfileView());
-                        case BROWSING -> {
-                            if (isInBookDetails) {
-                                client_parent.setCenter(
-                                        Model.getInstance().getViewFactory().getBookDetailsView(selectedBook));
-                            } else {
-                                client_parent.setCenter(Model.getInstance().getViewFactory().getBrowsingView());
+                    if (newVal != null) { // Kiểm tra newVal có phải là null không
+                        switch (newVal) {
+                            case HOME -> client_parent.setCenter(Model.getInstance().getViewFactory().getHomeView());
+                            case PROFILE ->
+                                client_parent.setCenter(Model.getInstance().getViewFactory().getProfileView());
+                            case BROWSING -> {
+                                if (isInBookDetails && selectedBook != null) {
+                                    client_parent.setCenter(
+                                            Model.getInstance().getViewFactory().getBookDetailsView(selectedBook));
+                                } else {
+                                    client_parent.setCenter(Model.getInstance().getViewFactory().getBrowsingView());
+                                }
                             }
+                            case NOTIFICATION ->
+                                client_parent.setCenter(Model.getInstance().getViewFactory().getNotiView());
+                            case BORROWTRANSACTION -> client_parent
+                                    .setCenter(Model.getInstance().getViewFactory().getBorrowTransactionView());
+                            default -> client_parent.setCenter(Model.getInstance().getViewFactory().getDashboardView());
                         }
-                        case NOTIFICATION ->
-                            client_parent.setCenter(Model.getInstance().getViewFactory().getNotiView());
-                        case BORROWTRANSACTION ->
-                            client_parent.setCenter(Model.getInstance().getViewFactory().getBorrowTransactionView());
-                        default -> client_parent.setCenter(Model.getInstance().getViewFactory().getDashboardView());
+                    } else {
+                        // Nếu newVal là null, bạn có thể xử lý tình huống này ở đây
+                        System.out.println("newVal is null, default action taken.");
                     }
                 });
 
