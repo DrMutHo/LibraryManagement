@@ -64,6 +64,7 @@ public class BookDetailWithReviewController {
         loadReviews();
         initializeWriteReviewSection();
         checkNotificationRequest();
+        Model.getInstance().setSelectedBook(null);
     }
 
     private void checkNotificationRequest() {
@@ -450,6 +451,15 @@ public class BookDetailWithReviewController {
 
     @FXML
     private void onBackButtonClick() {
-        Model.getInstance().getClientController().goBackToBrowsing();
+        switch (Model.getInstance().getPrevMenu()) {
+            case BORROWTRANSACTION:
+                Model.getInstance().getClientController().goBackToTransaction();
+                break;
+            case HOME:
+                Model.getInstance().getClientController().goBackToHome();
+                break;
+            default:
+                Model.getInstance().getClientController().goBackToBrowsing();
+        }
     }
 }

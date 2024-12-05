@@ -32,6 +32,7 @@ import javafx.util.Duration;
 import main.Models.Book;
 import main.Models.BookRecommendation;
 import main.Models.Model;
+import main.Views.ClientMenuOptions;
 
 public class HomeController implements Initializable {
     @FXML
@@ -255,6 +256,7 @@ public class HomeController implements Initializable {
      */
     private void showBookDetails(Book book) {
         Model.getInstance().setSelectedBook(book);
+        Model.getInstance().setPrevMenu(ClientMenuOptions.HOME);
     }
 
     /**

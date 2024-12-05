@@ -54,7 +54,8 @@ public class ClientMenuController implements Initializable {
      * Initializes the client menu by setting up button listeners and checking
      * for any new notifications to update the notification button icon.
      *
-     * @param url The location used to resolve relative paths for the root object.
+     * @param url            The location used to resolve relative paths for the
+     *                       root object.
      * @param resourceBundle The resources used to localize the view.
      */
     @Override
@@ -65,7 +66,8 @@ public class ClientMenuController implements Initializable {
 
     /**
      * Adds action listeners to all the navigation buttons. It also sets up
-     * listeners for changes in the notification list to update the notification icon.
+     * listeners for changes in the notification list to update the notification
+     * icon.
      */
     private void addListeners() {
         dashboard_btn.setOnAction(event -> onDashboard());
@@ -79,7 +81,8 @@ public class ClientMenuController implements Initializable {
 
         ObservableList<Notification> notifications = Model.getInstance().getAllNotifications();
 
-        // Add listener to check and update notification icon status when notifications are added
+        // Add listener to check and update notification icon status when notifications
+        // are added
         notifications.addListener((javafx.collections.ListChangeListener.Change<? extends Notification> c) -> {
             while (c.next()) {
                 if (c.wasAdded()) {
@@ -101,7 +104,6 @@ public class ClientMenuController implements Initializable {
         }
     }
 
-
     /**
      * Phương thức này được gọi khi người dùng chọn mục "Dashboard" trong menu.
      * Nó cập nhật lựa chọn menu hiện tại của người dùng sang "Dashboard".
@@ -110,7 +112,6 @@ public class ClientMenuController implements Initializable {
         Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.DASHBOARD);
     }
 
-
     /**
      * Phương thức này được gọi khi người dùng chọn mục "Home" trong menu.
      * Nó cập nhật lựa chọn menu hiện tại của người dùng sang "Home".
@@ -118,7 +119,6 @@ public class ClientMenuController implements Initializable {
     private void onHome() {
         Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.HOME);
     }
-
 
     /**
      * Phương thức này được gọi khi người dùng chọn mục "Profile" trong menu.
@@ -144,17 +144,15 @@ public class ClientMenuController implements Initializable {
         Model.getInstance().getViewFactory().getClientSelectedMenuItem().set(ClientMenuOptions.NOTIFICATION);
     }
 
-
     /**
      * Phương thức này được gọi khi người dùng thực hiện đăng xuất.
-     * Nó sẽ đóng cửa sổ hiện tại (dashboard), hiển thị cửa sổ đăng nhập và 
+     * Nó sẽ đóng cửa sổ hiện tại (dashboard), hiển thị cửa sổ đăng nhập và
      * đặt cờ đăng nhập của người dùng thành false.
      */
     @FXML
     private void onLogout() {
         Stage stage = (Stage) dashboard_btn.getScene().getWindow();
         Model.getInstance().getViewFactory().closeStage(stage);
-        Model.getInstance().getViewFactory().resetAllPanes();
         Model.getInstance().reset();
         Model.getInstance().getViewFactory().showLoginWindow();
         Model.getInstance().setClientLoginSuccessFlag(false);
@@ -162,7 +160,8 @@ public class ClientMenuController implements Initializable {
 
     /**
      * Phương thức này được gọi khi người dùng yêu cầu xem báo cáo lỗi.
-     * Nó sẽ tạo một cửa sổ mới để hiển thị báo cáo lỗi, với giao diện FXML được định nghĩa trong "Report.fxml".
+     * Nó sẽ tạo một cửa sổ mới để hiển thị báo cáo lỗi, với giao diện FXML được
+     * định nghĩa trong "Report.fxml".
      * Cửa sổ này sẽ mở dưới dạng một cửa sổ modal (chặn cửa sổ chính).
      */
     @FXML
@@ -184,11 +183,13 @@ public class ClientMenuController implements Initializable {
         }
     }
 
-
     /**
-     * Phương thức này kiểm tra số lượng thông báo chưa đọc và cập nhật trạng thái của nút thông báo.
-     * Nếu có thông báo chưa đọc, nó sẽ thay đổi biểu tượng và màu sắc của nút thông báo.
-     * Nếu không có thông báo chưa đọc, nó sẽ khôi phục lại biểu tượng và màu sắc mặc định.
+     * Phương thức này kiểm tra số lượng thông báo chưa đọc và cập nhật trạng thái
+     * của nút thông báo.
+     * Nếu có thông báo chưa đọc, nó sẽ thay đổi biểu tượng và màu sắc của nút thông
+     * báo.
+     * Nếu không có thông báo chưa đọc, nó sẽ khôi phục lại biểu tượng và màu sắc
+     * mặc định.
      */
     private void checkAndUpdateNotificationButton() {
         int unreadCount = (Model.getInstance().getViewFactory().getLoginAccountType().equals(AccountType.CLIENT))

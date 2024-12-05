@@ -481,6 +481,28 @@ public class DatabaseDriver {
     }
 
     /**
+     * Retrieves the top-rated books based on their average rating.
+     *
+     * @return a {@link ResultSet} containing details of the highest-rated books,
+     *         or {@code null} if an error occurs
+     */
+    public ResultSet getTop1HighestRatingBooks() {
+        ResultSet resultSet = null;
+        String query = "SELECT * FROM Book " +
+                "ORDER BY average_rating DESC " +
+                "LIMIT 1";
+        try {
+            Connection connection = this.dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultSet;
+    }
+
+    /**
      * Lấy danh sách 10 cuốn sách có đánh giá cao nhất theo thể loại.
      *
      * @param genre Thể loại của sách. Nếu là "TẤT CẢ" hoặc null, sẽ lấy sách từ mọi
@@ -2005,8 +2027,8 @@ public class DatabaseDriver {
      * @return {@code true} nếu xử lý thành công, {@code false} nếu có lỗi xảy ra.
      */
     public boolean processBookReturn(int transactionId) {
-        String updateTransaction = "UPDATE BorrowTransaction SET status = 'Returned', return_date = ? WHERE transaction_id = ?";
-        String getCopyIdQuery = "SELECT copy_id, book_id FROM BorrowTransaction WHERE transaction_id = ?";
+        String updateTransaction = "UPDATE BorrowTransaction SET status = 'Done', return_date = ? WHERE transaction_id = ?";
+        String getCopyIdQuery = "SELECT copy_id FROM BorrowTransaction WHERE transaction_id = ?";
 
         try (Connection conn = dataSource.getConnection()) {
             conn.setAutoCommit(false);
@@ -2018,12 +2040,12 @@ public class DatabaseDriver {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     copyId = rs.getInt("copy_id");
-                    bookId = rs.getInt("book_id");
                 } else {
                     conn.rollback();
                     return false;
                 }
             }
+            bookId = getBookIdByCopyId(copyId);
 
             try (PreparedStatement stmt = conn.prepareStatement(updateTransaction)) {
                 stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
@@ -2040,6 +2062,9 @@ public class DatabaseDriver {
                 conn.rollback();
                 return false;
             }
+            Book currentBook = getBookByBookId(bookId);
+            currentBook
+                    .setQuantity(Model.getInstance().getDatabaseDriver().countBookCopies(currentBook.getBook_id()));
 
             List<NotificationRequest> requests = getNotificationRequestsForBook(bookId);
             String bookTitle = getBookTitleById(bookId);

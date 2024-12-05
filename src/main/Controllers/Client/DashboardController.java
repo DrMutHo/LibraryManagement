@@ -96,6 +96,9 @@ public class DashboardController implements Initializable, Model.ModelListenerCl
      */
     @Override
     public void onBorrowTransactionClientCreated() {
+        borrowingTrendsLineChart.getData().clear();
+        borrowingTrendsBarChart.getData().clear();
+        topBooksContainer.getChildren().clear();
         refreshBorrowedBooksInfo();
         loadBorrowingTrends();
         loadGenreTrends();
@@ -129,10 +132,9 @@ public class DashboardController implements Initializable, Model.ModelListenerCl
         fee.setText(String.format("$%.2f", client.getOutstandingFees()));
     }
 
-
     /**
      * Loads and displays the top books for the client on the dashboard.
-     * Fetches the top 5 books from the database, parses the data, 
+     * Fetches the top 5 books from the database, parses the data,
      * and creates a visual card for each book to be displayed.
      */
     private void loadTopBooks() {
@@ -154,8 +156,8 @@ public class DashboardController implements Initializable, Model.ModelListenerCl
 
             // Parse the book's data from the fields.
             int bookId = Integer.parseInt(fields[0]); // Book ID
-            String author = fields[1];                // Author's name
-            String imagePath = fields[2];             // Path to the book's image
+            String author = fields[1]; // Author's name
+            String imagePath = fields[2]; // Path to the book's image
             double clientRating = Double.parseDouble(fields[3]); // Client's rating for the book
 
             // Create a card UI component for the book.
@@ -166,14 +168,15 @@ public class DashboardController implements Initializable, Model.ModelListenerCl
         }
     }
 
-
     /**
-     * Creates a UI card for displaying book information, including the author's name, 
+     * Creates a UI card for displaying book information, including the author's
+     * name,
      * book image, and client rating.
-     * The card is displayed as a `VBox` containing an image, author label, and rating.
+     * The card is displayed as a `VBox` containing an image, author label, and
+     * rating.
      * 
-     * @param author     the author of the book
-     * @param imagePath  the path to the book's image
+     * @param author       the author of the book
+     * @param imagePath    the path to the book's image
      * @param clientRating the rating provided by the client for the book
      * @return a `VBox` containing the book card UI components
      */
@@ -259,7 +262,6 @@ public class DashboardController implements Initializable, Model.ModelListenerCl
         return vbox;
     }
 
-
     /**
      * Loads and displays the borrowing trends for the client on the line chart.
      * Fetches monthly borrowing data for the client and populates the line chart
@@ -283,10 +285,10 @@ public class DashboardController implements Initializable, Model.ModelListenerCl
         borrowingTrendsLineChart.getData().add(lineSeries);
     }
 
-
     /**
-     * Loads and displays the borrowing trends by genre for the client on the bar chart.
-     * Fetches borrowing data categorized by genre from the database and populates 
+     * Loads and displays the borrowing trends by genre for the client on the bar
+     * chart.
+     * Fetches borrowing data categorized by genre from the database and populates
      * the bar chart to visually represent the trends for each genre.
      */
     private void loadGenreTrends() {
@@ -306,7 +308,6 @@ public class DashboardController implements Initializable, Model.ModelListenerCl
         // Add the series to the bar chart to display the genre trends.
         borrowingTrendsBarChart.getData().add(barSeries);
     }
-
 
     // private void loadRecentActivities() {
     // List<String> recentActivities = Model.getInstance().getDatabaseDriver()

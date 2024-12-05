@@ -1,5 +1,6 @@
 package main.Controllers.Admin;
 
+import javafx.scene.Parent;
 import java.awt.Button;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
@@ -24,55 +25,98 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller class for browsing books in the admin panel.
+ * Manages the display and interaction with the list of books, including
+ * searching, editing, and adding books.
+ */
 public class BookBrowsingController implements Initializable, Model.ModelListenerAdmin {
 
+    /** TextField for entering search queries */
     @FXML
     private TextField searchField;
+
+    /** TableView to display list of books */
     @FXML
     private TableView<Book> bookTable;
+
+    /** TableColumns for book attributes */
     @FXML
     private TableColumn<Book, String> colTitle, colAuthor, colGenre;
     @FXML
     private TableColumn<Book, Integer> colYear, colQuantity;
     @FXML
     private TableColumn<Book, Double> colRating;
+
+    /** ImageView to displays the selected book's image */
     @FXML
     private ImageView bookImageView;
+
+    /** Labels to display selected book's details */
     @FXML
     private Label labelTitle, labelAuthor, labelISBN, labelGenre, labelLanguage, labelPublicationYear,
             labelAverageRating, labelReviewCount;
+
+    /** TextArea to display selected book's description */
     @FXML
     private TextArea textDescription;
+
+    /** HBox to display rating stars */
     @FXML
     private HBox ratingStars;
 
+    /** The currently selected book */
     private Book selectedBook;
 
+    /** FilteredList for searching books */
     private FilteredList<Book> filteredData;
+
+    /** SortedList for sorting books */
     private SortedList<Book> sortedData;
 
+    /** Button to add a new book */
     private Button addBookButton;
 
+    /**
+     * Initializes the controller after its root element has been completely
+     * processed.
+     *
+     * @param url            The location used to resolve relative paths for the
+     *                       root object
+     * @param resourceBundle The resources used to localize the root object
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeBookTable();
     }
 
-    @Override
-    public void onBorrowTransactionAdminCreated() {
-        initializeBookTable();
-    }
+    /**
+     * Callback method when a borrow transaction is created.
+     * Refreshes the book table.
+     */
 
+    /**
+     * Callback method when a book return is processed.
+     * Refreshes the book table.
+     */
     @Override
     public void onBookReturnProcessed() {
         initializeBookTable();
     }
 
+    /**
+     * Callback method when a book is added.
+     * Refreshes the book table.
+     */
     @Override
     public void onAddBook() {
         initializeBookTable();
     }
 
+    /**
+     * Initializes the book table with data and sets up cell factories and
+     * listeners.
+     */
     public void initializeBookTable() {
         Model.getInstance().setAllBook();
         colTitle.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
@@ -121,6 +165,10 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
         bookTable.setOnMouseClicked(this::onBookSelect);
     }
 
+    /**
+     * Initializes the rating stars display based on the selected book's average
+     * rating.
+     */
     private void initializeRatingStars() {
         ratingStars.getChildren().clear();
         for (int i = 1; i <= 5; i++) {
@@ -138,6 +186,12 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
         }
     }
 
+    /**
+     * Calculates the new average rating for a book based on its reviews.
+     *
+     * @param book The book for which to calculate the average rating
+     * @return The new average rating
+     */
     private double calculateNewAverageRating(Book book) {
         int totalReviews = Model.getInstance().getDatabaseDriver().getReviewCount(book.getBook_id());
         double sumRatings = Model.getInstance().getDatabaseDriver().getSumRatings(book.getBook_id());
@@ -146,10 +200,21 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
         return sumRatings / totalReviews;
     }
 
+    /**
+     * Handles the search action.
+     * Currently, search logic is handled by the textProperty listener on
+     * searchField.
+     */
     @FXML
     private void onSearch() {
     }
 
+    /**
+     * Handles the event when a book is selected from the table.
+     * Displays the selected book's details.
+     *
+     * @param event The mouse event triggered by clicking on the table
+     */
     @FXML
     private void onBookSelect(MouseEvent event) {
         if (event.getClickCount() == 1) {
@@ -162,6 +227,10 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
         }
     }
 
+    /**
+     * Opens the edit window for the selected book.
+     * If no book is selected, shows a warning alert.
+     */
     @FXML
     private void openEditWindow() {
         if (selectedBook == null) {
@@ -201,11 +270,16 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
         }
     }
 
+    /**
+     * Display the details of the selected book.
+     *
+     * @param book The book whose details are to be displayed
+     */
     private void displayBookDetails(Book book) {
         labelTitle.textProperty().bind(Bindings.concat("Title: ", book.titleProperty()));
         labelAuthor.textProperty().bind(Bindings.concat("Author: ", book.authorProperty()));
         labelGenre.textProperty().bind(Bindings.concat("Genre: ", book.genreProperty()));
-        textDescription.setText(book.getDescription());
+        textDescription.textProperty().bind(Bindings.concat(book.descriptionProperty()));
 
         if (book.getImagePath() != null && !book.getImagePath().isEmpty()) {
             try {
@@ -220,6 +294,10 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
         }
     }
 
+    /**
+     * Open the detail window for the selected book.
+     * If zero book is selected, shows a warning alert.
+     */
     @FXML
     private void openDetailWindow() {
         if (selectedBook == null) {
@@ -230,8 +308,38 @@ public class BookBrowsingController implements Initializable, Model.ModelListene
             alert.showAndWait();
             return;
         }
-        Model.getInstance().setSelectedBook(selectedBook);
+
+        try {
+            // Load the FXML file
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/resources/Fxml/Admin/BookDetailWithReview.fxml"));
+            Parent root = loader.load();
+
+            // Pass the selectedBook to the controller
+            BookDetailWithReviewController controller = loader.getController();
+            controller.setBook(selectedBook); // Assume this method exists in the controller
+
+            // Create a new Stage for the modal window
+            Stage stage = new Stage();
+            stage.setTitle("Chi Tiết Sách");
+            stage.initModality(Modality.APPLICATION_MODAL); // Set modality to make it a modal window
+            stage.setScene(new Scene(root));
+
+            // Show the modal window
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Lỗi");
+            alert.setHeaderText(null);
+            alert.setContentText("Không thể mở cửa sổ chi tiết sách.");
+            alert.showAndWait();
+        }
     }
+
+    /**
+     * Opens the window to add a new book.
+     */
     @FXML
     private void addBook() {
         try {

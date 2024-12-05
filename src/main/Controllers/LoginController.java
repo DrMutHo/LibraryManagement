@@ -122,7 +122,14 @@ public class LoginController implements Initializable {
         setButtonActions();
     }
 
-    /**
+    public void reset() {
+        acc_selector_init();
+        username_password_promptext_init();
+        initializePasswordField();
+        setButtonActions();
+    }
+  
+     /**
      * Sets up the actions for various buttons in the login form.
      */
     private void setButtonActions() {

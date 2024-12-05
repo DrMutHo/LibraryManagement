@@ -35,6 +35,7 @@ import javafx.collections.ObservableList;
 import main.Views.NotificationType;
 import main.Views.RecipientType;
 import main.Views.ViewFactory;
+import main.Views.ClientMenuOptions;
 
 /**
  * Represents the central model of the library system, managing the data and
@@ -61,6 +62,7 @@ public class Model {
     private final List<ModelListenerAdmin> listenersAdmin;
     private ClientController clientController;
     private ObjectProperty<Book> selectedBook;
+    private ClientMenuOptions prvMenu;
     private final Client client;
     private final Admin admin;
 
@@ -84,6 +86,7 @@ public class Model {
         this.recentlyAddBook = FXCollections.observableArrayList();
         selectedBook = new SimpleObjectProperty<>(null);
         this.BorrowTransactions = FXCollections.observableArrayList();
+        this.prvMenu = null;
 
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "", "");
         this.admin = new Admin(0, "", "", "");
@@ -103,7 +106,8 @@ public class Model {
         this.listenersClient.clear();
         this.listenersAdmin.clear();
         this.selectedBook.set(null);
-        this.viewFactory = new ViewFactory();
+        this.viewFactory.reset();
+        this.prvMenu = null;
     }
 
     /**
@@ -225,6 +229,14 @@ public class Model {
      */
     public Client getClient() {
         return client;
+    }
+
+    public ClientMenuOptions getPrevMenu() {
+        return prvMenu;
+    }
+
+    public void setPrevMenu(ClientMenuOptions menu) {
+        this.prvMenu = menu;
     }
 
     /**
@@ -605,18 +617,25 @@ public class Model {
      *         empty {@link Book} object is returned.
      */
     public Book getReadingBook() {
-        // Attempt to retrieve the book currently being read by the client
-        ResultSet resultSet = databaseDriver.get1BookDataByCopyID(Model.getInstance().getClient().getClientId());
-        Book res = new Book();
-
-        // If no book is being read, fallback to retrieving the highest-rated book
-        if (resultSet == null) {
-            resultSet = databaseDriver.getHighestRatingBooks();
-        }
+        // Khởi tạo đối tượng Book rỗng
+        Book res = null;
 
         try {
-            while (resultSet.next()) {
-                // Extract book details from the result set
+            // Cố gắng lấy sách mà khách hàng đang đọc
+            ResultSet resultSet = databaseDriver.getReadingBook(Model.getInstance().getClient().getClientId());
+
+            // Nếu không có sách đang đọc, lấy sách đánh giá cao nhất
+            if (resultSet == null || !resultSet.isBeforeFirst()) { // Kiểm tra nếu ResultSet trống
+                resultSet = databaseDriver.getTop1HighestRatingBooks();
+
+                // Nếu vẫn không có sách nào, trả về null
+                if (resultSet == null || !resultSet.isBeforeFirst()) {
+                    return null;
+                }
+            }
+
+            // Lấy dữ liệu từ ResultSet
+            if (resultSet.next()) {
                 int book_id = resultSet.getInt("book_id");
                 String title = resultSet.getString("title");
                 String author = resultSet.getString("author");
@@ -629,19 +648,19 @@ public class Model {
                 Double average_rating = resultSet.getDouble("average_rating");
                 int review_count = resultSet.getInt("review_count");
 
-                // Count the available copies of the book
+                // Đếm số bản sao có sẵn của sách
                 int quantity = databaseDriver.countBookCopies(book_id);
 
-                // Create a new Book object and assign it to the result
-                Book book = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
+                // Tạo đối tượng Book và gán vào res
+                res = new Book(book_id, title, author, isbn, genre, language, description, publication_year,
                         image_path, average_rating, review_count, quantity);
-                res = book; // Set the result book
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+            // Bạn có thể xử lý thêm ở đây, ví dụ: ghi log hoặc thông báo lỗi
         }
 
-        // Return the retrieved book or an empty book if no result
+        // Trả về đối tượng Book hoặc null nếu không tìm thấy
         return res;
     }
 
@@ -958,8 +977,6 @@ public class Model {
         /**
          * Called when a borrow transaction is created by an admin.
          */
-        void onBorrowTransactionAdminCreated();
-
         /**
          * Called when a book return is processed by an admin.
          */
@@ -988,19 +1005,11 @@ public class Model {
      * Notifies all registered admin listeners that a borrow transaction has been
      * created.
      */
-    public void notifyBorrowTransactionAdminCreated() {
-        for (ModelListenerAdmin listener : listenersAdmin) {
-            listener.onBorrowTransactionAdminCreated();
-        }
-    }
 
     /**
      * Notifies all registered admin listeners that a borrow transaction event has
      * occurred.
      */
-    public void notifyBorrowTransactionAdminCreatedEvent() {
-        notifyBorrowTransactionAdminCreated();
-    }
 
     public void notifyAddBookEvent() {
         notifyAddBook();

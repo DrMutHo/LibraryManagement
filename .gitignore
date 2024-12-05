@@ -1,3 +1,4 @@
 .env
 .vscode/
 /bin
+src/resources/Database/Data.csv
