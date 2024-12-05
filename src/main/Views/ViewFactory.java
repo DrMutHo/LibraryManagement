@@ -79,14 +79,6 @@ public class ViewFactory {
         adminSelectedMenuItem.set(AdminMenuOptions.LOGOUT);
     }
 
-    public void reset() {
-        resetAllPanes();
-
-        clientSelectedMenuItem.set(null);
-        profileSelectedMenuItem.set(null);
-        adminSelectedMenuItem.set(null);
-    }
-
     // Admin Views
     private BorderPane adminDashboardView;
     private BorderPane adminProfileView;

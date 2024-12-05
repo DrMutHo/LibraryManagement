@@ -530,27 +530,6 @@ public class DatabaseDriver {
         return resultSet;
     }
 
-    /**
-     * Retrieves the top-rated books based on their average rating.
-     *
-     * @return a {@link ResultSet} containing details of the highest-rated books,
-     *         or {@code null} if an error occurs
-     */
-    public ResultSet getTop1HighestRatingBooks() {
-        ResultSet resultSet = null;
-        String query = "SELECT * FROM Book " +
-                "ORDER BY average_rating DESC " +
-                "LIMIT 1";
-        try {
-            Connection connection = this.dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            resultSet = preparedStatement.executeQuery();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return resultSet;
-    }
 
 
     public ResultSet getTop1HighestRatingBooks() {

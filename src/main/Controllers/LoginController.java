@@ -156,6 +156,7 @@ public class LoginController implements Initializable {
     public void acc_selector_init() {
         acc_selector.setItems(FXCollections.observableArrayList(AccountType.CLIENT, AccountType.ADMIN));
         acc_selector.setValue(Model.getInstance().getViewFactory().getLoginAccountType());
+        setAcc_selector();
         acc_selector.valueProperty().addListener(observable -> setAcc_selector());
     }
 
