@@ -65,7 +65,6 @@ public class Model {
     private ClientMenuOptions prvMenu;
     private final Client client;
     private final Admin admin;
-
     private GoogleBooksAPI BookAddSearch;
 
     /**
@@ -87,7 +86,6 @@ public class Model {
         selectedBook = new SimpleObjectProperty<>(null);
         this.BorrowTransactions = FXCollections.observableArrayList();
         this.prvMenu = null;
-
         this.client = new Client(0, "", "", "", "", "", null, 0, "", "", "");
         this.admin = new Admin(0, "", "", "");
     }
@@ -105,7 +103,7 @@ public class Model {
         this.recentlyAddBook.clear();
         this.listenersClient.clear();
         this.listenersAdmin.clear();
-        this.selectedBook.set(null);
+        this.selectedBook = new SimpleObjectProperty<>(null);
         this.viewFactory.reset();
         this.prvMenu = null;
     }
@@ -787,7 +785,7 @@ public class Model {
                 this.client.setRegistrationDate(resultSet.getDate("registration_date"));
                 this.client.setOutstandingFees(resultSet.getDouble("outstanding_fees"));
                 this.client.setUsername(resultSet.getString("username"));
-                this.client.setPasswordHash(resultSet.getString("password_hash"));
+                this.client.setPassword_hash(resultSet.getString("password_hash"));
                 this.client.setAvatarImagePath(resultSet.getString("avatar_image_path"));
                 this.clientLoginSuccessFlag = true;
             }
@@ -1031,4 +1029,7 @@ public class Model {
         databaseDriver.setClientAvatar(Model.getInstance().getClient().getClientId(), fileURI);
     }
 
+    public void setAllBooksAverageRating() {
+        databaseDriver.setAllBooksAverageRating();
+    }
 }

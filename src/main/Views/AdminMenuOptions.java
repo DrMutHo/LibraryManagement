@@ -6,5 +6,6 @@ public enum AdminMenuOptions {
     BOOKBROWSING,
     CLIENTSBROWSING,
     NOTIFICATION,
-    BOOKTRANSACTION
+    BOOKTRANSACTION,
+    LOGOUT
 }

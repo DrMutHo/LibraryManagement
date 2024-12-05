@@ -61,7 +61,7 @@
                                        </HBox.margin></ComboBox>
                                  </children>
                               </HBox>
-                              <ScrollPane hbarPolicy="NEVER" prefHeight="218.0" prefWidth="850.0" vbarPolicy="NEVER">
+                              <ScrollPane hbarPolicy="NEVER" prefHeight="218.0" prefWidth="850.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
                                  <content>
                                     <HBox fx:id="highestRatedBooks" prefHeight="408.0" prefWidth="909.0" styleClass="hbox-recentlyAdd" />
                                  </content>

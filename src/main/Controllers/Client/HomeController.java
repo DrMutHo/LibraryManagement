@@ -70,7 +70,6 @@ public class HomeController implements Initializable {
                 return Model.getInstance().getReadingBook(); // Lấy thông tin sách đang đọc
             }
         };
-        
         // Lắng nghe khi task hoàn thành để cập nhật UI
         task.setOnSucceeded(event -> {
             Book readingBook = task.getValue(); // Lấy kết quả trả về từ Task
@@ -78,14 +77,14 @@ public class HomeController implements Initializable {
             // Cập nhật tiêu đề và mô tả sách
             bookTitle.setText(readingBook.getTitle());
             description.setText(readingBook.getDescription());
-        
+
             // Đặt hình ảnh của sách
             rec.setArcWidth(20);
             rec.setArcHeight(20);
             ImagePattern pattern = new ImagePattern(new Image(readingBook.getImagePath()));
             rec.setFill(pattern);
             rec.setStroke(Color.TRANSPARENT);
-        
+
             // Cập nhật danh sách thể loại vào ComboBox
             ObservableList<String> genres = FXCollections.observableArrayList(
                     "All", "Fiction", "Dystopian", "Romance", "Adventure", "Historical", "Fantasy", "Philosophical", "Epic",
@@ -154,6 +153,13 @@ public class HomeController implements Initializable {
         }
     }
 
+    /**
+     * Adds a book to the recommended books list.
+     * This method creates a book card and displays it in the user interface.
+     * When the user clicks on the card, the book details will be shown.
+     *
+     * @param book The Book object to be added to the recommended list.
+     */
     private void addBookToRecommended(Book book) {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -278,6 +284,7 @@ public class HomeController implements Initializable {
                 return null;
             }
         };
+
         task.setOnSucceeded(event -> { 
             for (Book book : Model.getInstance().getHighestRatedBook()) {
                 addBookToHighestRatedBooks(book);
@@ -286,6 +293,13 @@ public class HomeController implements Initializable {
         new Thread(task).start();
 
     }
+
+    /**
+     * Updates the recommended books list by clearing the current list
+     * and loading a new set of book recommendations.
+     * This method creates a background task to fetch the recommended books
+     * and updates the UI once the task is complete.
+     */
     private void updateRecommendedBook() {
         Recommended.getChildren().clear();
         BookRecommendation bookRecommendation = new BookRecommendation();
@@ -296,15 +310,15 @@ public class HomeController implements Initializable {
                 return bookRecommendation.Recommendation();
             }
         };
-        
+
         // Xử lý khi Task thành công
         recommendationTask.setOnSucceeded(event -> {
             List<Book> dak = recommendationTask.getValue();
             // Cập nhật UI hoặc xử lý dữ liệu tại đây
             // Ví dụ: cập nhật TableView, ListView, v.v.
             for (Book book : dak) {
-            addBookToRecommended(book);
-        }
+                addBookToRecommended(book);
+            }
         });
         new Thread(recommendationTask).start();
     }
