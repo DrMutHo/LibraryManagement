@@ -1,7 +1,7 @@
 package main.Controllers.Admin;
 
 import java.io.File;
-
+import java.io.IOException;
 import java.awt.Checkbox;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -13,7 +13,10 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -22,10 +25,11 @@ import main.Models.BorrowTransaction;
 import main.Models.Model;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.util.Callback;
-
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+import javafx.scene.*;
+
 
 /**
  * Controller class for managing borrow transactions in the admin panel.
@@ -64,9 +68,9 @@ public class AdminBorrowTransactionController implements Initializable {
     @FXML
     private Button returnButton;
 
-    /** ChoiceBox for selecting actions */
     @FXML
-    private ChoiceBox actionChoiceBox;
+    private ComboBox<String> Actions;
+
 
     /** FilteredList for searching transactions */
     private FilteredList<BorrowTransaction> filteredData;
@@ -84,6 +88,7 @@ public class AdminBorrowTransactionController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         // Load data and set up table columns
         Model.getInstance().setBorrowTransaction();
 
@@ -127,6 +132,16 @@ public class AdminBorrowTransactionController implements Initializable {
         sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(bookTable.comparatorProperty());
         bookTable.setItems(sortedData);
+
+        ObservableList<String> langs = FXCollections.observableArrayList("Return", "Export", "Add");
+
+        Actions.setItems(langs);
+        Actions.setValue("Return");
+
+        Actions.valueProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Selected Action: " + newValue);
+            handleChoiceBoxAction(newValue);
+        });
     }
 
     /**
@@ -140,10 +155,66 @@ public class AdminBorrowTransactionController implements Initializable {
         // listener
     }
 
+    private void handleChoiceBoxAction(String selectedAction) {
+        System.out.println("Unknown action: ");
+        if (selectedAction == null) {
+            return;
+        }
+
+        switch (selectedAction) {
+            case "Return":
+                onReturnButtonClick();
+                break;
+            case "Export":
+                ExporttoExcel();
+                break;
+            case "Add":
+                onAddButtonClick();
+                break;
+            default:
+                System.out.println("Unknown action: " + selectedAction);
+                break;
+        }
+    }
     /**
      * Handles the return button click event.
      * Processes the return of selected borrowed books.
      */
+
+
+    @FXML
+    private void onAddButtonClick() {
+        try {
+            // Load the FXML file for the AssignBook modal
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/resources/Fxml/Admin/AssignBook.fxml"));
+            Parent root = loader.load();
+
+            // Pass data or perform any required setup for the controller
+            AssignBookController controller = loader.getController();
+            // If needed, you can pass any data to the controller here
+            // e.g., controller.initializeData(someData);
+
+            // Create a new Stage for the modal window
+            Stage stage = new Stage();
+            stage.setTitle("Assign Book");
+            stage.initModality(Modality.APPLICATION_MODAL); // Make it a modal window
+            stage.setScene(new Scene(root));
+
+            // Show the modal window and wait for it to close
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Show an alert dialog in case of an error
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Failed to open the Assign Book window.");
+            alert.showAndWait();
+        }
+    }
+
+
     @FXML
     private void onReturnButtonClick() {
 

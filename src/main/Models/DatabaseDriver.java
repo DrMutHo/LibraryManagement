@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.mindrot.jbcrypt.BCrypt;
+
+import com.mysql.cj.protocol.Resultset;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -193,6 +195,8 @@ public class DatabaseDriver {
      * @param copy_id the ID of the book copy whose details are to be retrieved.
      * @return a ResultSet containing the book data for the specified copy ID, or
      *         null if an error occurs.
+     * 
+     * */
     public String getBookTitleByCopyId(int copyId) {
         String title = null;
         String query = "SELECT b.title " +
@@ -355,6 +359,10 @@ public class DatabaseDriver {
      * @return a ResultSet containing the book(s) currently on the wishlist for the
      *         specified client,
      *         or null if an error occurs.
+     * 
+     * //
+     **/
+
     public Book getBookByBookId(int bookId) {
         String query = "SELECT * FROM Book WHERE book_id = ?";
 
@@ -1057,6 +1065,7 @@ public class DatabaseDriver {
      * @param clientId the ID of the client who submitted the review.
      * @return the `BookReview` object corresponding to the provided bookId and
      *         clientId, or null if no review exists.
+     * */
     public ResultSet getAllBorrowTransactions2() {
         String query = "SELECT transaction_id, client_id, copy_id, borrow_date, return_date, status " +
                 "FROM BorrowTransaction ORDER BY borrow_date DESC;";
@@ -1151,6 +1160,7 @@ public class DatabaseDriver {
         }
     }
 
+
     public ObservableList<Client> getAllClients() {
         ObservableList<Client> clients = FXCollections.observableArrayList();
         String query = "SELECT client_id, name, library_card_number, email, phone_number, address, " +
@@ -1212,6 +1222,31 @@ public class DatabaseDriver {
         // Return null if an exception occurs
         return null;
     }
+
+    public Boolean CheckIfClientReal(int clientId) {
+        String query = "SELECT client_id FROM Client WHERE client_id = ? LIMIT 1";
+    
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+    
+            // Set the client ID parameter in the query
+            pstmt.setInt(1, clientId);
+    
+            // Execute the query
+            ResultSet rs = pstmt.executeQuery();
+    
+            // If a row exists, the client is real
+            return rs.next();
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        // Return false if an exception occurs or no client is found
+        return false;
+    }
+    
+    
 
     /**
      * Lấy đánh giá của một người dùng cụ thể cho một cuốn sách.
@@ -1741,7 +1776,7 @@ public class DatabaseDriver {
      * @param copyId   the ID of the book copy being borrowed.
      * @return true if the borrow transaction was successfully created, false
      *         otherwise.
-
+     * */
     public void exportClientBorrowTransactionsToExcel(String filePath) {
         try {
             ResultSet resultSet = Model.getInstance().getDatabaseDriver().getAllClients2();
@@ -2274,7 +2309,7 @@ public class DatabaseDriver {
                 conn.rollback();
                 return false;
             }
-            Book currentBook = getBookByBookId(bookId);
+            Book currentBook = Model.getInstance().getDatabaseDriver().getBookByBookId(bookId);
             currentBook
                     .setQuantity(Model.getInstance().getDatabaseDriver().countBookCopies(currentBook.getBook_id()));
 
@@ -2896,45 +2931,6 @@ public class DatabaseDriver {
         return resultMap;
     }
 
-    // CREATE TABLE IF NOT EXISTS BookCopy (
-    // copy_id INT AUTO_INCREMENT PRIMARY KEY, -- Unique ID for each physical book
-    // copy
-    // book_id INT, -- Foreign key referencing the book this copy belongs to
-    // is_available BOOLEAN DEFAULT TRUE, -- Availability status of the book copy
-    // book_condition ENUM('New', 'Good', 'Fair', 'Poor') DEFAULT 'Good', --
-    // Physical condition of the book copy
-    // FOREIGN KEY (book_id) REFERENCES Book(book_id) ON DELETE CASCADE
-    // );
-
-    // public void toCSV() {
-    // String query = "SELECT client_id, book_id, rating FROM BookReview;";
-    // String output =
-    // getClass().getResource("/resources/Database/Data.csv").getFile();
-
-    // try (Connection conn = dataSource.getConnection();
-    // PreparedStatement pstmt = conn.prepareStatement(query);
-    // ResultSet rs = pstmt.executeQuery();
-    // BufferedWriter writer = Files.newBufferedWriter(Paths.get(output))) {
-
-    // writer.write("client_id,book_id,rating\n");
-
-    // // Write data rows
-    // while (rs.next()) {
-    // int userId = rs.getInt("client_id");
-    // int bookId = rs.getInt("book_id");
-    // double rating = rs.getDouble("rating");
-
-    // try {
-    // writer.write(userId + "," + bookId + "," + rating + "\n");
-    // } catch (IOException e) {
-    // e.printStackTrace(); // Handle the write exception
-    // }
-    // }
-
-    // } catch (SQLException | IOException e) {
-    // e.printStackTrace(); // Handle SQL and IOException for the whole block
-    // }
-    // }
     /**
      * Cập nhật địa chỉ của người dùng trong cơ sở dữ liệu.
      *
@@ -3064,6 +3060,3 @@ public class DatabaseDriver {
     }
 
 }
-
-// public boolean insertNotification(Notification notification) {
-// String query = "
