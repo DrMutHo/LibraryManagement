@@ -19,7 +19,6 @@
   <details>
   <summary>Phụ trách </summary>
   login signup forgotpassword,  phần setting,  đa luồng.
-  card, borrowtransaction, trending books, profile, report.
 </details>
 
 - Bùi Phúc Bình
