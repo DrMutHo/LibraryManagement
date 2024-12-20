@@ -50,7 +50,6 @@
     - [Javafx](#Tech1)
     - [GoogleBook API](#Tech2)
     - [Thuật toán Cosine  Simmilarity](#Tech3)
- - [Diagram](#Diagram)
 
 ## I. Giới Thiệu <a name="introduction"></a>
 
@@ -177,12 +176,4 @@
 - Hệ thống gợi ý sử dụng thuật toán **C/S** để đưa ra gợi ý sách cho người dùng.
 - Thuật toán hoạt động bằng cách coi từng phần trong bộ dữ liệu là các Vector và lấy giá trị Cosine góc giữa chúng. Thuật toán được áp dụng bộ {Người dùng, Sách, Rating}.
 - Thuật toán được chia làm 2 phần: tính tương quan giữa người và người, tính tương quan giữa sách và sách sau đó đưa ra tổng hợp. 
-
-## IV. Diagram <a name="Diagram"></a>
-
-<div style="display: flex; gap: 100px;">
-    <img src= diagram.png alt="Sơ đồ" width="150" style="border-radius: 150px;">
-  </div>
-
-
 
