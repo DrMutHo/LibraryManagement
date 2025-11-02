@@ -10,28 +10,16 @@
 ## Thành Viên Nhóm
 
 - Nguyễn Xuân Bách
-  <details>
-  <summary>Phụ trách </summary>
-  notification, browsing, bookdetail và các logic, database, phụ trách fix sau merge, dashboard, interface lắng nghe thay đổi.
-</details>
+  
 
 - Bùi Anh Chiến
-  <details>
-  <summary>Phụ trách </summary>
-  login signup forgotpassword,  phần setting,  đa luồng.
-</details>
+  
 
 - Bùi Phúc Bình
-  <details>
-  <summary>Phụ trách </summary>
-  card, borrowtransaction, trending books, profile, report.
-</details>
+  
 
 - Nguyễn Văn Tiền
-  <details>
-  <summary>Phụ trách </summary>
-  Chuyển các phần từ client sang admin, gợi ý sách.
-</details>
+  
   
 
 ## Table Of Content
